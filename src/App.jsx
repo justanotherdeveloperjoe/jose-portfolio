@@ -1,4 +1,7 @@
 import { useState } from 'react';
+import { StudioPortfolio } from './components/StudioPortfolio.jsx';
+import './studio.css';
+import './studio-details.css';
 import { Hero } from './components/Hero.jsx';
 import { WorkIndex } from './components/WorkIndex.jsx';
 import { CornerFrame } from './components/CornerFrame.jsx';
@@ -10,6 +13,13 @@ import { Footer } from './components/Footer.jsx';
 import { projects } from './data/projects.js';
 
 export default function App() {
+  if (new URLSearchParams(window.location.search).get('view') !== 'original') {
+    return <StudioPortfolio />;
+  }
+  return <OriginalPortfolio />;
+}
+
+function OriginalPortfolio() {
   const [introDone, setIntroDone] = useState(false);
   const firstBlock = projects.slice(0, 3);
   const restBlock = projects.slice(3);
