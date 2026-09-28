@@ -1,0 +1,27 @@
+.studio .postcard-interactive { padding: 0; background: transparent; border: 0; box-shadow: none; transform: none; perspective: 1100px; }
+.studio .postcard-interactive::before { content: none; }
+.postcard-entrance { perspective: 1100px; }
+.postcard-tilt { transform: rotate(-3deg); transform-style: preserve-3d; position: relative; }
+.postcard-flipper { display: grid; transform-style: preserve-3d; }
+.postcard-face { grid-area: 1 / 1; padding: 17px; background: #ece7d8; color: #3b4535; backface-visibility: hidden; -webkit-backface-visibility: hidden; border: 1px solid #ece7d8; box-shadow: 8px 12px 0 #c1cfa313; min-width: 0; }
+.postcard-front { transform: rotateY(0deg); }
+.postcard-back { transform: rotateY(180deg); display: flex; flex-direction: column; padding: 23px; background-image: repeating-linear-gradient(transparent 0, transparent 29px, #3b453508 29px, #3b453508 30px); }
+.postcard-stamp { position: absolute; right: -15px; top: -24px; z-index: 2; width: 55px; height: 55px; border: 1px solid #283623; border-radius: 50%; display: grid; place-items: center; color: #283623; background: #d5f77a; font-size: 36px; transform: rotate(15deg); }
+.postcard-back-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-family: var(--font-mono); font-size: 9px; letter-spacing: .05em; margin-bottom: 15px; }
+.postcard-postmark { width: 74px; height: 74px; border: 1px solid #59664c70; border-radius: 50%; display: grid; place-content: center; text-align: center; font-size: 7px; line-height: 1.2; transform: rotate(12deg); }
+.postcard-postmark b { font-size: 20px; font-weight: 400; }
+.studio .postcard-back h3 { font-size: clamp(27px, 2.5vw, 34px); font-weight: 500; letter-spacing: -.03em; line-height: 1.08; }
+.studio .postcard-back p { font-size: 13px; line-height: 1.8; color: #4c5844; margin-top: 17px; }
+.studio .postcard-back .postcard-signoff { font-family: Georgia, serif; font-style: italic; font-size: 15px; }
+.postcard-signoff > span { display: block; margin-top: 9px; font-size: 26px; }
+.postcard-back > a { margin-top: auto; padding-top: 20px; display: flex; justify-content: space-between; gap: 16px; color: #33452a; font-size: 12px; text-decoration: underline; text-underline-offset: 4px; }
+.postcard-flip-caption { margin-top: 28px; color: var(--s-muted); font-family: var(--font-mono); font-size: 9px; text-align: center; }
+.postcard-flip-caption > button { display: flex; width: 100%; align-items: center; justify-content: space-between; border: 1px solid #d5f77a60; background: #252c1e; color: #d5f77a; min-height: 48px; padding: 12px 16px; font-size: 12px; }
+.postcard-flip-caption > button:hover { background: #354328; }
+.postcard-flip-caption > button > span { font-size: 22px; }
+.postcard-flip-caption > span { display: block; margin-top: 10px; }
+.studio .postcard-interactive .postcard-windows { transition: fill .7s; }
+@media (max-width: 1100px) { .postcard-face { padding: 13px; } .postcard-back { padding: 19px; } .studio .postcard-back p { font-size: 12px; margin-top: 13px; } }
+@media (max-width: 760px) { .studio .postcard-back h3 { font-size: 32px; } .studio .postcard-back p { font-size: 14px; } .postcard-back { padding: 23px; } }
+@media (max-width: 380px) { .studio .postcard-back h3 { font-size: 27px; } .studio .postcard-back p { font-size: 12px; } .postcard-back { padding: 18px; } }
+@media (prefers-reduced-motion: reduce) { .postcard-tilt { transform: none; } }

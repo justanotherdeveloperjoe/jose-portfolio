@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { StudioPortfolio } from './components/StudioPortfolio.jsx';
 import './studio.css';
 import './studio-details.css';
+import './studio-editorial.css';
 import { Hero } from './components/Hero.jsx';
 import { WorkIndex } from './components/WorkIndex.jsx';
 import { CornerFrame } from './components/CornerFrame.jsx';

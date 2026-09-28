@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 const typeStyles = {
-  Sans: "'Segoe UI', Arial, sans-serif",
+  Sans: "'Bricolage Grotesque', 'Segoe UI', sans-serif",
   Serif: "Georgia, 'Times New Roman', serif",
   Mono: "'Cascadia Mono', Consolas, monospace",
 };

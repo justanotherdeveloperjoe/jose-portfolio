@@ -1,0 +1,86 @@
+.learning-grid .learning-card { overflow: hidden; }
+.learning-grid .learning-card-visual { min-height: 0; padding-block: 28px 18px; margin-bottom: 18px; gap: 12px; flex-direction: row; align-items: end; }
+.learning-grid .learning-card-visual h3 { font-size: clamp(35px, 3.8vw, 55px); }
+.learning-try-label { max-width: 95px; font-family: var(--font-mono); font-size: 8px; line-height: 1.6; text-align: right; opacity: .75; }
+.learning-grid .learning-description { min-height: 76px; }
+.learning-scene { margin-bottom: 26px; }
+.scene-actions { display: flex; gap: 10px; align-items: center; justify-content: space-between; min-height: 59px; padding-top: 12px; }
+.scene-actions > span, .scene-actions > code { font-family: var(--font-mono); font-size: 10px; }
+.learning-scene button { border: 1px solid var(--learning-line); background: transparent; color: inherit; min-height: 44px; padding: 9px 12px; font-size: 12px; cursor: pointer; }
+.scene-actions button { display: inline-flex; justify-content: center; align-items: center; gap: 14px; background: var(--learning-ink); color: #fff9ed; flex-shrink: 0; }
+.learning-scene button:hover { filter: brightness(1.15); }
+.learning-scene button:focus-visible { outline-color: var(--learning-ink); outline-offset: 3px; }
+.studio .scene-caption { font-size: 11px; line-height: 1.65; margin-top: 10px; min-height: 37px; }
+.scene-select { display: flex; gap: 8px; align-items: center; font-family: var(--font-mono); font-size: 10px; }
+.scene-select select { border: 1px solid var(--learning-line); color: inherit; background: #ffffff40; min-height: 44px; padding: 7px; font-size: 12px; color-scheme: light; }
+.terminal-window { background: #242920; color: #e3eccf; border-radius: 7px; min-height: 220px; overflow: hidden; box-shadow: 0 8px 16px #453d1b15; }
+.terminal-bar { display: flex; justify-content: space-between; align-items: center; padding: 11px 15px; background: #343b2e; color: #b7c3a7; font-family: var(--font-mono); font-size: 9px; }
+.terminal-bar > span:first-child { color: #d8c56c; letter-spacing: 3px; font-size: 7px; }
+.terminal-code { min-height: 100px; white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--font-mono); font-size: 12px; line-height: 1.8; padding: 22px 18px 12px; margin: 0; }
+.terminal-code code { font: inherit; }
+.terminal-output { color: #d5f77a; border-top: 1px solid #d5f77a22; margin: 0 18px; padding: 13px 0 18px; font-family: var(--font-mono); font-size: 11px; line-height: 1.8; overflow-wrap: anywhere; }
+.react-stage { display: flex; align-items: center; justify-content: center; gap: 25px; min-height: 220px; background: #eef9fa60; border: 1px solid var(--learning-line); border-radius: 7px; background-image: radial-gradient(#233e4d20 1px, transparent 1px); background-size: 14px 14px; padding: 14px; }
+.react-stage svg { width: 53%; max-width: 240px; color: #286781; }
+.react-mini-ui { background: #f4f9f6; border: 1px solid #749bac60; border-radius: 7px; padding: 17px; display: grid; gap: 10px; justify-items: center; min-width: 112px; box-shadow: 5px 6px 0 #233e4d0a; }
+.react-mini-ui > span { font-family: var(--font-mono); font-size: 8px; }
+.react-state-value { font-family: var(--s-display); font-size: 43px; font-weight: 500; line-height: 1; }
+.database-stage, .bot-stage { height: 190px; display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 16px 13px; border: 1px solid var(--learning-line); border-radius: 6px; background: #ffffff25; }
+.database-stage > svg { width: 38%; max-width: 110px; flex-shrink: 0; }
+.query-results { flex: 1; }
+.query-results > span, .bot-files > span:first-child { display: block; font-family: var(--font-mono); font-size: 8px; letter-spacing: .03em; margin-bottom: 10px; }
+.query-result-row { display: flex; justify-content: space-between; gap: 8px; padding: 9px 0; border-bottom: 1px solid var(--learning-line); font-size: 11px; }
+.query-result-row > span:last-child { font-family: var(--font-mono); font-size: 9px; opacity: .7; }
+.query-code { display: block; min-height: 44px; padding-top: 10px; font-family: var(--font-mono); font-size: 10px; line-height: 1.65; }
+.bot-stage { height: 234px; padding: 18px 12px; }
+.bot-stage > svg { width: 40%; max-width: 120px; flex-shrink: 0; }
+.bot-files { flex: 1; }
+.bot-file { display: block; background: #ffffff55; border: 1px solid var(--learning-line); border-radius: 3px; padding: 5px 7px; font-family: var(--font-mono); font-size: 9px; margin-top: 5px; }
+.loose-file:nth-child(2) { transform: rotate(-4deg); }
+.loose-file:nth-child(3) { transform: rotate(5deg); }
+.loose-file:nth-child(4) { transform: rotate(-2deg); }
+.bot-folder { border-left: 2px solid #8d73a1; padding-left: 7px; margin-top: 9px; }
+.bot-folder b { font-family: var(--font-mono); font-size: 9px; font-weight: 500; }
+.weather-stage { height: 234px; display: flex; flex-direction: column; justify-content: center; background: #fff7db60; border: 1px solid var(--learning-line); border-radius: 6px; transition: background .5s; padding: 8px 12px 14px; }
+.weather-stage svg { width: 100%; height: 175px; display: block; overflow: visible; }
+.weather-services { display: flex; justify-content: space-around; gap: 8px; font-family: var(--font-mono); font-size: 9px; }
+.weather-rain .weather-stage { background: #c6d4d960; }
+.weather-snow .weather-stage { background: #e9f1f1b0; }
+.weather-sun { opacity: 1; transition: opacity .35s; }
+.weather-rain .weather-sun, .weather-snow .weather-sun { opacity: .2; }
+.weather-particle { stroke: #587789; }
+.weather-snow .weather-particle { stroke: #617d84; }
+.weather-controls { display: flex; gap: 6px; padding-top: 12px; min-height: 59px; }
+.weather-controls button { flex: 1; }
+.weather-controls button[aria-pressed='true'] { background: var(--learning-ink); color: #fff9ed; }
+@media (min-width: 761px) and (max-width: 1100px) {
+  .learning-grid .learning-card { padding: 19px; }
+  .learning-grid .learning-card-visual { align-items: start; flex-direction: column; }
+  .learning-try-label { max-width: none; text-align: left; }
+  .scene-actions { flex-wrap: wrap; }
+  .scene-actions button { flex: 1; }
+  .scene-select { flex: 1; }
+  .scene-select select { flex: 1; }
+  .react-stage { gap: 10px; }
+  .react-mini-ui { min-width: 95px; padding: 12px; }
+  .database-stage, .bot-stage { gap: 8px; padding-inline: 8px; }
+  .learning-grid .learning-description { min-height: 145px; }
+  .weather-services { font-size: 8px; gap: 3px; }
+}
+@media (max-width: 760px) {
+  .learning-grid .learning-card-visual { flex-direction: row; align-items: end; padding-block: 24px 18px; }
+  .learning-grid .learning-card-visual h3 { font-size: clamp(32px, 8.5vw, 48px); }
+  .learning-try-label { font-size: 7px; max-width: 70px; }
+  .learning-grid .learning-description { min-height: 0; }
+  .terminal-code { font-size: 11px; padding-inline: 14px; }
+  .react-stage { gap: 12px; }
+  .react-mini-ui { min-width: 98px; padding: 13px; }
+}
+@media (max-width: 380px) {
+  .learning-grid .learning-javascript .learning-card-visual { flex-wrap: wrap; }
+  .learning-grid .learning-javascript .learning-try-label { max-width: none; }
+  .scene-actions { gap: 8px; flex-wrap: wrap; }
+  .scene-select { gap: 6px; }
+  .learning-scene button { padding-inline: 9px; font-size: 11px; }
+  .react-stage { padding: 8px; gap: 6px; }
+  .react-mini-ui { min-width: 90px; padding: 10px; }
+}

@@ -1,0 +1,77 @@
+.studio-learning { padding-block: 85px 90px; border-bottom: 1px solid var(--s-line); }
+.learning-heading { display: flex; justify-content: space-between; align-items: end; gap: 44px; margin-bottom: 38px; }
+.learning-heading .studio-kicker { color: var(--s-lime); }
+.learning-heading h2 { font-size: clamp(38px, 4.5vw, 64px); font-weight: 500; letter-spacing: -.04em; line-height: 1.08; margin-top: 20px; }
+.learning-heading > p { max-width: 350px; color: #babcB3; font-size: 15px; line-height: 1.8; padding-bottom: 3px; }
+.learning-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 20px; align-items: start; }
+.learning-card { --learning-ink: #293d25; --learning-line: #293d2530; grid-column: span 2; background: #dce6c8; color: var(--learning-ink); padding: 25px; border-top: 4px solid #9ab47c; }
+.learning-javascript { --learning-ink: #453d1b; --learning-line: #453d1b30; grid-column: span 3; background: #eee2ac; border-top-color: #c6ad50; }
+.learning-react { --learning-ink: #233e4d; --learning-line: #233e4d30; grid-column: span 3; background: #cde3ec; border-top-color: #87b8cc; }
+.learning-code { --learning-ink: #3c304d; --learning-line: #3c304d30; background: #ded3e9; border-top-color: #b599ca; }
+.learning-cloud { --learning-ink: #4b3527; --learning-line: #4b352730; background: #efdbc7; border-top-color: #d5aa7e; }
+.learning-card-meta { display: flex; align-items: start; justify-content: space-between; flex-wrap: wrap; gap: 8px 12px; font-family: var(--font-mono); font-size: 9px; line-height: 1.6; }
+.learning-card-meta > span:first-child { text-transform: uppercase; letter-spacing: .035em; }
+.learning-status { display: inline-flex; align-items: center; gap: 5px; }
+.learning-status i { height: 5px; width: 5px; border-radius: 50%; background: currentColor; }
+.learning-card-visual { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 150px; border-bottom: 1px solid var(--learning-line); margin-bottom: 23px; }
+.learning-card-visual h3 { font-size: clamp(40px, 4.3vw, 61px); font-weight: 700; letter-spacing: -.045em; line-height: 1; }
+.learning-illustration { width: 110px; height: 96px; flex-shrink: 0; stroke: currentColor; stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; }
+.learning-art-detail { opacity: .5; }
+.learning-card h4 { font-size: 20px; font-weight: 600; line-height: 1.25; letter-spacing: -.025em; }
+.learning-description { font-size: 14px; line-height: 1.75; margin-top: 13px !important; min-height: 100px; }
+.learning-focus { margin-top: 20px; }
+.learning-focus > span { font-family: var(--font-mono); text-transform: uppercase; font-size: 9px; letter-spacing: .07em; }
+.learning-focus ul { display: flex; flex-wrap: wrap; gap: 7px; list-style: none; padding: 0; margin: 12px 0 23px; min-height: 62px; align-content: start; }
+.learning-focus li { border: 1px solid var(--learning-line); padding: 5px 8px; font-size: 11px; line-height: 1.5; }
+.learning-next { border-top: 1px solid var(--learning-line); }
+.learning-next summary { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 48px; padding-top: 12px; font-size: 12px; cursor: pointer; list-style: none; }
+.learning-next summary::-webkit-details-marker { display: none; }
+.learning-next summary > span { font-size: 21px; transition: transform .2s ease; }
+.learning-next[open] summary > span { transform: rotate(90deg); }
+.learning-next summary:hover { text-decoration: underline; text-underline-offset: 4px; }
+.learning-next p { font-size: 13px; line-height: 1.75; padding-top: 12px; }
+.learning-outlook { display: flex; gap: 23px; align-items: center; margin-top: 30px; padding: 27px 0 0; }
+.learning-outlook-star { color: var(--s-lime); font-size: 52px; line-height: 1; }
+.learning-outlook h3 { font-size: 22px; font-weight: 500; letter-spacing: -.02em; }
+.learning-outlook p { font-size: 13px; color: var(--s-muted); line-height: 1.8; max-width: 590px; margin-top: 6px; }
+.learning-outlook > a { color: var(--s-lime); margin-left: auto; flex-shrink: 0; display: inline-flex; align-items: center; gap: 20px; padding-block: 12px; border-bottom: 1px solid #d5f77a70; font-size: 13px; }
+.learning-outlook > a > span { transition: transform .2s ease; }
+.learning-outlook > a:hover > span { transform: translate(3px, -3px); }
+.studio-about .studio-learning-link { display: inline-flex; align-items: center; gap: 24px; margin-top: 23px; padding-block: 10px; color: var(--s-lime); border-bottom: 1px solid #d5f77a70; font-size: 14px; }
+
+@media (min-width: 761px) and (max-width: 1100px) {
+  .learning-grid { gap: 14px; }
+  .learning-card { padding: 19px; }
+  .learning-card-visual { flex-direction: column-reverse; justify-content: end; align-items: start; gap: 8px; padding-block: 18px; }
+  .learning-illustration { width: 85px; height: 65px; align-self: end; }
+  .learning-card-visual h3 { font-size: 42px; }
+  .learning-card h4 { min-height: 50px; }
+  .learning-description { min-height: 150px; }
+  .learning-focus ul { min-height: 95px; }
+  .learning-outlook { flex-wrap: wrap; }
+  .learning-outlook > a { margin-left: 65px; }
+}
+@media (max-width: 760px) {
+  .studio-learning { padding-block: 60px; }
+  .learning-heading { flex-direction: column; align-items: start; gap: 22px; margin-bottom: 28px; }
+  .learning-heading h2 { font-size: clamp(38px, 8vw, 55px); }
+  .learning-heading > p { max-width: 480px; }
+  .learning-grid { grid-template-columns: 1fr; gap: 18px; }
+  .learning-card { padding: 25px; grid-column: auto; }
+  .learning-card-visual h3 { font-size: 54px; }
+  .learning-javascript .learning-card-visual { flex-direction: column-reverse; align-items: start; gap: 12px; padding-block: 18px; }
+  .learning-javascript .learning-illustration { align-self: end; height: 70px; }
+  .learning-javascript .learning-card-visual h3 { font-size: clamp(34px, 10vw, 54px); }
+  .learning-illustration { width: 110px; }
+  .learning-description, .learning-focus ul { min-height: 0; }
+  .learning-outlook { flex-wrap: wrap; gap: 16px; }
+  .learning-outlook-star { font-size: 36px; }
+  .learning-outlook > div { flex: 1 1 220px; }
+  .learning-outlook > a { margin-left: 0; }
+}
+@media (max-width: 380px) {
+  .learning-card { padding: 20px; }
+  .learning-card-visual h3 { font-size: 45px; }
+  .learning-illustration { width: 85px; }
+  .learning-outlook { align-items: start; }
+}
