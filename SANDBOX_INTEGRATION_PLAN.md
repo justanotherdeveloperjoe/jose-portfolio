@@ -1,10 +1,14 @@
 # Portfolio sandbox: integration plan
 
-**Status:** first release implemented locally and verified in Chromium; not deployed.  
+**Status:** first release published to GitHub and Hostinger, with production Chromium checks passing.  
 **Prepared:** September 28, 2026.  
 **Direction:** a lightweight, optional workspace lower on the page, built around Jose's work and ongoing learning.
 
 ## Implementation report — September 28, 2026
+
+**Live site:** [Jose's portfolio](https://darkslateblue-eagle-516041.hostingersite.com/#sandbox). **Source release:** [`e6db5c7`](https://github.com/justanotherdeveloperjoe/jose-portfolio/commit/e6db5c7).
+
+Published the static production build to the existing Hostinger Agency site. Assets were uploaded and verified before switching the entry page; previous hashed assets were retained. The complete sandbox browser check also passed against the live URL. Hostinger optimizes JPEGs, so their served dimensions were checked; code, styles, fonts, and the entry page matched the local build exactly.
 
 The first release below is implemented: an optional section after learning and before contact, a deferred terminal, three editable HTML/CSS previews, shared learning/project data, and a bridge to the existing arcade. The numbered sections preserve the integration design and rationale.
 
@@ -37,7 +41,7 @@ All four budgets were met. The browser network check confirms workspace chunks a
 
 **Remaining coverage:** Firefox and WebKit are not installed in this environment. Physical mobile devices and manual screen-reader announcements have not been tested. These remain release-review checks, not claims of completed validation.
 
-**Practical limits:** this is a defined command simulation and static HTML/CSS preview, not Linux or a general code runner. Arbitrarily expensive CSS can still burden the browser; source limits and explicit Run reduce accidental work. Closing destroys the preview. Reloading clears page-session drafts. No deployment or hosting changes were made.
+**Practical limits:** this is a defined command simulation and static HTML/CSS preview, not Linux or a general code runner. Arbitrarily expensive CSS can still burden the browser; source limits and explicit Run reduce accidental work. Closing destroys the preview. Reloading clears page-session drafts. Publication used the existing hosting site without changing its plan or domain.
 
 ## 1. The experience
 

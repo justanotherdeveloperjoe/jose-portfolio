@@ -25,6 +25,8 @@ Portfolio covering nutrition, industrial, fitness, food, e-commerce, media, real
 
 ## Current studio portfolio
 
+[View the live portfolio](https://darkslateblue-eagle-516041.hostingersite.com/) · [Open the sandbox section](https://darkslateblue-eagle-516041.hostingersite.com/#sandbox)
+
 The default route shows the editorial portfolio: hero and project deck, selected work, interactive playground and arcade, Monterrey postcard, learning cards, sandbox, and contact. The previous design remains available at `?view=original`.
 
 ### Jose's sandbox
