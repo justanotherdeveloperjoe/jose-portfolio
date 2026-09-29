@@ -1,11 +1,17 @@
 # Portfolio sandbox: integration plan
 
-**Status:** first release published; a real Linux desktop is implemented and verified locally, superseding the computer-refinement revision below, which is retained in the repository but no longer mounted on the page.
+**Status:** the Linux desktop and Utilities release is published to GitHub and Hostinger as of September 29, 2026. It supersedes the computer-refinement revision below, which is retained in the repository but no longer mounted on the page.
 
 **Prepared:** September 28, 2026.  
 **Direction:** a lightweight, optional workspace lower on the page, built around Jose's work and ongoing learning.
 
-## Linux desktop — current local revision
+## Linux desktop — current release
+
+**Live site:** [Jose's portfolio](https://darkslateblue-eagle-516041.hostingersite.com/#sandbox). **Source release:** [`3625f7a`](https://github.com/justanotherdeveloperjoe/jose-portfolio/commit/3625f7a).
+
+Published the production build to the existing Hostinger site after the build and Node checks passed. Assets were uploaded and verified before changing `index.html`; previous hashed assets were retained. Code, styles, fonts, Linux images, WebAssembly binaries, and the entry page match the local build. Hostinger optimizes JPEGs, so their served dimensions were verified.
+
+Both Chromium browser suites passed against the live Hostinger URL: Linux boot, shared files, Monitor, Appearance, pause/resume, arcade, loading recovery, all four utilities, saved reminders, timer completion, touch drawing, PNG export, and mobile layouts.
 
 The sandbox boots a real Linux 6.8 guest in the browser with [v86](https://github.com/copy/v86), an x86 emulator compiled to WebAssembly. `@xterm/xterm` renders the terminal over the guest's serial port. A draggable-window desktop (`DesktopWindow.jsx`) hosts five dock apps: **Terminal**, **Files**, **Notes**, **Monitor**, and **Appearance**. Welcome is available from the top bar's help button. Files and Notes read and write the guest's `/mnt` 9p filesystem through `linuxFiles.js`.
 
@@ -70,7 +76,7 @@ New dependencies: `v86` (BSD-2-Clause), `@xterm/xterm` and `@xterm/addon-fit` (M
 
 **Remaining coverage:** Firefox, WebKit, and physical devices are untested, as is a manual screen-reader pass. Booting a full kernel under WebAssembly is CPU-bound; a slow or throttled device will take longer to reach a shell prompt than the Chromium desktop environment used here.
 
-**Practical limits:** this is a genuine but small Linux guest — 64 MB of RAM, no networking, and files that live only in the current tab. It is not backed by any server, and nothing typed into it leaves the browser. This revision has not been pushed or published; the live site linked below still serves the original first release.
+**Practical limits:** this is a genuine but small Linux guest — 64 MB of RAM, no networking, and files that live only in the current tab. It is not backed by any server, and nothing typed into it leaves the browser. The linked live site now serves this desktop and its four Utilities apps.
 
 ## Computer refinement — earlier local revision (retained, not mounted)
 
@@ -93,7 +99,7 @@ The updated production build measures 120.12 KB gzip of initial JavaScript and 2
 
 Node checks cover file operations, path boundaries, storage validation, quotas, aliases, shared content, and completion. Chromium checks cover the complete create/edit/run/download/reload workflow, blocked networking, infinite loops, cancellation, blocked storage, and responsive layouts. The retained preview/arcade suite also passes.
 
-This revision has not been pushed or published. The report and sections below document the first release; this refinement supersedes their original read-only filesystem and deferred-JavaScript scope.
+This earlier implementation is retained in GitHub for reference and is not mounted in the published site. The report and sections below document the original first release.
 
 ## Implementation report — September 28, 2026
 
