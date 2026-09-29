@@ -25,19 +25,33 @@ export const aliases = new Map([
   ['estate', 'propiedades-allende'],
 ]);
 
-export const help = `A few familiar commands. A little room to explore.
+export const help = `STUDIO / browser computer
 
-ls [path]        See what's in a folder
-cd [path]        Move to a folder (or home)
-pwd              See where you are
-cat <file>       Read a note
-open <project>   Find a project (try logistics)
-learn [topic]    See what I'm learning
-edit [example]  Try button, card, or postcard
-theme <name>     Try cream or charcoal
-play invaders   Visit the little arcade
-clear           Start with a clean screen
-help            You're here
+FILES                         WORK + EXPERIMENTS
+ls [path]   list files         open logistics    selected work
+cd [path]   change directory   learn react       learning notes
+pwd         current directory edit postcard     HTML/CSS studio
+tree        folder tree       play invaders     arcade
+cat <file>  read a file        theme cream       change colors
+mkdir <dir> new folder
+touch <file> new file          SESSION
+edit <file> text editor        history           command history
+cp <a> <b>  copy file          whoami            current user
+mv <a> <b>  rename file        date              local date/time
+rm <path>   remove file        clear             clear screen
+download <file> save a copy    exit              close computer
 
-Tip: use / for home and .. for the folder above.
-This browser terminal supports these commands; it doesn't run Linux.`;
+JAVASCRIPT
+run hello.js                  run a saved script
+js [1, 2, 3].map(n => n * 2)  evaluate JavaScript
+
+WRITE A NOTE
+echo "my next idea" > notes.txt
+echo "keep building" >> notes.txt
+
+↑/↓ history · Ctrl+L clear · Ctrl+C stop · Alt+→ complete
+Tab moves between controls. Use the Complete button on touch.
+
+~ is your writable home. Files save in this browser.
+JavaScript runs in isolation, without network or page access.
+This is a browser computer, not a Linux installation.`;

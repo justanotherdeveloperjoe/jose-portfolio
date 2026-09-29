@@ -1,0 +1,66 @@
+.sandbox-computer { --sb-bg: #111611; --sb-panel: #1d241c; --sb-line: #374332; --sb-muted: #a3b19b; --sb-text: #e0e8d9; --sb-accent: #d5f77a; border-radius: 9px 9px 0 0; overflow: hidden; box-shadow: 0 24px 70px #0003; }
+.computer-chrome { display: flex; align-items: center; min-height: 52px; padding: 0 18px; gap: 18px; background: var(--sb-panel); border-bottom: 1px solid var(--sb-line); }
+.studio .computer-chrome h3 { flex: 1; font: 12px/1.5 var(--font-mono); font-weight: 400; text-align: center; color: var(--sb-muted); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.computer-session { font: 9px var(--font-mono); letter-spacing: .08em; color: var(--sb-muted); }
+.computer-lights { display: flex; gap: 2px; }
+.computer-lights button { display: grid; place-items: center; width: 32px; min-height: 44px; }
+.computer-lights button::before { content: ''; width: 10px; height: 10px; border-radius: 50%; background: #d78c75; box-shadow: inset 0 0 0 1px #0002; }
+.computer-lights button:last-child::before { background: #a9bf84; }
+.computer-lights button:hover::before { outline: 3px solid #ffffff20; }
+.computer-screen { height: 470px; overflow: auto; overscroll-behavior: contain; padding: 28px 30px; font: 13px/1.7 var(--font-mono); scrollbar-color: var(--sb-line) transparent; cursor: text; }
+.is-expanded .computer-screen { height: min(740px, 75vh); }
+.computer-welcome { margin-bottom: 22px; }
+.computer-welcome pre { color: var(--sb-accent); font: 15px/1.1 var(--font-mono); margin: 0 0 20px; letter-spacing: 2px; }
+.computer-welcome p { margin-top: 5px; }
+.computer-welcome button { padding: 0 3px; color: var(--sb-accent); text-decoration: underline; text-underline-offset: 3px; font: inherit; }
+.computer-dim { color: var(--sb-muted); }
+.computer-entry { margin: 12px 0; overflow-wrap: anywhere; }
+.computer-entry pre { margin: 0; font: inherit; white-space: pre-wrap; overflow-wrap: anywhere; }
+.computer-entry.is-error pre { color: #f4af8f; }
+.sandbox-cream .computer-entry.is-error pre { color: #8d3421; }
+.computer-command { margin-bottom: 4px; white-space: pre-wrap; }
+.computer-command > span, .computer-prompt label > span:first-child { color: var(--sb-accent); }
+.computer-command b, .computer-prompt label b { font-weight: 400; color: var(--sb-muted); }
+.computer-listing { display: flex; flex-wrap: wrap; gap: 4px 24px; }
+.computer-listing .is-directory { color: #9dcacc; }
+.sandbox-cream .computer-listing .is-directory { color: #215d67; }
+.computer-prompt { display: flex; flex-wrap: wrap; align-items: center; gap: 0 8px; margin-top: 10px; }
+.computer-prompt label { overflow-wrap: anywhere; max-width: 100%; }
+.studio .computer-prompt input { flex: 1; min-width: 90px; width: auto; border: 0; border-radius: 0; background: transparent; color: var(--sb-text); padding: 4px 0; min-height: 36px; font: inherit; caret-color: var(--sb-accent); }
+.computer-prompt input:focus-visible { outline: 0; box-shadow: 0 1px 0 var(--sb-line); }
+.computer-prompt:focus-within label { color: var(--sb-accent); }
+.computer-prompt button { min-width: 44px; color: var(--sb-muted); font: inherit; }
+.computer-prompt button:hover { color: var(--sb-accent); }
+.computer-shortcuts { display: flex; flex-wrap: wrap; gap: 0 22px; align-items: center; border-top: 1px solid var(--sb-line); padding: 3px 22px; background: var(--sb-panel); }
+.computer-shortcuts button { font: 11px/1.5 var(--font-mono); color: var(--sb-muted); }
+.computer-shortcuts button:hover { color: var(--sb-accent); }
+.computer-shortcuts button:last-child { margin-left: auto; }
+.computer-shortcuts button span { font-size: 9px; margin-left: 8px; }
+.computer-statusbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 13px 24px; border-top: 1px solid var(--sb-line); font: 10px/1.6 var(--font-mono); color: var(--sb-muted); }
+.computer-statusbar > span:first-child { display: flex; gap: 8px; align-items: center; }
+.computer-statusbar i { width: 5px; height: 5px; flex-shrink: 0; border-radius: 50%; background: var(--sb-accent); }
+.computer-appbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 10px 22px; font: 11px/1.6 var(--font-mono); color: var(--sb-muted); border-bottom: 1px solid var(--sb-line); }
+.computer-appbar button { font: inherit; color: var(--sb-accent); }
+.computer-editor textarea { display: block; width: 100%; min-height: 400px; resize: vertical; border: 0; background: var(--sb-bg); color: var(--sb-text); padding: 24px; font: 14px/1.7 var(--font-mono); tab-size: 2; }
+.computer-editor-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 0 24px; padding: 8px 22px; border-top: 1px solid var(--sb-line); }
+.computer-editor-controls button { color: var(--sb-accent); font: 11px var(--font-mono); }
+.computer-editor-controls kbd { font: 9px var(--font-mono); color: var(--sb-muted); margin-left: 8px; }
+.computer-editor-controls > span { font: 11px var(--font-mono); color: var(--sb-muted); }
+.computer-completions { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 12px; }
+.computer-completions button { font: 11px var(--font-mono); color: var(--sb-accent); text-align: left; overflow-wrap: anywhere; }
+.computer-process { color: var(--sb-muted); }
+.computer-process button { margin-left: 20px; color: var(--sb-accent); font: inherit; text-decoration: underline; }
+@media (max-width: 700px) {
+  .computer-chrome { padding-inline: 10px; gap: 8px; }
+  .computer-session { display: none; }
+  .computer-lights button { width: 44px; }
+  .computer-screen { height: 440px; padding: 22px 16px; font-size: 12px; }
+  .studio .computer-prompt input { font-size: 16px; }
+  .computer-prompt label { width: 100%; }
+  .computer-shortcuts { padding-inline: 16px; gap: 0 16px; }
+  .computer-shortcuts button:last-child { margin-left: 0; }
+  .computer-statusbar { padding-inline: 16px; font-size: 9px; }
+  .computer-statusbar > span:last-child { display: none; }
+  .computer-appbar { padding-inline: 16px; flex-wrap: wrap; font-size: 10px; }
+  .computer-editor textarea { padding: 16px; font-size: 16px; }
+}

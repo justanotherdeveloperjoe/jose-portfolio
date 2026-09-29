@@ -1,0 +1,93 @@
+.linux-desktop .linux-window-utilities { width: 460px; }
+.linux-desktop .linux-window-calculator { width: 340px; }
+.linux-desktop .linux-window-calendar { width: 410px; }
+.linux-desktop .linux-window-timer { width: 380px; }
+.linux-desktop .linux-window-sketchpad { width: 620px; }
+.linux-utility { padding: 22px; }
+.linux-utility button { border-radius: 6px; }
+.linux-utility button:hover:not(:disabled) { background: #30382c0c; }
+.linux-utility .linux-primary { background: #30382c; color: #f4f4e7; padding: 8px 14px; }
+.linux-utility .linux-primary:hover:not(:disabled) { background: #455239; }
+.linux-utility input:not([type=checkbox]), .linux-utility select { min-width: 0; color: #30382c; background: #faf8ef; border: 1px solid #30382c30; border-radius: 6px; padding: 9px 10px; font: 12px var(--linux-sans); }
+.linux-utility-status { min-height: 16px; margin: 14px 0 0; color: #646c5f; font: 10px/1.6 var(--linux-sans); }
+.linux-utilities-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.linux-utilities-grid > button { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 20px 16px; text-align: left; border: 1px solid #30382c20; border-radius: 10px; background: #e9ecdf; }
+.linux-utilities-grid .linux-glyph { width: 27px; height: 27px; margin-bottom: 8px; color: #536440; }
+.linux-utilities-grid strong { font-size: 13px; font-weight: 500; }
+.linux-utilities-grid span { color: #646c5f; font-size: 11px; line-height: 1.6; }
+.linux-utilities-grid small { position: absolute; top: 16px; right: 12px; display: flex; align-items: center; gap: 5px; font-size: 9px; color: #546744; }
+.linux-utilities-grid i { width: 4px; height: 4px; border-radius: 50%; background: #657d4b; }
+.linux-calculator input#linux-calculation { display: block; width: 100%; margin-top: 14px; padding: 12px; text-align: right; font: 16px var(--font-mono); }
+.linux-calculator-result { display: block; padding: 16px 4px; text-align: right; overflow-wrap: anywhere; color: #30382c; font: 30px/1.3 var(--font-mono); }
+.linux-calculator-keys { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.linux-calculator-keys button { min-height: 40px; background: #e5e9da; font: 15px var(--font-mono); }
+.linux-calculator-keys .is-operator { background: #d5ddc5; }
+.linux-calculator .linux-calculate { width: 100%; margin-top: 7px; display: flex; justify-content: space-between; align-items: center; }
+.linux-calculation-history { border-top: 1px solid #30382c20; margin-top: 14px; font-size: 11px; }
+.linux-calculation-history summary { padding-top: 12px; cursor: pointer; }
+.linux-calculation-history summary > span { float: right; color: #646c5f; }
+.linux-calculation-history ol { list-style: none; margin: 8px 0 0; padding: 0; max-height: 160px; overflow: auto; }
+.linux-calculation-history li button { width: 100%; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; text-align: left; padding: 6px; font: 11px var(--font-mono); overflow-wrap: anywhere; }
+.linux-calculation-history li b { font-weight: 500; }
+.linux-month-heading { display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 14px; }
+.linux-month-heading h3 { margin: 0; font: 500 19px var(--linux-sans); letter-spacing: -.03em; }
+.linux-month-heading button { min-width: 36px; font-size: 24px; }
+.linux-calendar-week, .linux-calendar-days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; }
+.linux-calendar-week { margin-bottom: 8px; font-size: 10px; color: #646c5f; text-align: center; }
+.linux-calendar-days button { position: relative; min-height: 35px; padding: 4px 0; font: 12px var(--font-mono); }
+.linux-calendar-days button.is-other-month { color: #7c8276; }
+.linux-calendar-days button[aria-current=date] { box-shadow: inset 0 0 0 1px #788958; }
+.linux-calendar-days button[aria-pressed=true] { background: #30382c; color: #f4f4e7; }
+.linux-calendar-days button.has-reminder::after { content: ''; position: absolute; bottom: 3px; left: 50%; width: 3px; height: 3px; border-radius: 50%; background: currentColor; }
+.linux-calendar .linux-calendar-today { display: block; margin: 8px auto; min-height: 30px; font-size: 10px; text-decoration: underline; text-underline-offset: 3px; }
+.linux-reminders { padding-top: 14px; border-top: 1px solid #30382c20; }
+.linux-reminders h4 { margin: 0 0 10px; font-size: 12px; font-weight: 500; }
+.linux-reminders h4 > span { font-weight: 400; color: #646c5f; }
+.linux-reminders ul { list-style: none; margin: 0; padding: 0; max-height: 110px; overflow: auto; }
+.linux-reminders li { display: flex; gap: 8px; align-items: center; justify-content: space-between; border-bottom: 1px solid #30382c10; font-size: 12px; }
+.linux-reminders li > span { overflow-wrap: anywhere; }
+.linux-reminders li > button { min-width: 32px; flex-shrink: 0; font-size: 18px; }
+.linux-reminders form { display: flex; gap: 8px; margin-top: 10px; }
+.linux-reminders form input { flex: 1; width: 100%; }
+.linux-segmented { display: flex; background: #e4e8d9; border: 1px solid #30382c15; border-radius: 8px; padding: 3px; }
+.linux-segmented button { flex: 1; min-height: 34px; font-size: 11px; }
+.linux-segmented button[aria-pressed=true] { background: #f8f7ee; box-shadow: 0 1px 4px #0001; }
+.linux-timer-face { position: relative; max-width: 238px; margin: 20px auto 14px; aspect-ratio: 1; }
+.linux-timer-face > svg { display: block; width: 100%; fill: none; stroke: #dce1d0; stroke-width: 3; transform: rotate(-90deg); }
+.linux-timer-face .linux-timer-progress { stroke: #75885a; stroke-linecap: round; }
+.linux-timer-face > div { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 14px; }
+.linux-timer-face output { font: 40px var(--font-mono); letter-spacing: -.06em; }
+.linux-timer-face > div > span:last-child { font-size: 10px; color: #646c5f; }
+.linux-timer-duration { display: flex; justify-content: center; align-items: center; gap: 8px; font-size: 11px; }
+.linux-timer-duration input { width: 68px; text-align: center; }
+.linux-timer-actions { display: flex; gap: 10px; justify-content: center; margin-top: 16px; }
+.linux-timer-actions button { min-width: 90px; }
+.linux-timer-sound { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 10px; margin-top: 16px; color: #646c5f; }
+.linux-timer-sound input { accent-color: #5b7044; }
+.linux-timer .linux-utility-status { text-align: center; }
+.linux-sketch-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; }
+.linux-sketch-tools > div { display: flex; gap: 2px; }
+.linux-sketch-tools > div > button { display: grid; place-items: center; width: 32px; min-height: 34px; }
+.linux-sketch-tools button[aria-pressed=true] { background: #dbe2ce; box-shadow: inset 0 0 0 1px #82966a; }
+.linux-sketch-tools button > span { width: 14px; height: 14px; border-radius: 50%; }
+.linux-sketch-tools > button { padding-inline: 10px; font-size: 11px; }
+.linux-sketch-tools > label { display: flex; align-items: center; gap: 7px; margin-left: auto; font-size: 10px; color: #646c5f; }
+.linux-sketch-tools select { padding: 6px; font-size: 11px; }
+.linux-sketchpad canvas { display: block; width: 100%; aspect-ratio: 1000 / 650; background: #faf8ef; border: 1px solid #30382c25; border-radius: 7px; cursor: crosshair; touch-action: none; }
+.linux-sketch-actions { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+.linux-sketch-actions > span { margin-right: auto; color: #646c5f; font-size: 10px; }
+.linux-sketch-actions button { font-size: 11px; padding-inline: 10px; }
+.linux-sketch-clear { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding-top: 8px; font-size: 11px; color: #646c5f; }
+@media (max-width: 700px) {
+  .linux-desktop .linux-window-utilities, .linux-desktop .linux-window-calculator, .linux-desktop .linux-window-calendar, .linux-desktop .linux-window-timer, .linux-desktop .linux-window-sketchpad { width: calc(100% - 16px); }
+  .linux-utility { padding: 18px 14px; }
+  .linux-utilities-grid > button { padding: 18px 12px; }
+  .linux-utility input:not([type=checkbox]), .linux-utility select { font-size: 16px; }
+  .linux-calendar-days button { min-height: 36px; }
+  .linux-timer-face { max-width: 214px; margin-block: 16px; }
+  .linux-timer-face output { font-size: 36px; }
+  .linux-sketch-tools > label { margin-left: 0; }
+  .linux-sketch-actions { flex-wrap: wrap; }
+  .linux-sketch-actions > span { font-size: 9px; }
+}
+@media (max-width: 400px) { .linux-desktop .linux-dock button { font-size: 8px; padding-inline: 1px; } }

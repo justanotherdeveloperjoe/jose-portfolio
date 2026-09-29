@@ -25,12 +25,16 @@ Controls: arrows or A/D to move, Space to fire, P/Escape to pause, or hold the o
 
 Run `npm run test:arcade` for the game simulation checks (movement bounds, collisions, scoring, waves, damage immunity, and game-over).
 
-## Jose's sandbox
+## Jose's sandbox: a Linux desktop
 
-The optional section below learning uses the existing charcoal, cream, lime, and type choices. It adds no downloaded artwork or font. The three original editor templates are native HTML/CSS, including a small landscape that echoes the Monterrey postcard.
+The optional section below learning uses the existing charcoal, cream, lime, and type choices. It adds no downloaded artwork or font; the desktop wallpaper and window chrome are native CSS.
 
-`SandboxSection.jsx` holds the invitation and retained page-session state. The workspace and its styles load on demand; closing makes it inert immediately, then unmounts it after the 240 ms collapse. Reduced motion closes it immediately. There are no sandbox animation loops or listeners before opening.
+`SandboxSection.jsx` holds the invitation, the open/close state, and the lazy boundary. `LinuxDesktop.jsx` loads on demand and boots a real Linux 6.8 guest with [v86](https://github.com/copy/v86), an x86 emulator compiled to WebAssembly. `@xterm/xterm` renders the terminal over the emulator's serial port. `DesktopWindow.jsx` provides the draggable/maximizable window chrome shared by the Terminal, Files, Notes, and Welcome apps. `linuxFiles.js` reads and writes the guest's `/mnt` 9p filesystem so Files and Notes share one filesystem with the terminal. Closing pauses the emulator; it does not destroy it until the page navigates away, so reopening resumes the same session.
 
-The terminal reads canonical project and learning data. `play invaders` sends an open request to the existing arcade; it never duplicates the game. DOMPurify is the only new runtime dependency and is included in the deferred workspace. Preview documents have an empty iframe sandbox and restrictive CSP, with no script execution or outside resources.
+The guest kernel, BusyBox root filesystem, and BIOS images live in `public/linux/` and are fetched only when the desktop opens; `public/linux/NOTICE.txt` credits their licenses. Networking is disabled in the emulator configuration, so nothing the guest does can reach the network.
 
-The production build adds about 1.64 KB gzip of initial JavaScript and 0.49 KB of initial CSS. Opening loads another 18.23 KB gzip of JavaScript and 2.05 KB of CSS. See `SANDBOX_INTEGRATION_PLAN.md` for verification, limitations, and the implementation map.
+`play invaders` (via the Welcome window's arcade link) sends an open request to the existing arcade; it never duplicates the game. See `SANDBOX_INTEGRATION_PLAN.md` for the implementation history, measured bundle sizes, and verification notes.
+
+### Earlier computer prototype (retained, not mounted)
+
+Before the Linux desktop, the sandbox was a JavaScript-simulated terminal with a writable virtual filesystem, a text editor, and an isolated worker that could run small JavaScript snippets. That code (`SandboxWorkspace.jsx`, `SandboxPreview.jsx`, `SandboxFileEditor.jsx`, and `src/lib/sandbox/`) remains in the repository for reference but `SandboxSection.jsx` no longer imports it, so it does not ship to visitors. `scripts/check-sandbox.cjs` and `scripts/check-computer.cjs` exercise that earlier UI and will not pass against the live page.

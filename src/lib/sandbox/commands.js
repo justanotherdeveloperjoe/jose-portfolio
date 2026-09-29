@@ -2,6 +2,8 @@ import { projects } from '../../data/projects.js';
 import { learningTopics } from '../../data/learning.js';
 import { aliases, help, templates } from '../../data/sandbox.js';
 import { directories, files, learningNote, listDirectory, normalizePath } from './filesystem.js';
+import { computerCommand } from './computer.js';
+import { filesystem, resolvePath, writable } from './home.js';
 
 export const limits = { command: 512, history: 100, output: 200, entry: 6000 };
 
@@ -13,6 +15,12 @@ export function parseCommand(input) {
     if (quote) {
       if (char === quote) quote = ''; else token += char;
     } else if (char === '"' || char === "'") { quote = char; started = true; }
+    else if (char === '>') {
+      if (started) tokens.push(token);
+      token = ''; started = false;
+      if (tokens.at(-1) === '\u0000>') tokens[tokens.length - 1] = '\u0000>>';
+      else tokens.push('\u0000>');
+    }
     else if (/\s/.test(char)) { if (started) tokens.push(token); token = ''; started = false; }
     else { token += char; started = true; }
   }
@@ -21,10 +29,22 @@ export function parseCommand(input) {
   return tokens;
 }
 
-export function executeCommand(input, cwd = '/') {
+export function executeCommand(input, cwd = '/', state) {
   try {
+    if (state && /^\s*js\s+/.test(input) && input.length <= limits.command) return computerCommand('js', [], { ...state, cwd }, input);
     const [command, ...args] = parseCommand(input);
     if (!command) return { text: '' };
+    if (state) {
+      const result = computerCommand(command.toLowerCase(), args, { ...state, cwd }, input);
+      if (result) return result;
+      if (command === 'edit' && args.length === 1 && !Object.hasOwn(templates, args[0])) {
+        const path = resolvePath(args[0], cwd);
+        const fs = filesystem(state.home, state.drafts);
+        if (fs.dirs.has(path)) throw new Error('That is a folder. Choose a file to edit.');
+        if (!fs.files.has(path) && !writable(path)) throw new Error('Create files inside your home folder.');
+        return { text: '', action: { type: 'file', path, content: fs.files.get(path) || '', readOnly: !writable(path) } };
+      }
+    }
     if (args.length > 1) return { text: 'Try one argument at a time. Type help for examples.' };
     const arg = args[0];
     const path = normalizePath(arg || '', cwd);
@@ -57,14 +77,15 @@ export function executeCommand(input, cwd = '/') {
       case 'play': return arg === 'invaders' ? { text: 'Your ship is waiting. Start or resume a round in the arcade.', action: { type: 'arcade' } } : { text: 'Try play invaders.' };
       default: return { text: `Unknown command: ${command}. Try help to see what you can do.` };
     }
-  } catch (error) { return { text: error.message }; }
+  } catch (error) { return { text: error.message, error: true }; }
 }
 
 export function appendCommand(state, command, result) {
   return {
     ...state,
     cwd: result.cwd ?? state.cwd,
+    ...(result.home ? { home: result.home } : {}),
     history: [...state.history, command.slice(0, limits.command)].slice(-limits.history),
-    output: result.clear ? [] : [...state.output, { command: command.slice(0, limits.command), cwd: state.cwd, text: result.text.slice(0, limits.entry), links: result.links }].slice(-limits.output),
+    output: result.clear ? [] : [...state.output, { command: command.slice(0, limits.command), cwd: state.cwd, text: result.text.slice(0, limits.entry), links: result.links, listing: result.listing, error: result.error }].slice(-limits.output),
   };
 }

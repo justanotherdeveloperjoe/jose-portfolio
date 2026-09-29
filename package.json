@@ -9,13 +9,17 @@
     "build": "vite build",
     "preview": "vite preview",
     "test:arcade": "node scripts/test-space-game.mjs",
-    "test:sandbox": "node scripts/test-sandbox.mjs"
+    "test:sandbox": "node scripts/test-sandbox.mjs",
+    "test:utilities": "node scripts/test-utilities.mjs"
   },
   "dependencies": {
+    "@xterm/addon-fit": "^0.11.0",
+    "@xterm/xterm": "^6.0.0",
     "dompurify": "^3.4.16",
     "gsap": "^3.15.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "v86": "^0.5.462"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.1",

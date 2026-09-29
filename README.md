@@ -29,32 +29,44 @@ Portfolio covering nutrition, industrial, fitness, food, e-commerce, media, real
 
 The default route shows the editorial portfolio: hero and project deck, selected work, interactive playground and arcade, Monterrey postcard, learning cards, sandbox, and contact. The previous design remains available at `?view=original`.
 
-### Jose's sandbox
+### Jose's sandbox: a little Linux desktop
 
-Find **Open sandbox** below the learning cards, or visit `#sandbox`. The workspace loads only when opened. It includes a small simulated terminal and three editable HTML/CSS examples: button, card, and postcard. It runs in the browser and does not boot Linux.
+Find **Open desktop** below the learning cards, or visit `#sandbox`. It loads only when opened, then boots a real Linux 6.8 guest in the browser with [v86](https://github.com/copy/v86), an x86 emulator compiled to WebAssembly — not a simulated shell. Closing pauses the emulator; reopening during the same page visit resumes it where you left off.
 
-Try `help`, `ls projects`, `cat learning/react.txt`, `open logistics`, `learn python`, `edit postcard`, `theme cream`, or `play invaders`. Ordinary buttons provide starting points without typing. The arcade command reveals the existing game without starting or resetting a round.
+One dock opens or focuses five apps: **Terminal** (a real Linux shell rendered with `@xterm/xterm`), **Files**, **Notes**, **Monitor**, and **Appearance**. Files and Notes share the guest's `/mnt` folder with the terminal. Monitor reads guest memory, uptime, and processes while open. Appearance offers three wallpapers, three accent colors, and terminal text sizes from 12–18 px; preferences stay in this browser across reloads. A small help button opens Welcome, with orientation, the arcade link, and restart controls. Windows drag by their title bar and can be centered or maximized. Try `uname -a`, `ls /mnt`, `sh hello.sh`, or `echo "hello" > /mnt/idea.txt`.
 
-The editor applies changes with **Run preview**. **Reset example** restores a template and offers undo. Drafts, history, and the selected view survive closing during the page session; reloading clears them. Preview HTML is sanitized with DOMPurify and rendered in an isolated iframe. Scripts, external resources, forms, and navigation are disabled. HTML and CSS are limited to 20 KB each. Keyboard Escape closes the workspace from its controls; reduced motion disables its reveal animation.
+Monitor and terminal resizing use a separate guest serial port, leaving the visitor's terminal input intact. Polling stops when Monitor closes, the desktop pauses/closes, or the browser tab is hidden. Memory values describe the Linux guest, not the visitor's computer. The guest has 64 MB allocated; usable memory is lower because Linux reserves some of it.
 
-Edit project content in `src/data/projects.js`, learning topics in `src/data/learning.js`, and example templates/help in `src/data/sandbox.js`. UI lives in `src/components/sandbox/`; command and preview logic lives in `src/lib/sandbox/`.
+**Utilities** adds one dock launcher for four browser tools, each in a movable window:
 
-See [the integration plan and implementation report](SANDBOX_INTEGRATION_PLAN.md). The older [Desk Mode proposal](DESK_MODE_PLAN.md) is a separate, unimplemented desktop-window concept.
+- **Calculator:** typed arithmetic, parentheses, percentages, and eight recent calculations. Enter calculates; Escape clears. Percent divides a value by 100.
+- **Calendar:** month navigation, today highlighting, and up to 100 personal reminders saved in this browser. These are local notes, without notifications or account sync.
+- **Focus Timer:** a 1–180 minute countdown, stopwatch, and optional completion sound. It keeps time while its window is closed or the tab is hidden. Closing or pausing the desktop pauses it; use Resume timer to continue.
+- **Sketchpad:** pen colors and sizes, eraser, undo, clear confirmation, and PNG download. Mouse, pen, and touch use the same canvas. Drawings remain during the page visit, including after closing their window; download before reloading.
+
+The utilities add no dependencies or external requests. Their code loads with the deferred desktop. Closing an app keeps its state for this visit; restarting Linux only resets the guest and its files.
+
+Networking is disabled in the emulator, so nothing inside the guest can reach the network. Files live only in the current browser tab; download anything worth keeping, since reloading the page or clearing the session starts a fresh machine. The Welcome window's **Restart Linux…** does the same on demand, after a confirmation. `public/linux/NOTICE.txt` (linked from the Welcome window) credits the open-source guest image, BIOS, and terminal library.
+
+Edit project content in `src/data/projects.js` and learning topics in `src/data/learning.js` — both feed the guest's `projects.txt`/`learning.txt` files. UI and filesystem-bridge code live in `src/components/sandbox/` (`SandboxSection.jsx`, `LinuxDesktop.jsx`, `DesktopWindow.jsx`, `linuxFiles.js`).
+
+See [the integration plan and implementation report](SANDBOX_INTEGRATION_PLAN.md) for the full history, including the earlier JavaScript-simulated prototype that this replaced. The older [Desk Mode proposal](DESK_MODE_PLAN.md) is a separate, unimplemented desktop-window concept.
 
 ### Checks
 
 ```bash
-npm run test:sandbox
 npm run test:arcade
+npm run test:utilities
 npm run build
 npm run preview -- --host 127.0.0.1 --port 4173
 # In another terminal, with Playwright and Chromium available:
-node scripts/check-sandbox.cjs
+node scripts/check-linux.cjs
+node scripts/check-utilities.cjs
 ```
 
-On Windows, use `npm.cmd` if PowerShell blocks `npm.ps1`. The browser check defaults to `http://127.0.0.1:4173`; set `SANDBOX_URL` to override it. Set `PLAYWRIGHT_MODULE` to reuse another Playwright installation if it is not locally resolvable. Playwright is a testing prerequisite, not a shipped dependency.
+On Windows, use `npm.cmd` if PowerShell blocks `npm.ps1`. The browser check defaults to `http://127.0.0.1:4173`; set `SANDBOX_URL` to override it. Set `PLAYWRIGHT_MODULE` to reuse another Playwright installation if it is not locally resolvable. Playwright is a testing prerequisite, not a shipped dependency. Booting the guest kernel under Chromium takes real time (tens of seconds), so this check runs slower than the rest.
 
-The browser checks cover deferred loading, command history, drafts/reset, isolated previews, reduced motion, responsive layouts, touch, focus, arcade navigation, failed-download recovery, and the original route. Chromium was verified; Firefox, WebKit, physical mobile devices, and a manual screen-reader pass remain unverified.
+The browser check covers deferred loading, booting to a shell prompt, terminal/Files/Notes sharing one filesystem, downloads, window dragging, pause/resume, close/reopen without rebooting, the arcade bridge, responsive layouts, focus on close, the original route, and failed-chunk-download recovery. Chromium was verified; Firefox, WebKit, physical mobile devices, and a manual screen-reader pass remain unverified. `npm run test:sandbox`, `node scripts/check-sandbox.cjs`, and `node scripts/check-computer.cjs` still run, but they exercise the earlier JavaScript-simulated prototype described in `docs/visual-assets.md`; that code is retained in the repo but `SandboxSection.jsx` no longer mounts it, so those checks say nothing about the live page.
 
 ## <img src="docs/icons/layout-template.svg" width="24" height="24" align="top" alt=""> Original view (`?view=original`)
 

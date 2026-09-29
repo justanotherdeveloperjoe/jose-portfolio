@@ -1,8 +1,99 @@
 # Portfolio sandbox: integration plan
 
-**Status:** first release published to GitHub and Hostinger, with production Chromium checks passing.  
+**Status:** first release published; a real Linux desktop is implemented and verified locally, superseding the computer-refinement revision below, which is retained in the repository but no longer mounted on the page.
+
 **Prepared:** September 28, 2026.  
 **Direction:** a lightweight, optional workspace lower on the page, built around Jose's work and ongoing learning.
+
+## Linux desktop — current local revision
+
+The sandbox boots a real Linux 6.8 guest in the browser with [v86](https://github.com/copy/v86), an x86 emulator compiled to WebAssembly. `@xterm/xterm` renders the terminal over the guest's serial port. A draggable-window desktop (`DesktopWindow.jsx`) hosts five dock apps: **Terminal**, **Files**, **Notes**, **Monitor**, and **Appearance**. Welcome is available from the top bar's help button. Files and Notes read and write the guest's `/mnt` 9p filesystem through `linuxFiles.js`.
+
+Implemented behavior:
+
+- The desktop loads only when opened (`React.lazy`), then downloads the guest kernel (`public/linux/buildroot-bzimage68.bin`, a BusyBox-based Linux 6.8 image), BIOS/VGA BIOS, and the v86 WebAssembly runtime — about 13 MB total, once per visit.
+- Closing the panel pauses the emulator (`vm.stop()`) rather than destroying it, so reopening during the same page visit resumes the same session instantly instead of rebooting. The panel also pauses on a hidden tab and resumes on return, if still open.
+- Windows drag by their title bar, maximize, and raise on focus/taskbar click. The terminal resizes the guest's TTY (`stty cols/rows`) to match its container.
+- Files can be opened into Notes (capped at 128 KB), edited, saved back with Ctrl+S, or downloaded. New files created from the terminal appear in Files after a short debounce on the emulator's `9p-write-end` event.
+- Networking is disabled in the emulator configuration (no NIC device), so nothing inside the guest can reach the network. Memory is capped at 64 MB.
+- A restart flow (Welcome → **Restart Linux…**) asks for confirmation, then clears the session and boots a fresh guest. A stalled boot (60 s without reaching a shell prompt) or a WASM/download failure surfaces a retry overlay instead of a silently broken page.
+
+### Desktop polish and new apps
+
+The desktop uses one dock with a dot for each open app and an accent highlight for the active app. Launching an open app raises its existing window. Matching SVG line icons, cream window surfaces, charcoal chrome, softer shadows, and three static wallpapers keep the desktop consistent with the site. Terminal shortcuts appear only when Terminal is active. The drag handler no longer shadows the browser's `window` object; windows are constrained to the workspace and the Center control uses their actual dimensions.
+
+| File | Responsibility |
+| --- | --- |
+| `DesktopIcon.jsx` | Shared SVG app and window-control icons |
+| `DesktopPolish.css` | Desktop theme, dock, Monitor, Appearance, mobile and reduced-motion styles |
+| `DesktopAppearance.jsx` | Validated browser preferences: wallpaper, accent, terminal font size |
+| `DesktopMonitor.jsx` | Live memory, uptime, and process display; stops polling when hidden or paused |
+| `guestControl.js` | Separate serial connection for guest metrics and TTY sizing |
+
+Monitor reads `/proc/meminfo`, `/proc/uptime`, and `ps` through a detached, noninteractive shell on the second serial port. It samples every 2.5 seconds while open and running, with bounded output and a six-second request timeout. It reports usable guest memory, which is lower than the 64 MB allocated to the VM. Resizing uses this same connection, so neither monitoring nor font changes inject text into the visitor's command line. Appearance preferences persist in localStorage; Linux files remain session-only. No dependencies were added for this refinement.
+
+### Utilities — September 29, 2026
+
+One **Utilities** dock button groups Calculator, Calendar, Focus Timer, and Sketchpad. Each uses the existing window manager and matching inline SVG icons. The four components mount on their first launch and keep state when closed. The Utilities dock indicator also represents its open child windows.
+
+| Component | Behavior and storage |
+| --- | --- |
+| `DesktopCalculator.jsx` | Arithmetic parser in `utilityMath.js`, no eval; eight calculations kept for the visit |
+| `DesktopCalendar.jsx` | Monday-first month grid, leap years, today shortcut, up to 100 reminders in localStorage |
+| `DesktopTimer.jsx` | Countdown/stopwatch based on timestamps, optional Web Audio chime, pauses on desktop close/pause |
+| `DesktopSketchpad.jsx` | Fixed-resolution canvas with pointer input, bounded stroke history, eraser, undo, clear confirmation, PNG export |
+| `DesktopUtilities.jsx` / `.css` | App launcher, retained windows, shared utility styling and mobile layouts |
+
+The timer keeps time in hidden tabs while display updates stop. It continues if its own window closes; closing the desktop pauses it until manually resumed. Sketches and calculator history stay only for the page visit. Calendar reminders persist independently of the Linux guest. These browser apps make no network requests and require no additional libraries. The initial page bundles remain unchanged; the utilities add about 6.8 KB gzip to the deferred desktop's combined JavaScript and CSS.
+
+Checks: `npm run test:utilities` covers arithmetic precedence, malformed input, division by zero, leap years, and timestamp/pause calculations. `scripts/check-utilities.cjs` covers keyboard calculation, history retention, reminders across reloads, countdown completion, stopwatch/desktop pause, sketch retention/undo/download, and 320/390/768/1440 px layouts. Existing Linux desktop checks still cover shared files, Monitor, Appearance, and the arcade connection.
+
+### Emulator readiness
+
+The emulator object is constructed synchronously, but its inner machine and 9p filesystem are only wired up asynchronously once the WASM module finishes loading and the library's own `emulator-ready` event fires. Two other effects (the Files/Notes refresh effect and the active/paused-tracking effect) ran on mount and called VM methods (`fs9p.SearchPath`, `.run()`, `.stop()`) before that event had ever fired, throwing on every single open and tripping the lazy-load error boundary before Linux ever got a chance to boot. The fix tracks readiness with a ref set only inside the `emulator-ready` handler, and every other call site checks it first; destroy calls made before that point are now caught rather than left as unhandled rejections. Verified with a from-scratch Playwright run against the production build (see below) before and after the fix.
+
+### Measured production build
+
+| Asset | Gzip |
+| --- | --- |
+| Initial JavaScript | 120.08 KB |
+| Initial CSS (unchanged by this revision) | 22.23 KB |
+| Deferred desktop JavaScript (v86 wrapper, xterm.js, apps and utilities) | 191.13 KB |
+| Deferred desktop CSS | 7.84 KB |
+| Guest kernel + BIOS + v86 WebAssembly (fetched on open, not gzip-measured by the build) | ≈ 13 MB |
+
+New dependencies: `v86` (BSD-2-Clause), `@xterm/xterm` and `@xterm/addon-fit` (MIT). `public/linux/NOTICE.txt`, linked from the Welcome window, credits the guest kernel/BusyBox (GPL-2.0), SeaBIOS (LGPL), v86, and xterm.js.
+
+### Verification completed
+
+`scripts/check-linux.cjs` (Chromium, against a production build served by `vite preview`) covers: no desktop code loads before open; boot reaches a shell prompt; terminal commands produce output; a file created in the terminal appears in Files and opens into Notes with matching content; an edit saved in Notes round-trips back through `cat` in the terminal; downloading a file from Files; dragging a window; pause/resume; closing and reopening without a reboot; the Welcome window's restart-confirmation dialog and arcade bridge; 320/390/768/1440 px layouts; focus returning to the launcher on close; `?view=original` never mounting the sandbox; and recovery from a failed deferred-chunk download. No console or page errors during the run.
+
+**Remaining coverage:** Firefox, WebKit, and physical devices are untested, as is a manual screen-reader pass. Booting a full kernel under WebAssembly is CPU-bound; a slow or throttled device will take longer to reach a shell prompt than the Chromium desktop environment used here.
+
+**Practical limits:** this is a genuine but small Linux guest — 64 MB of RAM, no networking, and files that live only in the current tab. It is not backed by any server, and nothing typed into it leaves the browser. This revision has not been pushed or published; the live site linked below still serves the original first release.
+
+## Computer refinement — earlier local revision (retained, not mounted)
+
+Superseded by the Linux desktop above. `SandboxSection.jsx` no longer imports this code (`SandboxWorkspace.jsx`, `SandboxPreview.jsx`, `SandboxFileEditor.jsx`, `src/lib/sandbox/`); it is kept in the repository for reference, and `scripts/check-sandbox.cjs`/`scripts/check-computer.cjs` still exercise it in isolation, but neither runs against the live page anymore.
+
+The latest request is for a computer visitors can use. This revision replaces the two-view dashboard with a single terminal screen, window controls, inline prompt/output, colored directory listings, and compact command shortcuts. Editors open through commands and return to the same session.
+
+Implemented additions:
+
+- Writable `/home/guest` (`~`) with `mkdir`, `touch`, `echo` redirection, `cp`, `mv`, `rm`, `tree`, and `download`.
+- A file editor with Save, Save & return, and Discard & return. Ctrl+S saves; Escape saves and returns.
+- Browser-local saved files, bounded to 20 KB per file, 128 KB total, and 100 combined files/folders. Corrupt or blocked storage falls back to a fresh session. Portfolio directories are read-only.
+- `run hello.js` executes a saved script; `js 2 + 2` evaluates JavaScript. Each execution uses a worker inside an opaque-origin iframe, separate from the HTML/CSS preview. CSP blocks outside resources. The host handles messages only from that frame, with a per-run token and bounded text output.
+- A two-second host deadline plus Ctrl+C/Stop, close, and hidden-tab cancellation. Worker code cannot reach the page DOM or portfolio storage. Browser memory is not strictly metered; this is intended for small experiments.
+- Path/command completion through Alt+Right or a visible button. Tab remains available for ordinary keyboard navigation. History, Ctrl+L, `whoami`, `date`, and `exit` round out the session.
+
+No new dependency or initial runtime download is needed. JavaScript evaluation happens only in the isolated worker, never in the host page. The original no-script restriction continues to apply to the HTML/CSS preview. [Worker behavior and CSP inheritance](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers)
+
+The updated production build measures 120.12 KB gzip of initial JavaScript and 22.23 KB of initial CSS. The deferred computer uses 23.97 KB gzip of JavaScript and 2.30 KB of CSS, including the retained HTML/CSS preview and sanitizer. It remains within the original deferred budgets.
+
+Node checks cover file operations, path boundaries, storage validation, quotas, aliases, shared content, and completion. Chromium checks cover the complete create/edit/run/download/reload workflow, blocked networking, infinite loops, cancellation, blocked storage, and responsive layouts. The retained preview/arcade suite also passes.
+
+This revision has not been pushed or published. The report and sections below document the first release; this refinement supersedes their original read-only filesystem and deferred-JavaScript scope.
 
 ## Implementation report — September 28, 2026
 
