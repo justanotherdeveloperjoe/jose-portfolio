@@ -171,7 +171,7 @@
 .workbench-heading h3 { font-size: clamp(28px, 3vw, 40px); font-weight: 400; letter-spacing: -.035em; margin-top: 12px; line-height: 1.1; }
 .workbench-heading > p { font-size: 11px; color: #b9bdb1; line-height: 1.9; }
 .workbench-heading > p > span { color: var(--s-muted); font-family: var(--font-mono); font-size: 8px; text-transform: uppercase; letter-spacing: .08em; }
-.workbench-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: start; gap: 18px; }
+.workbench-grid { display: grid; grid-template-columns: repeat(var(--workbench-columns, 4), minmax(0, 1fr)); align-items: start; gap: 18px; }
 .workbench-card { border: 1px solid #44483e; background: #22251f; }
 .workbench-card summary { cursor: pointer; list-style: none; padding: 8px; }
 .workbench-card summary::-webkit-details-marker { display: none; }

@@ -11,8 +11,10 @@ import { ComedyVisual, EstateVisual, LogisticsVisual, MountainSignature } from '
 import { LearningSection } from './LearningSection.jsx';
 import { SpaceArcade } from './SpaceArcade.jsx';
 import { SandboxSection } from './sandbox/SandboxSection.jsx';
+import { ServicesSection } from './ServicesSection.jsx';
 
-const liveProjects = projects.filter((project) => project.status === 'live');
+const featuredProjects = ['el-sotano-comico', 'propiedades-allende', 'afh-logistics'].map(slug => projects.find(project => project.slug === slug));
+const liveProjects = [...featuredProjects, ...projects.filter(project => project.status === 'live' && !featuredProjects.includes(project))];
 const upcomingProjects = projects.filter((project) => project.status !== 'live');
 const email = 'mailto:devilfruitd3v@proton.me';
 
@@ -57,7 +59,7 @@ function ProjectDeck() {
       {liveProjects.map((project, index) => {
         const position = (index - selected + liveProjects.length) % liveProjects.length;
         return <a key={project.id} href={`#${project.id}`} className={`studio-deck-card deck-position-${position}`} tabIndex={position === 0 ? 0 : -1} aria-hidden={position !== 0}>
-          <div className="studio-window-bar"><span>● ● ●</span><span>{project.url.replace('https://', '')}</span><span>↗</span></div>
+          <div className="studio-window-bar"><span>● ● ●</span><span>{project.url.replace(/^https?:\/\//, '')}</span><span>↗</span></div>
           <img src={project.screenshot} alt={`${project.name} website preview`} fetchpriority={index === 0 ? 'high' : 'auto'} />
         </a>;
       })}
@@ -70,7 +72,7 @@ function ProjectDeck() {
 }
 
 function FeaturedWork() {
-  const [comedy, estate, logistics] = liveProjects;
+  const [comedy, estate, logistics] = featuredProjects;
   const [notesOpen, setNotesOpen] = useState(false);
   const notesToggle = useRef(null);
 
@@ -149,7 +151,7 @@ export function StudioPortfolio() {
   const [arcadeRequest, setArcadeRequest] = useState(0);
   return <div className="studio" id="top">
     <a className="studio-skip" href="#main">Skip to content</a>
-    <header className="studio-nav studio-wrap"><a href="#top" className="studio-logo" aria-label="Jose Sanchez home">js<span>✳</span></a><span className="studio-nav-note">Independent developer<br />Monterrey, México</span><nav aria-label="Main navigation"><a href="#work">Work <span>03</span></a><a href="#playground">Playground</a><a href="#about">About</a><a className="studio-nav-contact" href={email}>Let’s talk ↗</a></nav></header>
+    <header className="studio-nav studio-wrap"><a href="#top" className="studio-logo" aria-label="Jose Sanchez home">js<span>✳</span></a><span className="studio-nav-note">Independent developer<br />Monterrey, México</span><nav aria-label="Main navigation"><a href="#work">Work <span>03</span></a><a href="#playground">Playground</a><a href="#about">About</a><a href="#services">Services</a><a className="studio-nav-contact" href={email}>Let’s talk ↗</a></nav></header>
     <main id="main">
       <section className="studio-hero studio-wrap" aria-labelledby="studio-name">
         <div className="studio-hero-meta"><span className="studio-kicker">A personal corner of the internet</span><span className="studio-available"><i /> Available for freelance & remote</span></div>
@@ -178,6 +180,7 @@ export function StudioPortfolio() {
       <section className="studio-about studio-wrap" id="about" aria-labelledby="about-title"><MonterreyPostcard time={time} /><div><span className="studio-kicker">03 / Behind the browser</span><h2 id="about-title">A person who likes<br /><em>figuring things out.</em></h2><p>I’m Jose. I build interfaces for businesses with very different worlds: comedy, real estate, logistics, fitness, and more. I’m interested in the details that make each one feel like itself.</p><a className="studio-learning-link" href="#learning">See what I’m learning <span aria-hidden="true">↘</span></a><div className="studio-about-tools"><span>Currently building with</span><span>React / JavaScript / CSS / Vite</span></div></div></section>
       <LearningSection />
       <SandboxSection onArcade={() => setArcadeRequest(value => value + 1)} />
+      <ServicesSection />
       <section className="studio-contact studio-wrap" id="contact"><span className="studio-kicker">Have something in mind?</span><a href={email}>Let’s make<br /><em>something good.</em><span aria-hidden="true">↗</span></a><div className="studio-contact-bottom"><span>A website. An idea. A good conversation.</span><a href={email}>devilfruitd3v@proton.me ↗</a></div></section>
     </main><MountainSignature /><footer className="studio-footer studio-wrap"><a href="#top" className="studio-logo" aria-label="Jose Sanchez home">js<span>✳</span></a><span>Jose Sanchez © {new Date().getFullYear()}</span><a href="#top">Back to the top ↑</a></footer>
   </div>;

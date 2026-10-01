@@ -27,7 +27,13 @@ Portfolio covering nutrition, industrial, fitness, food, e-commerce, media, real
 
 [View the live portfolio](https://darkslateblue-eagle-516041.hostingersite.com/) · [Open the sandbox section](https://darkslateblue-eagle-516041.hostingersite.com/#sandbox)
 
-The default route shows the editorial portfolio: hero and project deck, selected work, interactive playground and arcade, Monterrey postcard, learning cards, sandbox, and contact. The previous design remains available at `?view=original`.
+The default route shows the editorial portfolio: hero and project deck, selected work, interactive playground and arcade, Monterrey postcard, learning cards, sandbox, Work With Me services, and contact. The previous design remains available at `?view=original`.
+
+### Work With Me services
+
+The section at `#services` offers **Launch from $300 USD**, **Business Website from $650 USD**, and **Custom Build by quote**. Each connects deliverables to an existing project: Smashouse, AFH Logistics, and El Sótano Cómico. Interaction increases by tier, with quiet idle states and a reduced-motion fallback. Inquiry links open an email draft for the selected service.
+
+Edit prices, deliverables, and example assignments in `src/data/services.js`. Project links and screenshots remain in `src/data/projects.js`. Smashouse uses the supplied working HTTP URL and a local screenshot; its HTTPS endpoint returned a certificate error when checked on October 1, 2026. See [services implementation notes](docs/services-section.md) for behavior, files, and checks. This addition has not yet been deployed to Hostinger.
 
 ### Jose's sandbox: a little Linux desktop
 

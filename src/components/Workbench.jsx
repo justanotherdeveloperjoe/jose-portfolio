@@ -15,8 +15,8 @@ function ProjectArtwork({ theme }) {
 
 export function Workbench({ projects }) {
   return <section className="studio-workbench" id="workbench" aria-labelledby="workbench-title">
-    <div className="workbench-heading"><div><span className="studio-kicker">The next chapter</span><h3 id="workbench-title">On the <em>workbench.</em></h3></div><p>Four more businesses. Four different personalities.<br /><span>Built for clients · Launching soon</span></p></div>
-    <div className="workbench-grid">
+    <div className="workbench-heading"><div><span className="studio-kicker">The next chapter</span><h3 id="workbench-title">On the <em>workbench.</em></h3></div><p>More businesses. Different personalities.<br /><span>Built for clients · Launching soon</span></p></div>
+    <div className="workbench-grid" style={{ '--workbench-columns': Math.min(4, projects.length) }}>
       {projects.map((project, index) => <details className={`workbench-card workbench-${project.theme}`} key={project.id} id={project.id}>
         <summary>
           <span className="workbench-art" aria-hidden="true"><ProjectArtwork theme={project.theme} /><span className="workbench-study-label">Project study / 0{index + 4}</span></span>
