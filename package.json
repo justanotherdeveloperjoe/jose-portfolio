@@ -13,8 +13,10 @@
     "test:utilities": "node scripts/test-utilities.mjs",
     "test:sky": "node scripts/test-sky.mjs",
     "test:cube": "node scripts/test-rubiks-cube.mjs",
+    "test:pet": "node scripts/test-digimon.mjs",
     "test:sql": "node scripts/test-mini-sql.mjs",
     "test:js": "node scripts/test-js-runner.mjs",
+    "test:learning": "node scripts/test-learning-tasks.mjs",
     "build:skyline": "node scripts/build-skyline.mjs"
   },
   "dependencies": {

@@ -17,6 +17,7 @@ const base=process.env.PORTFOLIO_URL||'http://127.0.0.1:5173';
   // Tabs: five topics, arrow keys move between them (and focus follows), one panel visible at a time.
   const tab=theme=>page.locator(`#learning-tab-${theme}`), panel=theme=>page.locator(`#learning-panel-${theme}`);
   assert.equal(await section.getByRole('tab').count(),5);
+  assert.equal(await section.getByRole('tablist').getAttribute('aria-orientation'),'vertical');
   assert.equal(await tab('javascript').getAttribute('aria-selected'),'true');
   await tab('javascript').focus();await page.keyboard.press('ArrowDown');
   assert.equal(await tab('react').getAttribute('aria-selected'),'true');
@@ -30,7 +31,8 @@ const base=process.env.PORTFOLIO_URL||'http://127.0.0.1:5173';
   const js=panel('javascript'),jsLines=()=>js.locator('.lab-line').allTextContents();
   await js.locator('.lab-run').click();
   await page.waitForFunction(()=>document.querySelectorAll('#learning-panel-javascript .lab-line.is-log').length===2);
-  assert.deepEqual(await jsLines(),["›[ 'LEARN', 'BUILD', 'IMPROVE' ]",'›[ \'improve\' ] 1 of 3']);
+  assert.match((await jsLines())[0],/TK Industrial.*Smashouse.*El Sótano Cómico/);
+  assert.equal((await jsLines())[1],'›6 matching projects');
   assert.match(await js.locator('.scene-caption').textContent(),/^Ran in \d+ ms · 2 lines of output\.$/);
   const editor=js.locator('textarea');
   await editor.fill('const total = [1, 2, 3].reduce((a, b) => a + b);\nconsole.log("total", total);\nreturn total * 2;');
@@ -47,6 +49,12 @@ const base=process.env.PORTFOLIO_URL||'http://127.0.0.1:5173';
   await editor.fill('console.log("kept")');
   await tab('data').click();await tab('javascript').click();
   assert.equal(await editor.inputValue(),'console.log("kept")','Edits are kept when switching topics');
+  await js.getByRole('button',{name:'Form check',exact:true}).click();
+  await editor.fill((await editor.inputValue()).replace('ana@example.com','invalid'));
+  await js.locator('.lab-run').click();
+  await page.waitForFunction(()=>document.querySelector('#learning-panel-javascript .lab-line.is-log')?.textContent.includes('Check your email'));
+  await js.getByRole('button',{name:'Reset code',exact:true}).click();
+  assert.match(await editor.inputValue(),/ana@example.com/);
 
   // The endless loop is stopped after 2 seconds, and the page stays usable the whole time.
   await js.getByRole('button',{name:'Endless loop'}).click();
@@ -76,15 +84,74 @@ const base=process.env.PORTFOLIO_URL||'http://127.0.0.1:5173';
   assert.match(await sql.locator('.lab-line.is-error').textContent(),/no column called "nme"/);
   await sql.locator('textarea').fill('DELETE FROM projects');await sql.locator('.lab-run').click();
   assert.match(await sql.locator('.lab-line.is-error').textContent(),/read-only/);
-  await section.screenshot({path:'.preview/learning-lab-1440.png'});
+  await sql.getByLabel('Build a search query').fill('allende');
+  await sql.getByRole('button',{name:'Find projects',exact:true}).click();
+  assert.equal((await rows()).length,2);
+  const queryDownload=page.waitForEvent('download');
+  await sql.getByRole('button',{name:'Export results',exact:true}).click();
+  assert.equal((await queryDownload).suggestedFilename(),'project-query.csv');
+  await sql.locator('textarea').fill('SELECT name FROM projects LIMIT 1');
+  assert.equal(await sql.getByRole('button',{name:'Export results',exact:true}).isDisabled(),true,'Edited queries cannot export stale results');
+  await sql.getByLabel('Build a search query').fill("nobody's-project");
+  await sql.getByRole('button',{name:'Find projects',exact:true}).click();
+  assert.match(await sql.locator('.lab-results').textContent(),/No rows match/);
+  await sql.getByRole('button',{name:'Live sites',exact:true}).click();await sql.locator('.lab-run').click();
+  await section.screenshot({path:'.preview/learning-sql-1440.png',animations:'disabled',style:'.studio-skip:not(:focus){visibility:hidden}'});
 
-  // The illustrated scenes still work.
-  await tab('react').click();await panel('react').getByRole('button',{name:/Change state/}).click();
-  assert.match(await panel('react').locator('.scene-caption').textContent(),/State is 1/);
-  await tab('code').click();await panel('code').getByRole('button',{name:/Give it a task/}).click();
-  assert.match(await panel('code').locator('.scene-caption').textContent(),/3 sample files sorted/);
-  await tab('cloud').click();await panel('cloud').getByRole('button',{name:'Rain'}).click();
-  assert.match(await panel('cloud').locator('.scene-caption').textContent(),/^Rain in this little cloud world/);
+  // React: combined filters, empty states, saves, and persistence while switching tabs.
+  await tab('react').click();const react=panel('react');
+  await react.getByLabel('Find a project').fill('Allende');
+  assert.equal(await react.locator('.project-finder-list li').count(),2);
+  await react.getByLabel('Show',{exact:true}).selectOption('live');
+  assert.equal(await react.locator('.project-finder-list li').count(),1);
+  await react.getByRole('button',{name:'Save Propiedades Allende',exact:true}).click();
+  assert.match(await react.locator('.component-readout').textContent(),/saved: 1/);
+  await tab('code').click();await tab('react').click();
+  assert.equal(await react.getByRole('button',{name:'Unsave Propiedades Allende',exact:true}).getAttribute('aria-pressed'),'true');
+  await react.getByRole('button',{name:'Saved (1)',exact:true}).click();
+  await react.getByRole('button',{name:'Unsave Propiedades Allende',exact:true}).click();
+  assert.match(await react.locator('.task-empty').textContent(),/No saved projects/);
+  await react.getByRole('button',{name:'Reset demo',exact:true}).click();
+  assert.equal(await react.locator('.project-finder-list li').count(),8);
+  await section.screenshot({path:'.preview/learning-react-1440.png',animations:'disabled',style:'.studio-skip:not(:focus){visibility:hidden}'});
+
+  // Python study: changes input, numbers collisions, exports a real CSV, and invalidates stale output.
+  await tab('code').click();const python=panel('code');
+  await python.getByLabel('Filenames',{exact:false}).fill('Hero.JPG\nhero.jpg\nPricing.pdf');
+  await python.getByRole('button',{name:'Prepare assets',exact:false}).click();
+  assert.deepEqual(await python.locator('.asset-result code').allTextContents(),['images/hero.jpg','images/hero-2.jpg','documents/pricing.pdf']);
+  const assetDownload=page.waitForEvent('download');
+  await python.getByRole('button',{name:'Download mapping',exact:true}).click();
+  const assetFile=await assetDownload;assert.equal(assetFile.suggestedFilename(),'asset-mapping.csv');
+  const contents=require('node:fs').readFileSync(await assetFile.path(),'utf8');
+  assert.match(contents,/"hero.jpg","images\/hero-2.jpg"/);
+  await python.getByLabel('Group by type',{exact:true}).uncheck();
+  assert.equal(await python.getByRole('button',{name:'Download mapping',exact:true}).isDisabled(),true);
+  await python.getByRole('button',{name:'Prepare assets',exact:false}).click();
+  assert.equal(await python.locator('.asset-result code').first().textContent(),'hero.jpg');
+  await python.getByLabel('Filenames',{exact:false}).fill('');
+  await python.getByRole('button',{name:'Prepare assets',exact:false}).click();
+  assert.match(await python.locator('.task-status').textContent(),/at least one filename/);
+  await python.getByRole('button',{name:'Reset demo',exact:true}).click();
+  await python.getByRole('button',{name:'Prepare assets',exact:false}).click();
+  await section.screenshot({path:'.preview/learning-python-1440.png',animations:'disabled',style:'.studio-skip:not(:focus){visibility:hidden}'});
+
+  // AWS study: stale version, invalidation, cached availability, failure, and recovery.
+  await tab('cloud').click();const aws=panel('cloud'),status=()=>aws.locator('.task-status').textContent();
+  await aws.getByRole('button',{name:/Visit page/}).click();assert.match(await status(),/Cache miss/);
+  await aws.getByRole('button',{name:'Publish v2',exact:true}).click();
+  await aws.getByRole('button',{name:/Visit page/}).click();assert.match(await status(),/visitor sees version 1.*S3 has version 2/);
+  await aws.getByRole('button',{name:'Clear cache',exact:true}).click();
+  await aws.getByRole('button',{name:/Visit page/}).click();assert.match(await status(),/fetched version 2/);
+  await aws.getByLabel('Simulate origin outage').check();
+  assert.equal(await aws.getByRole('button',{name:'Publish v3',exact:true}).isDisabled(),true);
+  await aws.getByRole('button',{name:/Visit page/}).click();assert.match(await status(),/Cache hit/);
+  await aws.getByRole('button',{name:'Clear cache',exact:true}).click();
+  await aws.getByRole('button',{name:/Visit page/}).click();assert.match(await status(),/Request failed/);
+  await aws.getByLabel('Simulate origin outage').uncheck();
+  await aws.getByRole('button',{name:/Visit page/}).click();assert.match(await status(),/fetched version 2/);
+  await section.screenshot({path:'.preview/learning-aws-1440.png',animations:'disabled',style:'.studio-skip:not(:focus){visibility:hidden}'});
+  await aws.getByRole('button',{name:'Reset demo',exact:true}).click();assert.match(await aws.locator('.delivery-readout').textContent(),/^0 visits/);
   await page.close();
 
   // Phone: shorter, no sideways page scroll, Run gets its own row.
@@ -94,6 +161,7 @@ const base=process.env.PORTFOLIO_URL||'http://127.0.0.1:5173';
   const phoneHeight=await phone.evaluate(()=>Math.round(document.querySelector('#learning').getBoundingClientRect().height));
   assert.ok(phoneHeight<2000,`Section on a phone is ${phoneHeight}px (was 4752px)`);
   assert.ok(await phone.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'No sideways page scroll on a phone');
+  assert.equal(await phone.getByRole('tablist',{name:'What I’m learning'}).getAttribute('aria-orientation'),'horizontal');
   await phone.locator('#learning-tab-data').tap();
   await phone.waitForTimeout(400);
   const tabShown=await phone.evaluate(()=>{const row=document.querySelector('.learning-index').getBoundingClientRect(),tab=document.querySelector('#learning-tab-data').getBoundingClientRect();return tab.left>=row.left-1&&tab.right<=row.right+1;});
@@ -102,7 +170,17 @@ const base=process.env.PORTFOLIO_URL||'http://127.0.0.1:5173';
   assert.ok(runRow,'Run query gets the full width on a phone');
   await phone.locator('#learning-panel-data .lab-run').tap();
   assert.equal(await phone.locator('#learning-panel-data .lab-table tbody tr').count(),6);
-  await phone.locator('#learning').screenshot({path:'.preview/learning-lab-390.png'});
+  await phone.locator('#learning').screenshot({path:'.preview/learning-sql-390.png',animations:'disabled',style:'.studio-skip:not(:focus){visibility:hidden}'});
+  for(const width of [1024,768,390,320]) {
+   await phone.setViewportSize({width,height:900});
+   for(const theme of ['javascript','react','data','code','cloud']) {
+    await phone.locator(`#learning-tab-${theme}`).click();
+    const bounds=await phone.locator(`#learning-panel-${theme}`).evaluate(el=>({pageOverflow:document.documentElement.scrollWidth-innerWidth,panelOverflow:el.scrollWidth-el.clientWidth}));
+    assert.ok(bounds.pageOverflow<=1&&bounds.panelOverflow<=1,`${theme} at ${width}px: ${JSON.stringify(bounds)}`);
+    if(width===390&&theme==='react') assert.equal(await phone.locator('.react-lab input[type="search"]').evaluate(el=>getComputedStyle(el).fontSize),'16px','Mobile inputs remain readable without iOS focus zoom');
+    if(width===390||width===1024) await phone.locator('#learning').screenshot({path:`.preview/learning-${theme}-${width}.png`,animations:'disabled',style:'.studio-skip:not(:focus){visibility:hidden}'});
+   }
+  }
   await phone.close();
 
   // Reduced motion: no panel animation.
@@ -112,6 +190,6 @@ const base=process.env.PORTFOLIO_URL||'http://127.0.0.1:5173';
   await still.close();
 
   assert.deepEqual(errors,[]);
-  console.log(`PASS: ${desktopHeight}px on desktop (was 2236), ${phoneHeight}px on a phone (was 4752); keyboard tabs; real JavaScript (edits, Ctrl+Enter, errors, aligned editor, kept edits, endless loop stopped in ~2s with the page responsive); real SQL on the real projects; React, Python and AWS scenes; phone layout; reduced motion; no console errors.`);
+  console.log(`PASS: initial section ${desktopHeight}px desktop / ${phoneHeight}px phone; keyboard tabs; editable JavaScript and timeout; SQL search/export; React filters/shortlist; filename preparation/download; cloud caching/outage/recovery; all five tabs at 1024, 768, 390 and 320px; reduced motion; no console errors.`);
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exit(1);});

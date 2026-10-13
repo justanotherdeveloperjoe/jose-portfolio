@@ -43,18 +43,18 @@ export const describeError = error => clip(error instanceof Error ? `${error.nam
 
 // Runs code as the body of an async function, so `await` works at the top level and `return x` shows x.
 // emit({ kind, text }) is called for every console line, as it happens.
-export async function runCode(code, emit) {
+export async function runCode(code, emit, data = {}) {
   const line = kind => (...args) => emit({ kind, text: clip(args.map(arg => formatValue(arg)).join(' ')) });
   const sandboxConsole = { log: line('log'), info: line('log'), debug: line('log'), table: line('log'), dir: line('log'), warn: line('warn'), error: line('error') };
   let run;
   try {
-    run = new AsyncFunction('console', code);
+    run = new AsyncFunction('console', 'data', code);
   } catch (error) {
     emit({ kind: 'error', text: describeError(error) });
     return false;
   }
   try {
-    const result = await run(sandboxConsole);
+    const result = await run(sandboxConsole, data);
     if (result !== undefined) emit({ kind: 'result', text: clip(formatValue(result)) });
     return true;
   } catch (error) {

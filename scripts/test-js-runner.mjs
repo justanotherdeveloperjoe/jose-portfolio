@@ -2,11 +2,11 @@
 // starter snippet runs. (The 2-second stop for endless loops lives in the browser; check-learning-lab.cjs covers it.)
 import assert from 'node:assert/strict';
 import { runCode, formatValue, MAX_LINE_LENGTH } from '../src/lib/jsRunner.js';
-import { jsExamples } from '../src/data/jsExamples.js';
+import { jsExamples, jsExampleData } from '../src/data/jsExamples.js';
 
 async function run(code) {
   const lines = [];
-  const ok = await runCode(code, line => lines.push(line));
+  const ok = await runCode(code, line => lines.push(line), structuredClone(jsExampleData));
   return { ok, lines, text: lines.map(line => line.text) };
 }
 
@@ -54,14 +54,26 @@ result = await run('console.log("x".repeat(5000));');
 assert.equal(result.text[0].length, MAX_LINE_LENGTH + 1, 'Very long lines are clipped');
 
 // Every starter snippet runs and says what it should.
-result = await run(jsExamples.Arrays);
-assert.deepEqual(result.text, ["[ 'LEARN', 'BUILD', 'IMPROVE' ]", "[ 'improve' ] 1 of 3"]);
-result = await run(jsExamples.Objects);
-assert.deepEqual(result.text, ['Smashouse', "{ category: 'Restaurant', status: 'live' }", "{ name: 'Smashouse', category: 'Restaurant', status: 'redesign' }"]);
+result = await run(jsExamples.Projects);
+assert.match(result.text[0], /TK Industrial.*Smashouse.*El Sótano Cómico/);
+assert.equal(result.text[1], '6 matching projects');
+result = await run(jsExamples.Projects.replace('=== "live"', '=== "soon"'));
+assert.deepEqual(result.text, ["[ 'Nutrióloga Allende', 'Wolf Fitness' ]", '2 matching projects']);
+result = await run(jsExamples['Form check']);
+assert.deepEqual(result.text, ['Ready to send — demo only.']);
+result = await run(jsExamples['Form check'].replace('"Ana"', '""').replace('ana@example.com', 'invalid'));
+assert.match(result.text[0], /Add your name.*Check your email/);
 result = await run(jsExamples.Async);
-assert.deepEqual(result.text, ['Loading…', 'Ready, 400 ms later.']);
+assert.deepEqual(result.text, ['Loading projects…', '8 projects ready.']);
+result = await run(jsExamples.Async.replace('shouldFail = false', 'shouldFail = true'));
+assert.deepEqual(result.text, ['Loading projects…', 'Could not load projects. Try again.']);
 result = await run(jsExamples.Errors);
-assert.deepEqual(result.lines, [{ kind: 'warn', text: "Couldn't read that: SyntaxError" }, { kind: 'log', text: 'Still running.' }]);
+assert.deepEqual(result.text, ['Untitled project', 'The rest of the page can still work.']);
+result = await run(jsExamples.Errors.replace('{ "title": null }', '{ invalid }'));
+assert.equal(result.lines[0].kind, 'warn');
+assert.match(result.text[0], /SyntaxError/);
+await run('data.projects.length = 0');
+assert.equal((await run('console.log(data.projects.length)')).text[0], '8', 'Every execution gets a fresh project snapshot');
 assert.match(jsExamples['Endless loop'], /while \(true\)/, 'The endless-loop example is there to show the sandbox stopping it');
 
 console.log('JavaScript lab checks passed: console-style formatting, await, return values, explained errors, clipped lines, and every starter snippet.');

@@ -25,9 +25,9 @@ Portfolio covering nutrition, industrial, fitness, food, e-commerce, media, real
 
 ## Current studio portfolio
 
-[View the live portfolio](https://darkslateblue-eagle-516041.hostingersite.com/) · [Open the sandbox section](https://darkslateblue-eagle-516041.hostingersite.com/#sandbox)
+[View the live portfolio](https://hechoporjs.com/) · [Open the sandbox section](https://hechoporjs.com/#sandbox)
 
-The default route shows the editorial portfolio: hero and project deck, selected work (the seven-project Workbench), interactive playground and arcade, Monterrey postcard, learning cards, sandbox, Work With Me services, and contact. The previous design remains available at `?view=original`.
+The default route shows the editorial portfolio: hero and project deck, selected work (the seven-project Workbench), interactive playground and arcade, a Digimon fan companion in the Monterrey postcard, five practical learning labs, sandbox, Work With Me services, and contact. The previous design remains available at `?view=original`.
 
 ### Playground: Monterrey, live
 

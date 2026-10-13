@@ -14,10 +14,10 @@ Workbench card compositions are styled in `src/studio.css`; the other visual add
 
 ## Interactive story and learning scenes
 
-- `MonterreyPostcard.jsx` uses GSAP and ScrollTrigger for a single layered entrance, pointer depth, day/night lighting, and a reversible personal note. Hidden faces are inert, and the flip button remains available on both sides.
-- The learning section is a lab notebook (see [learning lab](learning-lab.md)). JavaScript and SQL are real: `learning/JsLab.jsx` runs the visitor's code in a sandboxed Web Worker, and `learning/SqlLab.jsx` runs real queries over the site's own project data. `LearningScenes.jsx` keeps the React state demo, the Python sorting illustration and the AWS weather scene; Python uses local sample data and doesn't access visitor files, and the weather is illustrative.
-- `useSceneMotion.js` scopes the finite GSAP timelines to each scene, settles them when offscreen or the tab is hidden, and removes them when reduced motion is enabled. The underlying results are React state and remain usable without animation.
-- Edit study topics and goals in `src/data/learning.js`; edit the JavaScript starters in `src/data/jsExamples.js`, the SQL starters in `learning/SqlLab.jsx`, and the other scenes in `LearningScenes.jsx`.
+- `digimon/DigimonPetCard.jsx` houses the personal Digimon fan companion and a reversible note. The original Monterrey illustration is preserved in `MonterreyHabitat.jsx`. Hidden faces are inert, the flip button remains accessible, and reduced motion swaps faces immediately. Prepared sprite strips and attribution live in `public/sprites/digimon/`; see `docs/digimon-pet-plan.md` for mechanics and verification.
+- The learning section is a lab notebook (see [learning lab](learning-lab.md)). JavaScript runs editable website examples in a Web Worker; SQL queries and exports the portfolio's actual project data. React demonstrates filtering and a shortlist. Python illustrates filename preparation with editable sample text and a CSV mapping; its processing is JavaScript, not a Python runtime. AWS models storage, cache invalidation, and origin outages locally.
+- The atom, bot, and cloud are small inline SVGs in `learning/LabParts.jsx` and `learning/AwsLab.jsx`. State changes provide the feedback; there are no looping learning-scene animations or downloaded illustrations. The notebook's entrance respects reduced motion.
+- Edit study topics and goals in `src/data/learning.js`, JavaScript starters in `src/data/jsExamples.js`, and the individual labs in `src/components/learning/`. Filename and cloud models live in `src/lib/learningTasks.js`.
 
 ## Off hours arcade
 

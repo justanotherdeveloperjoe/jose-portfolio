@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './LearningSection.css';
 import { LearningScene } from './LearningScenes.jsx';
 
@@ -9,6 +9,14 @@ import { learningTopics } from '../data/learning.js';
 export function LearningSection() {
   const [active, setActive] = useState(0);
   const tabs = useRef([]);
+  const [horizontal, setHorizontal] = useState(() => window.matchMedia('(max-width: 1100px)').matches);
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 1100px)');
+    const update = () => setHorizontal(media.matches);
+    update();
+    media.addEventListener('change', update);
+    return () => media.removeEventListener('change', update);
+  }, []);
 
   // On narrow screens the topics scroll sideways; the chosen one always slides fully into view.
   function select(index) {
@@ -30,7 +38,7 @@ export function LearningSection() {
       <p>Client work keeps me building. Curiosity keeps me learning. I’m strengthening my front-end skills and exploring what’s behind them, one experiment at a time.</p>
     </div>
     <div className="learning-lab">
-      <div className="learning-index" role="tablist" aria-orientation="vertical" aria-label="What I’m learning">
+      <div className="learning-index" role="tablist" aria-orientation={horizontal ? 'horizontal' : 'vertical'} aria-label="What I’m learning">
         {learningTopics.map((topic, index) => <button key={topic.name} ref={element => { tabs.current[index] = element; }} type="button" role="tab" id={`learning-tab-${topic.theme}`} aria-selected={active === index} aria-controls={`learning-panel-${topic.theme}`} tabIndex={active === index ? 0 : -1} className={`learning-tab learning-${topic.theme}`} onClick={() => select(index)} onKeyDown={event => navigate(event, index)}>
           <span className="learning-tab-number">0{index + 1}</span>
           <span className="learning-tab-name">{topic.name}</span>

@@ -1,6 +1,6 @@
 // Local stand-in for public/api/weather.php, since Vite can't run PHP: the same polite, cached relay to MET Norway.
 const source = 'https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=25.6866&lon=-100.3161';
-const agent = 'jose-portfolio/1.0 (+https://darkslateblue-eagle-516041.hostingersite.com)';
+const agent = 'jose-portfolio/1.0 (+https://hechoporjs.com)';
 
 export function weatherRelay() {
   let cached = null;

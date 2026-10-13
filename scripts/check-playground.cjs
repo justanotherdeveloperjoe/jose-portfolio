@@ -14,8 +14,10 @@ const sunCentre = page => page.evaluate(() => { const r = document.querySelector
   await page.goto(base,{waitUntil:'networkidle'}); await page.evaluate(()=>document.fonts.ready);
   const lab=page.locator('.composition-playground'), canvas=lab.locator('.composition-canvas'), readout=lab.locator('.composition-readout');
   const tab=name=>lab.getByRole('tab',{name:new RegExp(name)});
-  const baseline=fs.existsSync('.preview/playground-baseline.json') ? JSON.parse(fs.readFileSync('.preview/playground-baseline.json','utf8')) : {};
-  const normalize=html=>html.replace(/ style=""/g,'').replace(/\b\d{2}:\d{2}\b/g,'TIME');
+  const baselinePath=process.env.PLAYGROUND_BASELINE || '.preview/playground-baseline.json';
+  const baseline=fs.existsSync(baselinePath) ? JSON.parse(fs.readFileSync(baselinePath,'utf8')) : {};
+  // GSAP can settle an offscreen postcard to this neutral transform after scrolling.
+  const normalize=html=>html.replace(/ style="(?:translate: none; rotate: none; scale: none; transform: translate\(0px, 0px\);)?"/g,'').replace(/\b\d{2}:\d{2}\b/g,'TIME');
   assert.equal(await lab.getByRole('tab').count(),4);
   assert.equal(await lab.locator('canvas.composition-sky').count(),1,'The print shader draws the poster');
   assert.match(await readout.textContent(),/^Live · 16:41 · Sun 20° up/);
@@ -29,7 +31,9 @@ const sunCentre = page => page.evaluate(() => { const r = document.querySelector
    await tab('Motion').click(); await page.evaluate(()=>document.activeElement?.blur());
    if(baseline[width])for(const [selector,expected]of Object.entries(baseline[width])){
     const actual=await page.locator(selector).evaluate(el=>{const r=el.getBoundingClientRect();return{html:el.outerHTML,width:r.width,height:r.height}});
-    assert.equal(normalize(actual.html),normalize(expected.html),`${selector} content changed`);
+    const actualHtml=normalize(actual.html), expectedHtml=normalize(expected.html);
+    const firstDifference=[...actualHtml].findIndex((character,index)=>character!==expectedHtml[index]);
+    assert.ok(actualHtml===expectedHtml,`${selector} content changed at ${firstDifference}: ${actualHtml.slice(firstDifference,firstDifference+160)} / expected ${expectedHtml.slice(firstDifference,firstDifference+160)}`);
     assert.ok(Math.abs(actual.width-expected.width)<1&&Math.abs(actual.height-expected.height)<1,`${selector} size changed at ${width}`);
    }
    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),`Overflow at ${width}`);

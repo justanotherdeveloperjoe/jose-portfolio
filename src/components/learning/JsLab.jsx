@@ -1,7 +1,8 @@
 import { useRef, useState } from 'react';
-import { jsExamples } from '../../data/jsExamples.js';
+import { jsExamples, jsExampleNotes, jsExampleData } from '../../data/jsExamples.js';
 import { runJs, TIME_LIMIT_MS } from '../../lib/runJs.js';
 import { CodeEditor } from './CodeEditor.jsx';
+import { LabIntro } from './LabParts.jsx';
 
 const firstExample = Object.keys(jsExamples)[0];
 
@@ -20,7 +21,7 @@ export function JsLab() {
     setRunning(true);
     setLines([]);
     setSummary('Running…');
-    const result = await runJs(code, line => { if (runCount.current === id) setLines(current => [...current, line]); });
+    const result = await runJs(code, line => { if (runCount.current === id) setLines(current => [...current, line]); }, { data: jsExampleData });
     if (runCount.current !== id) return;
     setRunning(false);
     if (result.stopped) {
@@ -40,8 +41,9 @@ export function JsLab() {
   }
 
   return <div className="learning-scene lab-scene">
+    <LabIntro title="The logic behind the interface.">{jsExampleNotes[example]}</LabIntro>
     <div className="lab-window">
-      <div className="lab-bar"><span aria-hidden="true">● ● ●</span><span>scratch.js</span><span>JS</span></div>
+      <div className="lab-bar"><span aria-hidden="true">● ● ●</span><span>website.js</span><span>JS</span></div>
       <CodeEditor language="js" value={code} onChange={setCode} onRun={run} label="JavaScript code — edit it, then run it" />
       <div className="lab-output" data-state={running ? 'running' : lines.length ? 'done' : 'empty'}>
         {lines.length ? lines.map((line, i) => <div key={i} className={`lab-line is-${line.kind}`}><span aria-hidden="true">{line.kind === 'result' ? '←' : line.kind === 'error' ? '✕' : line.kind === 'stopped' ? '■' : '›'}</span>{line.text}</div>)
@@ -52,6 +54,8 @@ export function JsLab() {
       <div className="lab-examples" role="group" aria-label="Start from an example">{Object.keys(jsExamples).map(name => <button key={name} type="button" aria-pressed={example === name} onClick={() => choose(name)}>{name}</button>)}</div>
       <button type="button" className="lab-run" onClick={run} aria-disabled={running}>{running ? 'Running…' : 'Run it'} <span aria-hidden="true">▶</span></button>
     </div>
+    <button type="button" className="lab-reset" onClick={() => choose(example)}>Reset code</button>
+    <details className="lab-reference"><summary>Available data · {jsExampleData.projects.length} projects</summary><pre>{JSON.stringify(jsExampleData.projects, null, 2)}</pre><p>Use data.projects in any example. Each run gets a fresh copy with name, category, and status (“live” or “soon”).</p></details>
     <p className="scene-caption" role="status">{summary || 'Real JavaScript, sandboxed: it can’t touch this page, and anything that runs too long is stopped.'}</p>
   </div>;
 }

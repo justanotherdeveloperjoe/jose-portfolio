@@ -23,7 +23,7 @@ self.clearInterval = id => { pending.delete(id); native.clearInterval(id); finis
 self.addEventListener('unhandledrejection', event => { event.preventDefault(); emit({ kind: 'error', text: describeError(event.reason) }); });
 
 self.onmessage = async ({ data }) => {
-  await runCode(data.code, emit);
+  await runCode(data.code, emit, data.data);
   settled = true;
   finishIfIdle();
 };

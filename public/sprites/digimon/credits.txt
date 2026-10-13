@@ -1,0 +1,37 @@
+DIGIMON FAN COMPANION — SPRITE CREDITS
+
+Unofficial fan project by Jose. Digimon and its characters belong to their
+respective rights holders. No affiliation or endorsement is claimed.
+Source credits identify the sprite rippers; they do not transfer ownership
+of the original game artwork.
+
+Game: Digimon World DS (Nintendo DS)
+Source collection: The Spriters Resource
+
+Agumon — Mighty Jetters, redblueyellow
+https://www.spriters-resource.com/ds_dsi/dgmnworldds/asset/48418/
+
+Greymon — A.J. Nitro, redblueyellow
+https://www.spriters-resource.com/ds_dsi/dgmnworldds/asset/48406/
+
+MetalGreymon — RadSpyro
+https://www.spriters-resource.com/ds_dsi/dgmnworldds/asset/48322/
+
+WarGreymon — A.J. Nitro, Dazz
+https://www.spriters-resource.com/ds_dsi/dgmnworldds/asset/48613/
+
+Preparation
+Only the small overworld frames are used. Source backgrounds were keyed
+out, and frames were placed in 56px cells with a shared ground anchor.
+The original character pixels are displayed at an integer 3x scale.
+Original ripper credits are preserved here rather than in the game viewport.
+
+Animation notes
+Walking and idle playback use original frame sequences. Dedicated eating,
+sleeping, training, and affectionate reaction strips were not available in
+the selected sheets. Those activities reuse existing poses with text cues.
+The short Digivolution fade is implemented in CSS, not a ripped game effect.
+
+The Monterrey city illustration is reused from this portfolio's original
+postcard. Pet logic and interface are implemented locally without copied
+third-party game-engine code. No remote sprite service is needed at runtime.

@@ -6,7 +6,7 @@
 declare(strict_types=1);
 
 const SOURCE = 'https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=25.6866&lon=-100.3161';
-const AGENT = 'jose-portfolio/1.0 (+https://darkslateblue-eagle-516041.hostingersite.com)';
+const AGENT = 'jose-portfolio/1.0 (+https://hechoporjs.com)';
 
 function fetch_forecast(?string $lastModified): ?array
 {

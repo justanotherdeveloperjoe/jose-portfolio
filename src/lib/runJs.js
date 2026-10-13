@@ -3,7 +3,7 @@
 export const TIME_LIMIT_MS = 2000;
 export const MAX_LINES = 200;
 
-export function runJs(code, onLine, { timeLimit = TIME_LIMIT_MS } = {}) {
+export function runJs(code, onLine, { timeLimit = TIME_LIMIT_MS, data = {} } = {}) {
   return new Promise(resolve => {
     const worker = new Worker(new URL('./jsRunner.worker.js', import.meta.url), { type: 'module' });
     const started = performance.now();
@@ -24,6 +24,6 @@ export function runJs(code, onLine, { timeLimit = TIME_LIMIT_MS } = {}) {
       } else if (data.type === 'done') end(false);
     };
     worker.onerror = event => { event.preventDefault(); onLine({ kind: 'error', text: event.message || 'The code could not run.' }); end(false); };
-    worker.postMessage({ code });
+    worker.postMessage({ code, data });
   });
 }

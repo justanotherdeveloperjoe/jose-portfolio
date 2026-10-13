@@ -1,46 +1,6 @@
-/* The illustrated scenes (React, Python, AWS). The real JavaScript and SQL labs are styled in learning/LearningLab.css. */
-.learning-scene { min-width: 0; }
-.scene-actions { display: flex; gap: 10px; align-items: center; justify-content: space-between; min-height: 59px; padding-top: 12px; }
-.scene-actions > span, .scene-actions > code { font-family: var(--font-mono); font-size: 10px; }
+﻿.learning-scene { min-width: 0; }
 .learning-scene button { border: 1px solid var(--learning-line); background: transparent; color: inherit; min-height: 44px; padding: 9px 12px; font-size: 12px; cursor: pointer; }
-.scene-actions button { display: inline-flex; justify-content: center; align-items: center; gap: 14px; background: var(--learning-ink); color: #fff9ed; flex-shrink: 0; }
-.learning-scene button:hover { filter: brightness(1.15); }
-.learning-scene button:focus-visible { outline-color: var(--learning-ink); outline-offset: 3px; }
+.learning-scene button:hover:not(:disabled) { box-shadow: inset 0 0 0 1px currentColor; }
+.learning-scene button:disabled { opacity: .5; cursor: not-allowed; }
+.learning-scene :is(button, input, select, textarea, summary, a):focus-visible { outline: 2px solid var(--learning-ink); outline-offset: 3px; }
 .studio .scene-caption { font-size: 11px; line-height: 1.65; margin-top: 10px; min-height: 37px; }
-.react-stage { display: flex; align-items: center; justify-content: center; gap: 25px; min-height: 220px; background: #eef9fa60; border: 1px solid var(--learning-line); border-radius: 7px; background-image: radial-gradient(#233e4d20 1px, transparent 1px); background-size: 14px 14px; padding: 14px; }
-.react-stage svg { width: 53%; max-width: 240px; color: #286781; }
-.react-mini-ui { background: #f4f9f6; border: 1px solid #749bac60; border-radius: 7px; padding: 17px; display: grid; gap: 10px; justify-items: center; min-width: 112px; box-shadow: 5px 6px 0 #233e4d0a; }
-.react-mini-ui > span { font-family: var(--font-mono); font-size: 8px; }
-.react-state-value { font-family: var(--s-display); font-size: 43px; font-weight: 500; line-height: 1; }
-.bot-stage { height: 234px; display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 18px 12px; border: 1px solid var(--learning-line); border-radius: 6px; background: #ffffff25; }
-.bot-stage > svg { width: 40%; max-width: 120px; flex-shrink: 0; }
-.bot-files { flex: 1; }
-.bot-files > span:first-child { display: block; font-family: var(--font-mono); font-size: 8px; letter-spacing: .03em; margin-bottom: 10px; }
-.bot-file { display: block; background: #ffffff55; border: 1px solid var(--learning-line); border-radius: 3px; padding: 5px 7px; font-family: var(--font-mono); font-size: 9px; margin-top: 5px; }
-.loose-file:nth-child(2) { transform: rotate(-4deg); }
-.loose-file:nth-child(3) { transform: rotate(5deg); }
-.loose-file:nth-child(4) { transform: rotate(-2deg); }
-.bot-folder { border-left: 2px solid #8d73a1; padding-left: 7px; margin-top: 9px; }
-.bot-folder b { font-family: var(--font-mono); font-size: 9px; font-weight: 500; }
-.weather-stage { height: 234px; display: flex; flex-direction: column; justify-content: center; background: #fff7db60; border: 1px solid var(--learning-line); border-radius: 6px; transition: background .5s; padding: 8px 12px 14px; }
-.weather-stage svg { width: 100%; height: 175px; display: block; overflow: visible; }
-.weather-services { display: flex; justify-content: space-around; gap: 8px; font-family: var(--font-mono); font-size: 9px; }
-.weather-rain .weather-stage { background: #c6d4d960; }
-.weather-snow .weather-stage { background: #e9f1f1b0; }
-.weather-sun { opacity: 1; transition: opacity .35s; }
-.weather-rain .weather-sun, .weather-snow .weather-sun { opacity: .2; }
-.weather-particle { stroke: #587789; }
-.weather-snow .weather-particle { stroke: #617d84; }
-.weather-controls { display: flex; gap: 6px; padding-top: 12px; min-height: 59px; }
-.weather-controls button { flex: 1; }
-.weather-controls button[aria-pressed='true'] { background: var(--learning-ink); color: #fff9ed; }
-@media (max-width: 760px) {
-  .react-stage { gap: 12px; }
-  .react-mini-ui { min-width: 98px; padding: 13px; }
-}
-@media (max-width: 380px) {
-  .scene-actions { gap: 8px; flex-wrap: wrap; }
-  .learning-scene button { padding-inline: 9px; font-size: 11px; }
-  .react-stage { padding: 8px; gap: 6px; }
-  .react-mini-ui { min-width: 90px; padding: 10px; }
-}
