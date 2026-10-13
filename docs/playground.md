@@ -32,7 +32,7 @@ The Playground is one editorial poster, "Made in Monterrey.", that is a live por
 
 Credit ("Weather data from MET Norway") appears in the line below the controls. When the site moves to its own domain, update `AGENT` in the PHP file and in `scripts/weather-dev.mjs`. That script is the same relay inside Vite for local development, because Vite cannot run PHP. In development, `?weather=clear|partlycloudy|cloudy|rain|storm|fog` previews a condition without the network.
 
-The PHP relay has not run on Hostinger yet. Check `/api/weather.php` after the next deploy.
+The relay is live on Hostinger (PHP 8.3) since October 12, 2026: `/api/weather.php` answers with MET Norway's forecast for Monterrey and `Cache-Control: public, max-age=600`.
 
 ## Credits
 
@@ -54,4 +54,4 @@ The PHP relay has not run on Hostinger yet. Check `/api/weather.php` after the n
   - Play a day, the reactive letters and reduced motion.
   - The SVG fallback with sun dragging, the rain preview, and touch palette selection.
 
-Chromium was verified. Firefox, Safari and physical devices have not been tested. The changes are local and not deployed.
+Chromium was verified. Firefox, Safari and physical devices have not been tested. Deployed to Hostinger on October 12, 2026 (release e5dbec8) and checked on the live site.

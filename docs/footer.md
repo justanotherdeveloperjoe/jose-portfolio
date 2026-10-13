@@ -12,6 +12,6 @@ There is no autonomous animation, city-light effect, added dependency or downloa
 
 Production build passed, with the existing v86 externalization and chunk-size warnings. scripts/check-footer.cjs passed at 1440, 768, 390 and 320px, covering preserved dimensions/neighboring content, no overflow, independent pointer depth, moving gradient, idle settling, keyboard focus, unchanged mailto destination, dynamic reduced-motion settings, offscreen reset and touch scrolling. Chromium reviewed; physical devices and other browser engines have not been tested.
 
-Local preview: http://127.0.0.1:5173/#contact. Captures: .preview/footer-desktop-active.png and .preview/footer-mobile-active.png. Motion needs to be reviewed in the browser. Changes have not been deployed.
+Local preview: http://127.0.0.1:5173/#contact. Captures: .preview/footer-desktop-active.png and .preview/footer-mobile-active.png. Motion needs to be reviewed in the browser. Deployed to Hostinger on October 12, 2026 (release e5dbec8) and checked on the live site.
 
 Run the check with PLAYWRIGHT_MODULE set to the installed Playwright package. PORTFOLIO_URL defaults to localhost:5173. The optional .preview/footer-baseline.json enables comparison with the page before this change.

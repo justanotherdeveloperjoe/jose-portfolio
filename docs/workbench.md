@@ -43,4 +43,4 @@ $env:PLAYWRIGHT_MODULE = '<path to an installed playwright package>'
 node scripts/check-workbench.cjs   # PORTFOLIO_URL defaults to http://127.0.0.1:5173
 ```
 
-`scripts/check-services.cjs` was updated for seven cards and a six-card hero deck; Ikinuki and TK Industrial join the deck automatically as live projects. Chromium only; Firefox, Safari and physical devices are unverified. Changes are local and have not been deployed.
+`scripts/check-services.cjs` was updated for seven cards and a six-card hero deck; Ikinuki and TK Industrial join the deck automatically as live projects. Chromium only; Firefox, Safari and physical devices are unverified. Deployed to Hostinger on October 12, 2026 (release e5dbec8) and checked on the live site.

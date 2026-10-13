@@ -39,7 +39,7 @@ Drag the sun along its real path, scrub or play a whole day (the forecast plays 
 
 The section at `#services` offers **Launch from $300 USD**, **Business Website from $650 USD**, and **Custom Build by quote**. Each connects deliverables to an existing project: Smashouse, AFH Logistics, and El Sótano Cómico. Interaction increases by tier, with quiet idle states and a reduced-motion fallback. Inquiry links open an email draft for the selected service.
 
-Edit prices, deliverables, and example assignments in `src/data/services.js`. Project links and screenshots remain in `src/data/projects.js`. Smashouse uses the supplied working HTTP URL and a local screenshot; its HTTPS endpoint returned a certificate error when checked on October 1, 2026. See [services implementation notes](docs/services-section.md) for behavior, files, and checks. This addition has not yet been deployed to Hostinger.
+Edit prices, deliverables, and example assignments in `src/data/services.js`. Project links and screenshots remain in `src/data/projects.js`. Smashouse uses the supplied working HTTP URL and a local screenshot; its HTTPS endpoint returned a certificate error when checked on October 1, 2026. See [services implementation notes](docs/services-section.md) for behavior, files, and checks. Deployed to Hostinger on October 12, 2026 (release e5dbec8).
 
 ### Jose's sandbox: a little Linux desktop
 

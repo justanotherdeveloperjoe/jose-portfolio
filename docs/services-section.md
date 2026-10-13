@@ -40,4 +40,4 @@ Use `PLAYWRIGHT_MODULE` to point to an existing Playwright installation and `SER
 
 Smashouse returned HTTP 200 at `http://smashouseburger.com/`. HTTPS reported `ERR_CERT_COMMON_NAME_INVALID`. The supplied HTTP link is retained; this work does not change that site's hosting or certificate.
 
-This services addition is local and has not been deployed.
+This services addition was deployed to Hostinger on October 12, 2026 (release e5dbec8) and checked on the live site.
