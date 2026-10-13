@@ -13,6 +13,8 @@
     "test:utilities": "node scripts/test-utilities.mjs",
     "test:sky": "node scripts/test-sky.mjs",
     "test:cube": "node scripts/test-rubiks-cube.mjs",
+    "test:sql": "node scripts/test-mini-sql.mjs",
+    "test:js": "node scripts/test-js-runner.mjs",
     "build:skyline": "node scripts/build-skyline.mjs"
   },
   "dependencies": {

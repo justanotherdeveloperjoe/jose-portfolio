@@ -1,0 +1,53 @@
+/* The real labs (JavaScript and SQL): an editor window, live output underneath, and example buttons. */
+.lab-window { background: #22261f; color: #e3eccf; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 22px #0000001c; }
+.lab-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #30362a; color: #b7c3a7; font: 9px var(--font-mono); }
+.lab-bar > span:first-child { color: #d8c56c; letter-spacing: 3px; font-size: 7px; }
+
+/* The editor: the colored copy and the transparent text box share one grid cell with identical type,
+   so every character of the colors sits exactly under the character you typed. */
+.code-editor { position: relative; display: grid; max-height: 280px; overflow: auto; }
+.code-editor > pre, .code-editor > textarea { grid-area: 1 / 1; box-sizing: border-box; width: 100%; margin: 0; padding: 16px 16px 12px; border: 0; font: 12px/1.75 var(--font-mono); letter-spacing: 0; white-space: pre-wrap; overflow-wrap: anywhere; tab-size: 2; }
+.code-editor > textarea { resize: none; overflow: hidden; background: transparent; color: transparent; caret-color: #f5f0d8; outline: none; }
+.code-editor > textarea::selection { background: #d5f77a40; color: transparent; }
+.code-editor:focus-within { box-shadow: inset 0 0 0 2px #d5f77a59; }
+.code-colors { color: #e3eccf; pointer-events: none; }
+.code-keyword { color: #e6c26c; }
+.code-string { color: #b5d98a; }
+.code-number { color: #f0a07a; }
+.code-function { color: #8fc6e0; }
+.code-comment { color: #7f8d6f; font-style: italic; }
+.code-hint { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* Output: console lines, or the query's results table. */
+.lab-output { border-top: 1px solid #d5f77a22; padding: 12px 16px 16px; min-height: 96px; max-height: 214px; overflow: auto; font: 11px/1.75 var(--font-mono); }
+.lab-line { display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: 6px; white-space: pre-wrap; overflow-wrap: anywhere; animation: lab-line-in .2s ease both; }
+.lab-line.is-log { color: #e3eccf; }
+.lab-line.is-result { color: #d5f77a; }
+.lab-line.is-warn, .lab-line.is-stopped { color: #f0c86c; }
+.lab-line.is-error { color: #ff9b85; }
+.lab-line.is-hint { color: #9aa58a; }
+@keyframes lab-line-in { from { opacity: 0; transform: translateY(3px); } }
+.lab-results { max-height: 330px; }
+.lab-table-scroll { overflow-x: auto; }
+.lab-table { width: 100%; border-collapse: collapse; font: 11px/1.5 var(--font-mono); }
+.lab-table th { text-align: left; color: #d5f77a; font-weight: 500; padding: 3px 14px 7px 0; border-bottom: 1px solid #d5f77a33; white-space: nowrap; }
+.lab-table td { padding: 6px 14px 6px 0; border-bottom: 1px solid #ffffff10; color: #e3eccf; }
+.lab-table td.is-number { color: #f0a07a; }
+.lab-table td.is-null { color: #7f8d6f; font-style: italic; }
+
+/* Actions: the example buttons, then Run. */
+.lab-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; padding-top: 12px; }
+.lab-examples { display: flex; flex-wrap: wrap; gap: 6px; }
+.learning-scene .lab-examples button { min-height: 36px; padding: 6px 10px; font-size: 11px; }
+.learning-scene .lab-examples button[aria-pressed='true'] { background: var(--learning-ink); color: #fff9ed; border-color: var(--learning-ink); }
+.learning-scene .lab-run { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; padding: 9px 16px; background: var(--learning-ink); color: #fff9ed; border-color: var(--learning-ink); }
+.learning-scene .lab-run[aria-disabled='true'] { opacity: .65; cursor: progress; }
+
+@media (max-width: 760px) {
+  .code-editor > pre, .code-editor > textarea { font-size: 11px; padding: 14px 13px 10px; }
+  .lab-output { padding-inline: 13px; }
+  .learning-scene .lab-run { flex: 1 0 100%; justify-content: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lab-line { animation: none; }
+}

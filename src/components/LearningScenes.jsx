@@ -1,25 +1,14 @@
 import { useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { useSceneMotion } from '../hooks/useSceneMotion.js';
+import { JsLab } from './learning/JsLab.jsx';
+import { SqlLab } from './learning/SqlLab.jsx';
 import './LearningScenes.css';
+import './learning/LearningLab.css';
 
-const terminalExamples = {
-  Arrays: { code: 'const ideas = ["learn", "build", "improve"];\nideas.map(idea => `${idea} ↗`);', run: () => ['learn', 'build', 'improve'].map(idea => `${idea} ↗`).join('  ') },
-  Async: { code: 'const message = await Promise.resolve("Ready!");\nconsole.log(message);', run: async () => await Promise.resolve('Ready!') },
-  Events: { code: 'button.addEventListener("click", () => {\n  count += 1;\n});', run: count => `Click received. count = ${count}` },
-};
-
-function terminalMotion(select) {
-  return gsap.timeline().fromTo(select('.terminal-code'), { clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0% 0 0)', duration: .9, ease: 'steps(28)' })
-    .fromTo(select('.terminal-output'), { opacity: 0, y: 5 }, { opacity: 1, y: 0, duration: .25 });
-}
 function atomMotion(select) {
   return gsap.timeline().fromTo(select('.react-orbits'), { rotation: -120, svgOrigin: '110 85' }, { rotation: 0, duration: 1.25, ease: 'power2.out' })
     .fromTo(select('.react-state-value'), { scale: .8 }, { scale: 1, duration: .45, ease: 'back.out(2)' }, 0);
-}
-function databaseMotion(select) {
-  return gsap.timeline().fromTo(select('.database-layer'), { opacity: .15 }, { opacity: 1, duration: .25, stagger: .2 })
-    .fromTo(select('.query-result-row'), { opacity: 0, x: 12 }, { opacity: 1, x: 0, stagger: .12, duration: .3 });
 }
 function botMotion(select) {
   return gsap.timeline().fromTo(select('.bot-head'), { rotation: -8, svgOrigin: '65 55' }, { rotation: 0, duration: .5, ease: 'back.out(3)' })
@@ -33,33 +22,6 @@ function weatherMotion(select) {
     .fromTo(select('.weather-sun'), { rotation: -35, svgOrigin: '164 35' }, { rotation: 0, duration: 1 }, 0);
 }
 
-function JavaScriptScene() {
-  const ref = useRef(null);
-  const runId = useRef(0);
-  const [example, setExample] = useState('Arrays');
-  const [output, setOutput] = useState('Your next idea starts here.');
-  const [revision, setRevision] = useState(0);
-  const [clicks, setClicks] = useState(0);
-  useSceneMotion(ref, revision, terminalMotion);
-  async function run() {
-    const id = ++runId.current;
-    const count = clicks + 1;
-    const result = await terminalExamples[example].run(count);
-    if (runId.current !== id) return;
-    if (example === 'Events') setClicks(count);
-    setOutput(result);
-    setRevision(value => value + 1);
-  }
-  return <div className="learning-scene terminal-scene" ref={ref}>
-    <div className="terminal-window"><div className="terminal-bar"><span aria-hidden="true">● ● ●</span><span>ideas.js</span><span>JS</span></div>
-      <pre className="terminal-code"><code>{terminalExamples[example].code}</code></pre>
-      <div className="terminal-output" aria-hidden="true"><span>›</span> {output}</div>
-    </div>
-    <div className="scene-actions"><label className="scene-select">Example<select value={example} onChange={event => { runId.current++; setExample(event.target.value); setOutput('Ready when you are.'); setRevision(0); }}>{Object.keys(terminalExamples).map(name => <option key={name}>{name}</option>)}</select></label><button type="button" onClick={run}>Run it <span aria-hidden="true">↗</span></button></div>
-    <p className="scene-caption" role="status">{revision ? output : 'A small instruction. Something happens.'}</p>
-  </div>;
-}
-
 function ReactScene() {
   const ref = useRef(null);
   const [count, setCount] = useState(0);
@@ -70,22 +32,6 @@ function ReactScene() {
     </div>
     <div className="scene-actions"><code>count = {count}</code><button type="button" onClick={() => setCount(value => value + 1)}>Change state <span aria-hidden="true">+</span></button></div>
     <p className="scene-caption" role="status">{count ? `State is ${count}. The interface updated with it.` : 'One state change. A new view.'}</p>
-  </div>;
-}
-
-const sampleProjects = [{ name: 'Studio', status: 'live' }, { name: 'Shop', status: 'draft' }, { name: 'Journal', status: 'live' }];
-function SQLScene() {
-  const ref = useRef(null);
-  const [revision, setRevision] = useState(0);
-  useSceneMotion(ref, revision, databaseMotion);
-  const rows = revision ? sampleProjects.filter(row => row.status === 'live') : sampleProjects;
-  return <div className="learning-scene sql-scene" ref={ref}>
-    <div className="database-stage"><svg viewBox="0 0 120 145" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.5">{[0, 1, 2].map(i => <g key={i} className="database-layer" transform={`translate(0 ${i * 33})`}><path d="M18 25v28c0 18 84 18 84 0V25" fill="currentColor" fillOpacity=".12" /><ellipse cx="60" cy="25" rx="42" ry="14" /><circle cx="86" cy="47" r="3" fill="currentColor" /></g>)}</svg>
-      <div className="query-results"><span>SAMPLE PROJECTS</span>{rows.map(row => <div className="query-result-row" key={row.name}><span>{row.name}</span><span>{row.status}</span></div>)}</div>
-    </div>
-    <code className="query-code">SELECT * FROM projects<br />WHERE status = 'live';</code>
-    <div className="scene-actions"><span>{revision ? '2 matching rows' : '3 sample rows'}</span><button type="button" onClick={() => setRevision(value => value + 1)}>Run query <span aria-hidden="true">↗</span></button></div>
-    <p className="scene-caption" role="status">{revision ? 'Studio and Journal match. Draft filtered out.' : 'Organize the data. Find what matters.'}</p>
   </div>;
 }
 
@@ -123,7 +69,8 @@ function AWSScene() {
   </div>;
 }
 
-const scenes = { javascript: JavaScriptScene, react: ReactScene, data: SQLScene, code: PythonScene, cloud: AWSScene };
+// JavaScript and SQL are real (they run what you type); React, Python and AWS are illustrated scenes.
+const scenes = { javascript: JsLab, react: ReactScene, data: SqlLab, code: PythonScene, cloud: AWSScene };
 export function LearningScene({ kind }) {
   const Scene = scenes[kind];
   return <Scene />;

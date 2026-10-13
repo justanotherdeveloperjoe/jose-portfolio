@@ -15,9 +15,9 @@ Workbench card compositions are styled in `src/studio.css`; the other visual add
 ## Interactive story and learning scenes
 
 - `MonterreyPostcard.jsx` uses GSAP and ScrollTrigger for a single layered entrance, pointer depth, day/night lighting, and a reversible personal note. Hidden faces are inert, and the flip button remains available on both sides.
-- `LearningScenes.jsx` contains the JavaScript terminal, React state demo, SQL sample query, Python sorting illustration, and AWS weather scene. SQL and Python use local sample data; they do not connect to a database or access visitor files. The weather is illustrative.
+- The learning section is a lab notebook (see [learning lab](learning-lab.md)). JavaScript and SQL are real: `learning/JsLab.jsx` runs the visitor's code in a sandboxed Web Worker, and `learning/SqlLab.jsx` runs real queries over the site's own project data. `LearningScenes.jsx` keeps the React state demo, the Python sorting illustration and the AWS weather scene; Python uses local sample data and doesn't access visitor files, and the weather is illustrative.
 - `useSceneMotion.js` scopes the finite GSAP timelines to each scene, settles them when offscreen or the tab is hidden, and removes them when reduced motion is enabled. The underlying results are React state and remain usable without animation.
-- Edit study topics and goals in `src/data/learning.js`; edit sample interactions in `LearningScenes.jsx`.
+- Edit study topics and goals in `src/data/learning.js`; edit the JavaScript starters in `src/data/jsExamples.js`, the SQL starters in `learning/SqlLab.jsx`, and the other scenes in `LearningScenes.jsx`.
 
 ## Off hours arcade
 
