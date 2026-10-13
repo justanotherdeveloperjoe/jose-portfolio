@@ -11,7 +11,7 @@
   --rubiks-step: calc(var(--rubiks-cubie) + var(--rubiks-gap)); /* distance between cube centers */
   --rubiks-half: calc(var(--rubiks-cubie) / 2);
 }
-.rubiks-trigger:disabled { cursor: default; }
+.rubiks-trigger[aria-disabled='true'] { cursor: default; }
 
 .rubiks-scene {
   width: calc(var(--rubiks-step) * 3);
@@ -49,13 +49,12 @@
   backface-visibility: hidden;
 }
 
-/* While a slice is turning, its cubes sit inside this instead — rotating the wrapper spins all of them
-   together around the cube's own center, exactly like twisting a real face. */
+/* While a slice is turning, its cubes sit inside this instead — spinning the wrapper (RubiksCube.jsx animates
+   it) turns all of them together around the cube's own center, exactly like twisting a real face. */
 .rubiks-turn-layer {
   position: absolute;
   inset: 0;
   transform-style: preserve-3d;
-  transition: transform var(--rubiks-turn-duration, .22s) cubic-bezier(.65, .05, .36, 1);
 }
 
 .rubiks-announcement { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
@@ -65,6 +64,5 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .rubiks-turn-layer { transition: none; }
   .rubiks-scene, .rubiks-trigger:hover .rubiks-scene, .rubiks-trigger:focus-visible .rubiks-scene { filter: drop-shadow(0 6px 14px #00000055); }
 }

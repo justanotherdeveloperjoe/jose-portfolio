@@ -1,52 +1,63 @@
-// Checks the cube math is actually correct: scrambling then replaying the moves backwards must return
-// every small cube to exactly where it started — same spot, same way round, not just close.
+// Checks the cube is a real, valid Rubik's cube at every step — not just that it ends up solved.
+// The rule a real cube always obeys: every colored sticker faces outward, and no outside square is plastic.
 import assert from 'node:assert/strict';
-import { createSolvedCubies, randomMove, invertMove, applyMove, applyMoves } from '../src/lib/rubiksCube.js';
+import { createSolvedCubies, randomMove, invertMove, applyMove, applyMoves, faces, turnMatrix, transform, identity } from '../src/lib/rubiksCube.js';
 
-// A 3x3 rotation matrix for a single move, used only here to independently double-check "which way is it
-// facing" — the real component never needs this, it just composes CSS rotate() strings.
-function matrixFor(axis, dir) {
-  return { x: [[1, 0, 0], [0, 0, -dir], [0, dir, 0]], y: [[0, 0, dir], [0, 1, 0], [-dir, 0, 0]], z: [[0, -dir, 0], [dir, 0, 0], [0, 0, 1]] }[axis];
+// The browser's own rotations, from the CSS Transforms spec, computed independently of the cube code.
+function cssRotation(fn, degrees) {
+  const r = degrees * Math.PI / 180, c = Math.round(Math.cos(r)), s = Math.round(Math.sin(r));
+  if (fn === 'rotateX') return [[1, 0, 0], [0, c, -s], [0, s, c]];
+  if (fn === 'rotateY') return [[c, 0, s], [0, 1, 0], [-s, 0, c]];
+  return [[c, -s, 0], [s, c, 0], [0, 0, 1]];
 }
-function multiply(a, b) {
-  return a.map((row, i) => row.map((_, j) => row.reduce((sum, _v, k) => sum + a[i][k] * b[k][j], 0)));
-}
-const identity = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
-// Only pos + faceColors say where a cube physically is. The orientation string is deliberately NOT compared
-// here: "rotateZ(90deg) rotateZ(-90deg)" and "" are different text but the exact same rotation on screen,
-// the same way "turn right then turn left" and "stand still" end up facing the same way. The net-rotation
-// matrix check further down is the real proof that facing direction comes back correctly, not this string.
-const placementOf = cubies => JSON.stringify([...cubies].map(({ pos, faceColors }) => ({ pos, faceColors })).sort((a, b) => a.pos.join() < b.pos.join() ? -1 : 1));
-
-function checkRoundTrip(moveCount) {
-  const moves = Array.from({ length: moveCount }, randomMove);
-  const start = placementOf(createSolvedCubies());
-
-  let cubies = moves.reduce(applyMove, createSolvedCubies());
-  if (moveCount > 0) assert.notEqual(placementOf(cubies), start, `A ${moveCount}-move scramble should actually move things`);
-
-  for (const move of [...moves].reverse().map(invertMove)) cubies = applyMove(cubies, move);
-  assert.equal(placementOf(cubies), start, `Playing ${moveCount} moves backwards must return every cube to its exact starting spot`);
-
-  // Also check with real 3x3 rotation matrices, independently of the CSS-string approach the component uses:
-  // a cube that's been scrambled then un-scrambled must face the exact same way it started (no net rotation).
-  const net = [...moves, ...[...moves].reverse().map(invertMove)].reduce((m, move) => multiply(matrixFor(move.axis, move.dir), m), identity);
-  for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) assert.equal(net[i][j], identity[i][j], `Net facing isn't identity at [${i}][${j}] for a ${moveCount}-move scramble`);
-
-  return moves;
+function parseRotation(css) {
+  const match = css.match(/^(rotate[XYZ])\((-?\d+)deg\)$/);
+  return match ? cssRotation(match[1], Number(match[2])) : identity;
 }
 
-assert.equal(createSolvedCubies().length, 26, 'A real cube has 26 small cubes you can see');
-checkRoundTrip(0); // doing nothing and "undoing nothing" should also be a no-op
+// 1. Each face's CSS really points it the way the model says (renderer and model agree).
+for (const face of faces) {
+  assert.deepEqual(transform(parseRotation(face.css), [0, 0, 1]), face.normal, `${face.key} face CSS points the wrong way`);
+}
 
-const moves = checkRoundTrip(14);
+// 2. A move turns pieces exactly the way the browser animates that same move (rotateX/Y/Z ±90deg).
+for (const axis of ['x', 'y', 'z']) for (const dir of [1, -1]) {
+  assert.deepEqual(turnMatrix(axis, dir), cssRotation(`rotate${axis.toUpperCase()}`, dir * 90), `${axis} turn ${dir} doesn't match CSS`);
+}
 
-// The all-at-once version (used for reduced motion) must agree with playing the same moves one by one.
-const stepByStep = placementOf(moves.reduce(applyMove, createSolvedCubies()));
-const allAtOnce = placementOf(applyMoves(createSolvedCubies(), moves));
-assert.equal(stepByStep, allAtOnce, 'Playing moves one at a time or all at once must land in the same place');
+// 3. The valid-cube rule, checked on every piece.
+function assertValidCube(cubies, label) {
+  assert.equal(cubies.length, 26, `${label}: 26 pieces`);
+  const seenSlots = new Set();
+  for (const cubie of cubies) {
+    assert.ok(cubie.pos.every(v => v === -1 || v === 0 || v === 1), `${label}: ${cubie.id} is off the grid`);
+    assert.ok(cubie.turn.flat().every(v => v === -1 || v === 0 || v === 1), `${label}: ${cubie.id} has a non-quarter-turn rotation`);
+    seenSlots.add(cubie.pos.join());
+    const outward = cubie.pos.flatMap((v, i) => v === 0 ? [] : [[0, 1, 2].map(k => k === i ? v : 0).join()]).sort();
+    const stickers = faces.filter(face => cubie.faceColors[face.key]).map(face => transform(cubie.turn, face.normal).join()).sort();
+    assert.deepEqual(stickers, outward, `${label}: ${cubie.id} at [${cubie.pos}] has stickers facing [${stickers.join(' | ')}], outside is [${outward.join(' | ')}] — plastic would show`);
+  }
+  assert.equal(seenSlots.size, 26, `${label}: two pieces share a slot`);
+}
 
-// Run many more random scrambles of varying length, since one lucky run could hide a bug.
-for (let trial = 0; trial < 50; trial++) checkRoundTrip(1 + Math.floor(Math.random() * 20));
+assertValidCube(createSolvedCubies(), 'solved');
+for (const axis of ['x', 'y', 'z']) for (const layer of [-1, 0, 1]) for (const dir of [1, -1]) {
+  assertValidCube(applyMove(createSolvedCubies(), { axis, layer, dir }), `one ${axis}${layer}${dir > 0 ? '+' : '-'} turn`);
+}
 
-console.log("Rubik's cube math checks passed: scramble + reverse always returns to the exact starting state (position and facing), across 50+ random trials.");
+// 4. Hundreds of random scrambles: valid after EVERY single turn, and exactly solved after undoing.
+const solved = JSON.stringify(createSolvedCubies());
+for (let trial = 0; trial < 300; trial++) {
+  const moves = Array.from({ length: 1 + Math.floor(Math.random() * 25) }, randomMove);
+  let cubies = createSolvedCubies();
+  moves.forEach((move, i) => { cubies = applyMove(cubies, move); assertValidCube(cubies, `trial ${trial}, turn ${i + 1}`); });
+  [...moves].reverse().map(invertMove).forEach((move, i) => { cubies = applyMove(cubies, move); assertValidCube(cubies, `trial ${trial}, undo ${i + 1}`); });
+  // Not just "looks solved": every piece is back in its own slot with no leftover rotation at all.
+  assert.equal(JSON.stringify(cubies), solved, `trial ${trial}: undoing ${moves.length} moves didn't land exactly on solved`);
+}
+
+// 5. The no-animation version (reduced motion) lands exactly where turning one at a time does.
+const sample = Array.from({ length: 14 }, randomMove);
+assert.equal(JSON.stringify(applyMoves(createSolvedCubies(), sample)), JSON.stringify(sample.reduce(applyMove, createSolvedCubies())));
+
+console.log("Rubik's cube checks passed: faces and turns match the browser's CSS, the cube is valid (no plastic outside) after every turn of 300 random scrambles, and every scramble undoes to exactly solved.");
