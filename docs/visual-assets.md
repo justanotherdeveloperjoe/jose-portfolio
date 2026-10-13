@@ -3,12 +3,14 @@
 The studio design uses local assets so visitors do not need third-party font or image requests.
 
 - **Bricolage Grotesque:** variable Latin WOFF2 from [Google Fonts](https://fonts.google.com/specimen/Bricolage+Grotesque), designed by Mathieu Triay. License: SIL Open Font License, included at `public/fonts/OFL.txt`. The Latin subset includes Spanish accented characters.
-- **Quinta El Roble photograph:** pool and terrace image from the [Propiedades Allende](https://propiedadesallende.com) project gallery, stored at `public/artwork/allende-property.webp`. [Original image](https://assets.zyrosite.com/BlW7BFDF77mnFapt/2-FauBMZGvVAO2Mh2M.png).
-- **AFH mobile preview:** screenshot of [afh.mx](https://afh.mx) at 390 × 844 pixels, captured September 27, 2026, stored at `public/screenshots/afh-mobile.jpg`.
-- **Comedy artwork:** CSS crop of the existing El Sótano Cómico project screenshot; the original screenshot remains intact.
-- **Mountain footer and route diagram:** inline SVG in `src/components/ProjectVisuals.jsx`.
+- **Quinta El Roble photograph:** pool and terrace image from the [Propiedades Allende](https://propiedadesallende.com) project gallery, stored at `public/artwork/allende-property.webp`. [Original image](https://assets.zyrosite.com/BlW7BFDF77mnFapt/2-FauBMZGvVAO2Mh2M.png). Used behind the website mockup on the Propiedades Allende Workbench card.
+- **AFH mobile preview:** screenshot of [afh.mx](https://afh.mx) at 390 × 844 pixels, captured September 27, 2026, stored at `public/screenshots/afh-mobile.jpg`. Used on the AFH Logistics Workbench card and the Business Website service.
+- **Comedy artwork:** Workbench uses the original orange welcome illustration, cropped with CSS from `public/screenshots/elsotanocomico-welcome.jpg`. This is a direct capture of the live website's welcome section on October 6, 2026. The source remains intact; no synthetic artwork is used.
+- **TK Industrial homepage:** capture of [tkindustrial.org](https://tkindustrial.org/) at 1440 × 1000 pixels, taken October 6, 2026, stored at `public/screenshots/tkindustrial.jpg`. Used in the hero deck; the Workbench card keeps its typographic artwork.
+- **Ikinuki homepage:** capture of [ikinukitripagency.com](https://www.ikinukitripagency.com/) at 1440 × 1000 pixels, taken October 6, 2026, stored at `public/screenshots/ikinuki.jpg`. The Workbench card shows a CSS crop of the unmodified image; its photography, Playfair Display headline and gold details all come from the live site.
+- **Mountain footer:** inline SVG in `src/components/ProjectVisuals.jsx`. The AFH route diagram is inline SVG in `src/components/Workbench.jsx`.
 
-The visual additions are styled in `src/studio-editorial.css`. Hero entrance animations and pointer tilt respect reduced-motion preferences; tilt also requires a fine pointer and hover support.
+Workbench card compositions are styled in `src/studio.css`; the other visual additions are in `src/studio-editorial.css`. Hero entrance animations and pointer tilt respect reduced-motion preferences; tilt also requires a fine pointer and hover support.
 
 ## Interactive story and learning scenes
 

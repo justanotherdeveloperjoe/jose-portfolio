@@ -19,7 +19,7 @@ const base = process.env.SERVICES_URL || 'http://127.0.0.1:4173';
     assert.equal(await section.getByText('Starting at · USD', { exact: true }).count(), 2);
     assert.equal(await section.getByText('$300', { exact: true }).count(), 1);
     assert.equal(await section.getByText('$650', { exact: true }).count(), 1);
-    for (const [id, name, url] of [['launch', 'Launch', 'http://smashouseburger.com/'], ['business', 'Business Website', 'https://afh.mx'], ['custom', 'Custom Build', 'https://elsotanocomico.com']]) {
+    for (const [id, name, url] of [['launch', 'Launch', 'http://smashouseburger.com/'], ['business', 'Business Website', 'https://afh.mx'], ['custom', 'Custom Build', null]]) {
       const card = section.locator(`.service-${id}`);
       assert.ok((await card.locator('.service-features li').count()) >= 5);
       assert.equal(await card.locator('.service-example a').getAttribute('href'), id === 'custom' ? '#service-case-study' : url);
@@ -31,10 +31,10 @@ const base = process.env.SERVICES_URL || 'http://127.0.0.1:4173';
     }
     await page.waitForFunction(() => [...document.querySelectorAll('#services img')].every(image => image.complete && image.naturalWidth > 0));
     assert.equal(await page.locator('#p04').count(), 1);
-    assert.equal(await page.locator('.workbench-card').count(), 3);
-    assert.equal(await page.locator('.studio-comedy').getAttribute('id'), 'p05');
-    assert.equal(await page.locator('.studio-logistics').getAttribute('id'), 'p07');
-    assert.equal(await page.locator('.studio-deck-card').count(), 4);
+    assert.equal(await page.locator('.workbench-card').count(), 7);
+    assert.equal(await page.locator('#workbench .workbench-entertainment').getAttribute('id'), 'p05');
+    assert.equal(await page.locator('#workbench .workbench-enterprise').getAttribute('id'), 'p07');
+    assert.equal(await page.locator('.studio-deck-card').count(), 6);
     assert.equal(requests.some(url => /LinuxDesktop/.test(url)), false, 'Services must not start the Linux desktop');
 
     const business = section.locator('.service-business');
@@ -71,7 +71,7 @@ const base = process.env.SERVICES_URL || 'http://127.0.0.1:4173';
     await caseLink.click();
     const caseStudy = section.locator('#service-case-study');
     await caseStudy.waitFor({ state: 'visible' });
-    assert.equal(await caseStudy.getByRole('link', { name: 'View the live project' }).getAttribute('href'), 'https://elsotanocomico.com');
+    assert.equal(await caseStudy.getByRole('link', { name: 'View the live project' }).getAttribute('href'), 'https://elsotanocomico.com/');
     assert.equal(await caseStudy.locator('h3').evaluate(node => node === document.activeElement), true);
     await page.keyboard.press('Escape');
     await caseStudy.waitFor({ state: 'hidden' });
@@ -86,7 +86,7 @@ const base = process.env.SERVICES_URL || 'http://127.0.0.1:4173';
     await section.screenshot({ path: '.preview/services-desktop.png' });
 
     // The new live project remains reachable from the existing hero deck.
-    for (let index = 0; index < 3; index++) await page.getByRole('button', { name: 'Next project preview', exact: true }).click();
+    for (let index = 0; index < 6 && await page.locator('.deck-position-0').getAttribute('href') !== '#p04'; index++) await page.getByRole('button', { name: 'Next project preview', exact: true }).click();
     assert.equal(await page.locator('.deck-position-0').getAttribute('href'), '#p04');
     await page.locator('.deck-position-0').click();
     assert.equal(new URL(page.url()).hash, '#p04');

@@ -3,7 +3,7 @@
 # Jose Sanchez — Front-End Developer
 
 **Fast, responsive interfaces for real businesses, from first pixel to launch-ready.**<br>
-Portfolio covering nutrition, industrial, fitness, food, e-commerce, media, real estate and logistics.
+Portfolio covering nutrition, industrial, fitness, food, e-commerce, media, real estate, logistics and travel.
 
 <br>
 
@@ -27,7 +27,13 @@ Portfolio covering nutrition, industrial, fitness, food, e-commerce, media, real
 
 [View the live portfolio](https://darkslateblue-eagle-516041.hostingersite.com/) · [Open the sandbox section](https://darkslateblue-eagle-516041.hostingersite.com/#sandbox)
 
-The default route shows the editorial portfolio: hero and project deck, selected work, interactive playground and arcade, Monterrey postcard, learning cards, sandbox, Work With Me services, and contact. The previous design remains available at `?view=original`.
+The default route shows the editorial portfolio: hero and project deck, selected work (the seven-project Workbench), interactive playground and arcade, Monterrey postcard, learning cards, sandbox, Work With Me services, and contact. The previous design remains available at `?view=original`.
+
+### Playground: Monterrey, live
+
+The poster at `#playground` is a live portrait of Monterrey. The ridges are the real skyline of Cerro de la Silla, the Sierra Madre and Cerro de las Mitras, computed from elevation data for the coordinates printed on it. The sun and moon sit where they are over the city right now, with the real moon phase, and the clouds, rain and fog follow MET Norway's forecast. A hand-written WebGL2 shader prints it all as a risograph (paper grain, halftone glow, inks slightly out of register); without WebGL2 the same scene is drawn as SVG.
+
+Drag the sun along its real path, scrub or play a whole day (the forecast plays with it), let "Made in" swell under the cursor, and switch palettes to watch new ink spread across the print. Everything is free: public elevation data, astronomy computed in the browser, and MET Norway's free forecast through a small relay on this site (`public/api/weather.php`). See [playground notes](docs/playground.md).
 
 ### Work With Me services
 
@@ -63,6 +69,7 @@ See [the integration plan and implementation report](SANDBOX_INTEGRATION_PLAN.md
 ```bash
 npm run test:arcade
 npm run test:utilities
+npm run test:sky
 npm run build
 npm run preview -- --host 127.0.0.1 --port 4173
 # In another terminal, with Playwright and Chromium available:
@@ -134,4 +141,4 @@ SANDBOX_INTEGRATION_PLAN.md Integration map and shipped sandbox verification
 
 ## <img src="docs/icons/globe.svg" width="24" height="24" align="top" alt=""> Deployment
 
-`npm run build` produces a static `dist/` folder, which can go on any static host (Netlify, Vercel, GitHub Pages).
+`npm run build` produces a static `dist/` folder, which can go on any static host (Netlify, Vercel, GitHub Pages). The Playground's live weather needs PHP for `dist/api/weather.php` (Hostinger runs it); on a host without PHP the poster simply shows no weather.

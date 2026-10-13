@@ -23,6 +23,7 @@ export const aliases = new Map([
   ['logistics', 'afh-logistics'],
   ['comedy', 'el-sotano-comico'],
   ['estate', 'propiedades-allende'],
+  ['ikinuki', 'ikinuki-trip-agency'],
 ]);
 
 export const help = `STUDIO / browser computer

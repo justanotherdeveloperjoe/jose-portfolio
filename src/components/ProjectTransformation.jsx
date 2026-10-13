@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 function ReconstructedWireframe() {
   return <svg viewBox="0 0 1400 880" className="transformation-wireframe" aria-hidden="true">
@@ -20,10 +20,21 @@ function ReconstructedWireframe() {
   </svg>;
 }
 
-export function ProjectTransformation({ project }) {
+export function ProjectTransformation({ project, onClose }) {
   const [reveal, setReveal] = useState(50);
-  return <section className="studio-transformation" id="transformation" aria-labelledby="transformation-title">
-    <div className="transformation-heading"><div><span className="studio-kicker">From structure to character / {project.name}</span><h3 id="transformation-title">Same bones.<br /><em>Whole new feeling.</em></h3></div><p>Slide between the structure and the finished interface.<br /><span>Wireframe reconstructed for this comparison.</span></p></div>
+  const heading = useRef(null);
+
+  useEffect(() => {
+    heading.current?.focus({ preventScroll: true });
+    heading.current?.closest('section').scrollIntoView({
+      block: 'start',
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
+    });
+  }, []);
+
+  return <section className="studio-transformation" id="transformation" aria-labelledby="transformation-title" onKeyDown={event => { if (event.key === 'Escape') { event.stopPropagation(); onClose(); } }}>
+    <div className="studio-case-topline"><span className="studio-kicker">From structure to character / {project.name}</span><button type="button" className="studio-case-close" onClick={onClose}>Close comparison <span aria-hidden="true">×</span></button></div>
+    <div className="transformation-heading"><h3 id="transformation-title" ref={heading} tabIndex={-1}>Same bones.<br /><em>Whole new feeling.</em></h3><p>Slide between the structure and the finished interface.<br /><span>Wireframe reconstructed for this comparison.</span></p></div>
     <div className="transformation-browser"><span aria-hidden="true">● ● ●</span><span>{project.url.replace('https://', '')} / a closer look</span><span aria-hidden="true">↗</span></div>
     <div className="transformation-stage" style={{ '--reveal': `${reveal}%` }}>
       <ReconstructedWireframe />

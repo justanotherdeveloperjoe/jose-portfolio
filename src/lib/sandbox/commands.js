@@ -69,8 +69,8 @@ export function executeCommand(input, cwd = '/', state) {
         const slug = aliases.get(arg.toLowerCase()) || arg.toLowerCase();
         const project = projects.find(item => item.slug === slug || item.id === slug);
         if (!project) return { text: 'Project not found. Try ls /projects or open logistics.' };
-        const anchor = ['p05', 'p06', 'p07'].includes(project.id) ? `#${project.id}` : '#work';
-        return { text: `${project.name}\n${project.blurb}`, links: [{ label: 'View in selected work ↗', href: anchor }, ...(project.status === 'live' && project.url ? [{ label: 'Visit website ↗', href: project.url }] : [])], action: { type: 'navigate', target: anchor } };
+        const anchor = `#${project.id}`;
+        return { text: `${project.name}\n${project.blurb}`, links: [{ label: 'Jump to the project ↗', href: anchor }, ...(project.status === 'live' && project.url ? [{ label: 'Visit website ↗', href: project.url }] : [])], action: { type: 'navigate', target: anchor } };
       }
       case 'edit': return !arg || Object.hasOwn(templates, arg) ? { text: 'Make it your own. Run preview when you are ready.', action: { type: 'edit', example: arg || 'button' } } : { text: 'Try edit button, edit card, or edit postcard.' };
       case 'theme': return ['cream', 'charcoal'].includes(arg) ? { text: `A little change of atmosphere: ${arg}.`, action: { type: 'theme', theme: arg } } : { text: 'Try theme cream or theme charcoal.' };

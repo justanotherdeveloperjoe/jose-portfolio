@@ -1,21 +1,21 @@
 import { useEffect, useRef, useState } from 'react';
 import { projects } from '../data/projects.js';
 import { useLocalClock } from '../hooks/useLocalClock.js';
-import { ProjectAnnotations } from './ProjectAnnotations.jsx';
-import { afhNotes } from '../data/projectNotes.js';
 import { Workbench } from './Workbench.jsx';
-import { TypographyPlayground, ThemePlayground } from './ExtraPlaygrounds.jsx';
-import { ProjectTransformation } from './ProjectTransformation.jsx';
+import { CompositionPlayground } from './CompositionPlayground.jsx';
 import { MonterreyPostcard } from './MonterreyPostcard.jsx';
-import { ComedyVisual, EstateVisual, LogisticsVisual, MountainSignature } from './ProjectVisuals.jsx';
+import { MountainSignature } from './ProjectVisuals.jsx';
 import { LearningSection } from './LearningSection.jsx';
 import { SpaceArcade } from './SpaceArcade.jsx';
 import { SandboxSection } from './sandbox/SandboxSection.jsx';
 import { ServicesSection } from './ServicesSection.jsx';
 
-const featuredProjects = ['el-sotano-comico', 'propiedades-allende', 'afh-logistics'].map(slug => projects.find(project => project.slug === slug));
-const liveProjects = [...featuredProjects, ...projects.filter(project => project.status === 'live' && !featuredProjects.includes(project))];
-const upcomingProjects = projects.filter((project) => project.status !== 'live');
+const bySlug = slug => projects.find(project => project.slug === slug);
+const deckLeads = ['el-sotano-comico', 'propiedades-allende', 'afh-logistics'].map(bySlug);
+const liveProjects = [...deckLeads, ...projects.filter(project => project.status === 'live' && !deckLeads.includes(project))];
+// Alternates light and dark artwork in every column count (3, 2 and 1).
+const workbenchProjects = ['ikinuki-trip-agency', 'propiedades-allende', 'afh-logistics', 'tk-industrial', 'el-sotano-comico', 'nutriologa-allende', 'wolf-fitness'].map(bySlug);
+const pad = number => String(number).padStart(2, '0');
 const email = 'mailto:devilfruitd3v@proton.me';
 
 function Asterisk({ className = '' }) {
@@ -59,7 +59,7 @@ function ProjectDeck() {
       {liveProjects.map((project, index) => {
         const position = (index - selected + liveProjects.length) % liveProjects.length;
         return <a key={project.id} href={`#${project.id}`} className={`studio-deck-card deck-position-${position}`} tabIndex={position === 0 ? 0 : -1} aria-hidden={position !== 0}>
-          <div className="studio-window-bar"><span>● ● ●</span><span>{project.url.replace(/^https?:\/\//, '')}</span><span>↗</span></div>
+          <div className="studio-window-bar"><span>● ● ●</span><span>{project.url ? project.url.replace(/^https?:\/\//, '') : 'Project preview / launching soon'}</span><span>↗</span></div>
           <img src={project.screenshot} alt={`${project.name} website preview`} fetchpriority={index === 0 ? 'high' : 'auto'} />
         </a>;
       })}
@@ -71,79 +71,14 @@ function ProjectDeck() {
   </div>;
 }
 
-function FeaturedWork() {
-  const [comedy, estate, logistics] = featuredProjects;
-  const [notesOpen, setNotesOpen] = useState(false);
-  const notesToggle = useRef(null);
-
-  function closeNotes() {
-    setNotesOpen(false);
-    notesToggle.current?.focus({ preventScroll: true });
-    notesToggle.current?.scrollIntoView({ block: 'nearest', behavior: 'instant' });
-  }
-
+function SelectedWork() {
+  const liveCount = workbenchProjects.filter(project => project.status === 'live').length;
   return <section className="studio-work studio-wrap" id="work" aria-labelledby="work-title">
-    <div className="studio-section-heading"><div><span className="studio-kicker">01 / Selected work</span><h2 id="work-title">Different businesses.<br /><em>Different worlds.</em></h2></div><p>Real clients. Real constraints.<br />A different answer every time.</p></div>
-    <article className="studio-feature studio-comedy" id={comedy.id}>
-      <div className="studio-feature-copy"><span className="studio-kicker">01 — Media & entertainment</span><h3>Serious about<br /><span>not being<br />serious.</span></h3><p>A home for the jokes.<br />And everything that comes after.</p><a className="studio-project-link" href={comedy.url} target="_blank" rel="noreferrer">{comedy.name}<span aria-hidden="true">↗</span></a></div>
-      <ComedyVisual project={comedy} />
-      <div className="studio-feature-foot"><span>Newsletter · Social integration · Merch</span><span className="studio-live">Live website ↗</span></div>
-    </article>
-    <div className="studio-work-pair">
-      <article className="studio-feature studio-estate" id={estate.id}>
-        <div className="studio-feature-top"><span className="studio-kicker">02 — Real estate</span><span aria-hidden="true">↗</span></div>
-        <h3>A little more<br /><em>room to imagine.</em></h3>
-        <EstateVisual project={estate} />
-        <div className="studio-card-caption"><div><h4>{estate.name}</h4><p>One property. Space to tell its story.</p></div><a href={estate.url} target="_blank" rel="noreferrer" aria-label={`Explore ${estate.name}`}>↗</a></div>
-      </article>
-      <article className="studio-feature studio-logistics" id={logistics.id}>
-        <div className="studio-feature-top"><span className="studio-kicker">03 — Logistics</span><span className="studio-live">Live</span></div>
-        <h3>Built to<br />keep moving<span>.</span></h3>
-        <div className="studio-route" aria-hidden="true"><span>MONTERREY</span><i /><span>ONWARD ↗</span></div>
-        <LogisticsVisual project={logistics} />
-        <div className="studio-card-caption"><div><h4>{logistics.name}</h4><p>Cold-chain freight. Clear next steps.</p></div><a href={logistics.url} target="_blank" rel="noreferrer" aria-label={`Explore ${logistics.name}`}>↗</a></div>
-        <button ref={notesToggle} type="button" className="studio-peek-toggle" aria-expanded={notesOpen} aria-controls={`${logistics.id}-under-the-hood`} onClick={() => setNotesOpen(!notesOpen)}><span aria-hidden="true">{notesOpen ? '−' : '+'}</span>{notesOpen ? 'Hide the design notes' : 'Peek under the hood'}<span className="studio-peek-count">03 notes</span></button>
-      </article>
-    </div>
-    {notesOpen && <ProjectAnnotations project={logistics} notes={afhNotes} onClose={closeNotes} />}
-    <ProjectTransformation project={logistics} />
-    <Workbench projects={upcomingProjects} />
+    <Workbench projects={workbenchProjects}>
+      <div><span className="studio-kicker">01 / Selected work</span><h2 id="work-title">Different businesses.<br /><em>Different worlds.</em></h2></div>
+      <div className="workbench-intro-copy"><p>Live websites, independent work,<br />and studies still on the workbench.<br />A different answer every time.</p><p className="workbench-legend"><span className="is-live"><i aria-hidden="true" />{pad(liveCount)} Live</span><span className="is-progress"><i aria-hidden="true" />{pad(workbenchProjects.length - liveCount)} In progress</span></p></div>
+    </Workbench>
   </section>;
-}
-
-const easings = { Smooth: 'cubic-bezier(.22,1,.36,1)', Bounce: 'cubic-bezier(.34,1.56,.64,1)', Linear: 'linear' };
-
-function MotionPlayground() {
-  const [duration, setDuration] = useState(900);
-  const [easing, setEasing] = useState('Bounce');
-  const [played, setPlayed] = useState(false);
-  const shape = useRef(null);
-  const track = useRef(null);
-  const animation = useRef(null);
-  useEffect(() => {
-    const observer = new ResizeObserver(() => animation.current?.cancel());
-    observer.observe(track.current);
-    return () => {
-      observer.disconnect();
-      animation.current?.cancel();
-    };
-  }, []);
-  function replay() {
-    animation.current?.cancel();
-    setPlayed(true);
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const distance = Math.max(0, track.current.clientWidth - shape.current.offsetWidth - 32);
-    animation.current = shape.current.animate([
-      { transform: 'translateX(0) rotate(0deg)' },
-      { transform: `translateX(${distance}px) rotate(180deg)` },
-    ], { duration, easing: easings[easing], fill: 'forwards' });
-  }
-  return <article className="studio-lab-card"><div className="studio-lab-heading"><span className="studio-kicker">Experiment 001</span><span>Motion studies</span></div><h3>A little movement.<br />A different feeling.</h3><div className="studio-motion-track" ref={track}><Asterisk className="studio-motion-shape" /><div ref={shape} className="studio-motion-object"><Asterisk /></div></div><div className="studio-motion-settings"><label>Easing<select value={easing} onChange={(event) => setEasing(event.target.value)}>{Object.keys(easings).map((name) => <option key={name}>{name}</option>)}</select></label><label htmlFor="motion-duration">Duration <output>{duration} ms</output><input id="motion-duration" type="range" min="300" max="1800" step="100" value={duration} onChange={(event) => setDuration(Number(event.target.value))} /></label><button type="button" className="studio-play" onClick={replay}>Play <span aria-hidden="true">↗</span></button></div><p className="studio-lab-caption" aria-live="polite">{played ? `${easing} · ${duration} ms. Change a setting and play again.` : 'Same shape. Same journey. You set the mood.'}<span className="studio-reduced-note"> Reduced motion is on; animation is paused.</span></p></article>;
-}
-
-function ResponsivePlayground() {
-  const [width, setWidth] = useState(100);
-  return <article className="studio-lab-card studio-responsive-lab"><div className="studio-lab-heading"><span className="studio-kicker">Experiment 002</span><span>Responsive systems</span></div><h3>Good design<br />makes room.</h3><div className="studio-responsive-stage"><div className="studio-mini-browser" style={{ width: `${width}%` }}><div className="studio-mini-chrome"><span>● ● ●</span><span>little.website</span></div><div className="studio-mini-content"><span className="studio-mini-label">A small collection</span><div className="studio-mini-grid">{['A', 'B', 'C'].map((item) => <div key={item}><span>{item}</span><i /></div>)}</div></div></div></div><label className="studio-width-label" htmlFor="preview-width">Drag to resize <output>{width}%</output><input id="preview-width" type="range" min="45" max="100" value={width} onChange={(event) => setWidth(Number(event.target.value))} /></label><p className="studio-lab-caption">The content stays. The composition adapts.</p></article>;
 }
 
 export function StudioPortfolio() {
@@ -151,7 +86,7 @@ export function StudioPortfolio() {
   const [arcadeRequest, setArcadeRequest] = useState(0);
   return <div className="studio" id="top">
     <a className="studio-skip" href="#main">Skip to content</a>
-    <header className="studio-nav studio-wrap"><a href="#top" className="studio-logo" aria-label="Jose Sanchez home">js<span>✳</span></a><span className="studio-nav-note">Independent developer<br />Monterrey, México</span><nav aria-label="Main navigation"><a href="#work">Work <span>03</span></a><a href="#playground">Playground</a><a href="#about">About</a><a href="#services">Services</a><a className="studio-nav-contact" href={email}>Let’s talk ↗</a></nav></header>
+    <header className="studio-nav studio-wrap"><a href="#top" className="studio-logo" aria-label="Jose Sanchez home">js<span>✳</span></a><span className="studio-nav-note">Independent developer<br />Monterrey, México</span><nav aria-label="Main navigation"><a href="#work">Work <span>{pad(workbenchProjects.length)}</span></a><a href="#playground">Playground</a><a href="#about">About</a><a href="#services">Services</a><a className="studio-nav-contact" href={email}>Let’s talk ↗</a></nav></header>
     <main id="main">
       <section className="studio-hero studio-wrap" aria-labelledby="studio-name">
         <div className="studio-hero-meta"><span className="studio-kicker">A personal corner of the internet</span><span className="studio-available"><i /> Available for freelance & remote</span></div>
@@ -167,12 +102,12 @@ export function StudioPortfolio() {
         </div>
         <div className="studio-hero-baseline"><span>LOCAL TIME {time} / MX</span><span>Scroll a little. Find something good. ↓</span><span>SELECTED WORK & EXPERIMENTS</span></div>
       </section>
-      <FeaturedWork />
+      <SelectedWork />
       <section className="studio-playground" id="playground" aria-labelledby="playground-title">
         <div className="studio-wrap">
           <div className="playground-topline"><span>AN OPEN INVITATION TO PLAY</span><Asterisk /><span>NO RIGHT ANSWERS HERE.</span></div>
-          <div className="studio-section-heading"><div><span className="studio-kicker">02 / The playground</span><h2 id="playground-title">Curiosity,<br /><em>with a browser.</em></h2></div><p>Small experiments. No client brief.<br />Go on, touch the controls.</p></div>
-          <div className="studio-lab-grid"><MotionPlayground /><ResponsivePlayground /><TypographyPlayground /><ThemePlayground /></div>
+          <div className="studio-section-heading"><div><span className="studio-kicker">02 / The playground</span><h2 id="playground-title">Curiosity,<br /><em>with a browser.</em></h2></div><p>One composition. Four ways to play.<br />A little piece of Monterrey, made yours.</p></div>
+          <CompositionPlayground />
           <SpaceArcade openRequest={arcadeRequest} />
           <div className="playground-bottomline"><span>A FEW IDEAS, LEFT OPEN.</span><span>Made to be played with. <span aria-hidden="true">↗</span></span></div>
         </div>

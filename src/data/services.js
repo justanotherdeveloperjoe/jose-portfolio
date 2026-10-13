@@ -1,7 +1,7 @@
 export const serviceTiers = [
   {
     id: 'launch', number: '01', name: 'Launch', character: 'A clear starting point',
-    description: 'A focused home for your business, with one clear next step for your customers.',
+    description: 'Give customers a clear place to start.',
     price: '$300', priceNote: 'Starting at · USD', projectSlug: 'smashouse',
     exampleNote: 'A menu, opening hours, and a direct way to order.',
     features: ['One responsive page', 'A layout made for mobile', 'Contact details & a clear call to action', 'Basic search engine setup', 'Deployment to your hosting'],
@@ -9,7 +9,7 @@ export const serviceTiers = [
   },
   {
     id: 'business', number: '02', name: 'Business Website', character: 'More room to grow',
-    description: 'Give your services room to breathe, and make it easy for the right people to get in touch.',
+    description: 'Turn interest into inquiries.',
     price: '$650', priceNote: 'Starting at · USD', projectSlug: 'afh-logistics',
     exampleNote: 'Services, reassurance, and a clear route to a quote.',
     features: ['Multiple pages, clearly organized', 'Responsive design across devices', 'Contact & inquiry forms', 'Dedicated service sections', 'Basic search engine setup', 'Deployment to your hosting'],
@@ -17,7 +17,7 @@ export const serviceTiers = [
   },
   {
     id: 'custom', number: '03', name: 'Custom Build', character: 'Built around your idea',
-    description: 'For the idea that needs its own approach. A new experience, a useful feature, or a better existing site.',
+    description: 'Build the experience your idea needs.',
     price: 'Let’s talk.', priceNote: 'Custom quote', projectSlug: 'el-sotano-comico',
     exampleNote: 'A brand experience that connects content, audience, and merch.',
     features: ['Interfaces shaped around your business', 'Thoughtful motion & interactions', 'Connections to your existing tools', 'Custom features & customer journeys', 'Redesigns & existing-site improvements'],

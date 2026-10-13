@@ -71,6 +71,13 @@
 .studio .service-demo-controls button { display: grid; place-items: center; width: 30px; height: 34px; padding: 0; border: 1px solid transparent; background: transparent; }
 .service-demo-controls button[aria-pressed=true] { border-color: #a2b287; }
 .service-demo-controls button > span { width: 16px; height: 16px; border-radius: 50%; background: var(--swatch); }
+.service-demo-toolbar { padding: 10px; border-top: 1px solid #343e2c; margin-top: 10px; }
+.service-demo-toolbar-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.service-demo-toolbar .service-demo-tabs { flex: 1; max-width: 200px; margin: 0; }
+.service-demo-toolbar .service-demo-controls { padding: 10px 0 0; }
+.studio .service-demo-reset { min-height: 44px; padding: 5px; background: none; border: 0; color: #bfc8b2; font-size: 11px; }
+.service-demo-reset > span { margin-left: 4px; }
+.service-project-status { display: inline-block; padding-block: 10px; color: #bfbcaa; font: 11px var(--font-mono); }
 .service-demo-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 6px; align-items: center; padding: 3px 10px 0; color: #89977b; font: 7px var(--font-mono); }
 .studio .service-demo-footer button { padding: 10px 0; min-height: 32px; border: 0; background: transparent; color: #bfcca9; font: 8px var(--font-mono); }
 .studio .service-custom-actions > button { padding: 8px 0; border: 0; background: transparent; color: var(--s-lime); font-size: 10px; text-align: left; }

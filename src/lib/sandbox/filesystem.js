@@ -8,7 +8,7 @@ export function learningNote(topic) {
 
 export const files = new Map([
   ['/about.txt', "I'm Jose, a front-end developer in Monterrey. I build interfaces for businesses with very different worlds: comedy, real estate, logistics, fitness, and more. I'm interested in the details that make each one feel like itself."],
-  ...projects.map(project => [`/projects/${project.slug}.txt`, `${project.name}\n${project.category} / ${project.status === 'live' ? 'Live' : 'In progress'}\n\n${project.blurb}\n\nBuilt with: ${project.tags.join(', ')}`]),
+  ...projects.map(project => [`/projects/${project.slug}.txt`, `${project.name}\n${project.category} / ${project.status === 'live' ? 'Live' : 'In progress'}\n\n${project.blurb}\n\nHighlights: ${project.tags.join(', ')}`]),
   ...learningTopics.map(topic => [`/learning/${topic.name.toLowerCase()}.txt`, learningNote(topic)]),
   ...Object.entries(templates).flatMap(([key, template]) => [
     [`/experiments/${key}/index.html`, template.html],

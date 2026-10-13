@@ -1,0 +1,9 @@
+﻿/* Event-driven footer depth. Typography and hit targets remain still. */
+.mountain-signature { --ridge-x: 0px; --ridge-y: 0px; --foothill-x: 0px; --foothill-y: 0px; --ridge-glow: .32; }
+.mountain-landscape { overflow: hidden; pointer-events: none; }
+.mountain-ridge { transform: translate(var(--ridge-x), var(--ridge-y)); }
+.mountain-foothills { transform: translate(var(--foothill-x), var(--foothill-y)); }
+.mountain-illumination { opacity: var(--ridge-glow); }
+@media (prefers-reduced-motion: reduce) {
+  .mountain-signature .mountain-ridge, .mountain-signature .mountain-foothills { transform: none; }
+}

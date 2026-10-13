@@ -10,7 +10,9 @@
     "preview": "vite preview",
     "test:arcade": "node scripts/test-space-game.mjs",
     "test:sandbox": "node scripts/test-sandbox.mjs",
-    "test:utilities": "node scripts/test-utilities.mjs"
+    "test:utilities": "node scripts/test-utilities.mjs",
+    "test:sky": "node scripts/test-sky.mjs",
+    "build:skyline": "node scripts/build-skyline.mjs"
   },
   "dependencies": {
     "@xterm/addon-fit": "^0.11.0",
