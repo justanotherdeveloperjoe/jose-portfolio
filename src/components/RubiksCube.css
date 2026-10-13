@@ -1,0 +1,70 @@
+/* A small 3D Rubik's cube: 26 little cubes, each positioned and rotated with plain CSS 3D transforms —
+   the same technique the project cards already use to tilt (see .studio-deck-stack). No library. */
+
+.rubiks-wrap { display: inline-flex; align-items: center; }
+
+.rubiks-trigger {
+  all: unset;
+  cursor: pointer;
+  --rubiks-cubie: 18px;   /* the size of one little cube */
+  --rubiks-gap: 2px;      /* the thin gap between cubes, like real plastic seams */
+  --rubiks-step: calc(var(--rubiks-cubie) + var(--rubiks-gap)); /* distance between cube centers */
+  --rubiks-half: calc(var(--rubiks-cubie) / 2);
+}
+.rubiks-trigger:disabled { cursor: default; }
+
+.rubiks-scene {
+  width: calc(var(--rubiks-step) * 3);
+  height: calc(var(--rubiks-step) * 3);
+  perspective: 480px;
+  filter: drop-shadow(0 6px 14px #00000055);
+  transition: filter .2s;
+}
+.rubiks-trigger:hover .rubiks-scene, .rubiks-trigger:focus-visible .rubiks-scene { filter: drop-shadow(0 6px 14px #00000055) drop-shadow(0 0 10px #d5f77a55); }
+
+.rubiks-cubies {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  /* A fixed three-quarter viewing angle, so it always reads clearly as a cube, not a flat puzzle. */
+  transform: rotateX(-28deg) rotateY(-35deg);
+}
+
+/* One little cube: a box centered on the scene, then pushed out to its (x, y, z) slot and spun by its
+   own inline transform. Faces inside it never move relative to each other — the whole box turns as one. */
+.rubiks-cubie {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--rubiks-cubie);
+  height: var(--rubiks-cubie);
+  margin: calc(var(--rubiks-cubie) / -2) 0 0 calc(var(--rubiks-cubie) / -2);
+  transform-style: preserve-3d;
+}
+.rubiks-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 2px;
+  backface-visibility: hidden;
+}
+
+/* While a slice is turning, its cubes sit inside this instead — rotating the wrapper spins all of them
+   together around the cube's own center, exactly like twisting a real face. */
+.rubiks-turn-layer {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform var(--rubiks-turn-duration, .22s) cubic-bezier(.65, .05, .36, 1);
+}
+
+.rubiks-announcement { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+@media (max-width: 760px) {
+  .rubiks-trigger { --rubiks-cubie: 15px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rubiks-turn-layer { transition: none; }
+  .rubiks-scene, .rubiks-trigger:hover .rubiks-scene, .rubiks-trigger:focus-visible .rubiks-scene { filter: drop-shadow(0 6px 14px #00000055); }
+}

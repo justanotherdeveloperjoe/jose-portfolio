@@ -12,6 +12,7 @@
     "test:sandbox": "node scripts/test-sandbox.mjs",
     "test:utilities": "node scripts/test-utilities.mjs",
     "test:sky": "node scripts/test-sky.mjs",
+    "test:cube": "node scripts/test-rubiks-cube.mjs",
     "build:skyline": "node scripts/build-skyline.mjs"
   },
   "dependencies": {

@@ -242,8 +242,9 @@
 .studio-about-symbol span { font-family: var(--font-mono); font-size: 8px; text-align: center; letter-spacing: .12em; line-height: 1.8; color: var(--s-muted); }
 .studio-about h2 { font-size: clamp(32px, 3.6vw, 46px); }
 .studio-about p { color: #babcB3; font-size: 14px; line-height: 1.8; margin-top: 23px; max-width: 490px; }
-.studio-about-tools { display: flex; flex-wrap: wrap; gap: 12px 24px; padding-top: 24px; margin-top: 26px; border-top: 1px solid var(--s-line); font-family: var(--font-mono); font-size: 9px; }
+.studio-about-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; padding-top: 24px; margin-top: 26px; border-top: 1px solid var(--s-line); font-family: var(--font-mono); font-size: 9px; }
 .studio-about-tools > span:first-child { color: var(--s-muted); }
+.studio-about-tools .rubiks-wrap { margin-left: auto; }
 .studio-contact { padding-block: 65px; }
 .studio-contact > a { position: relative; display: block; font-size: clamp(45px, 7.4vw, 102px); line-height: 1.04; letter-spacing: -.055em; margin-top: 28px; }
 .studio-contact > a em { color: var(--s-lime); }

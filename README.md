@@ -70,6 +70,7 @@ See [the integration plan and implementation report](SANDBOX_INTEGRATION_PLAN.md
 npm run test:arcade
 npm run test:utilities
 npm run test:sky
+npm run test:cube
 npm run build
 npm run preview -- --host 127.0.0.1 --port 4173
 # In another terminal, with Playwright and Chromium available:

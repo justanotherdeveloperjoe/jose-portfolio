@@ -9,6 +9,7 @@ import { LearningSection } from './LearningSection.jsx';
 import { SpaceArcade } from './SpaceArcade.jsx';
 import { SandboxSection } from './sandbox/SandboxSection.jsx';
 import { ServicesSection } from './ServicesSection.jsx';
+import { RubiksCube } from './RubiksCube.jsx';
 
 const bySlug = slug => projects.find(project => project.slug === slug);
 const deckLeads = ['el-sotano-comico', 'propiedades-allende', 'afh-logistics'].map(bySlug);
@@ -112,7 +113,7 @@ export function StudioPortfolio() {
           <div className="playground-bottomline"><span>A FEW IDEAS, LEFT OPEN.</span><span>Made to be played with. <span aria-hidden="true">↗</span></span></div>
         </div>
       </section>
-      <section className="studio-about studio-wrap" id="about" aria-labelledby="about-title"><MonterreyPostcard time={time} /><div><span className="studio-kicker">03 / Behind the browser</span><h2 id="about-title">A person who likes<br /><em>figuring things out.</em></h2><p>I’m Jose. I build interfaces for businesses with very different worlds: comedy, real estate, logistics, fitness, and more. I’m interested in the details that make each one feel like itself.</p><a className="studio-learning-link" href="#learning">See what I’m learning <span aria-hidden="true">↘</span></a><div className="studio-about-tools"><span>Currently building with</span><span>React / JavaScript / CSS / Vite</span></div></div></section>
+      <section className="studio-about studio-wrap" id="about" aria-labelledby="about-title"><MonterreyPostcard time={time} /><div><span className="studio-kicker">03 / Behind the browser</span><h2 id="about-title">A person who likes<br /><em>figuring things out.</em></h2><p>I’m Jose. I build interfaces for businesses with very different worlds: comedy, real estate, logistics, fitness, and more. I’m interested in the details that make each one feel like itself.</p><a className="studio-learning-link" href="#learning">See what I’m learning <span aria-hidden="true">↘</span></a><div className="studio-about-tools"><span>Currently building with</span><span>React / JavaScript / CSS / Vite</span><RubiksCube /></div></div></section>
       <LearningSection />
       <SandboxSection onArcade={() => setArcadeRequest(value => value + 1)} />
       <ServicesSection />
