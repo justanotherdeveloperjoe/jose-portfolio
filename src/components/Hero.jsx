@@ -48,7 +48,7 @@ export function Hero() {
           <Magnetic className="btn-primary" href="#work">
             View Selected Work <span aria-hidden="true">↓</span>
           </Magnetic>
-          <Magnetic className="btn-ghost" href="mailto:devilfruitd3v@proton.me">
+          <Magnetic className="btn-ghost" href="/#contact">
             Contact Me
           </Magnetic>
         </div>

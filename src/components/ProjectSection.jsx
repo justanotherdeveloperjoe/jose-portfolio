@@ -1,3 +1,4 @@
+import { ArrowUpRight as PhArrowUpRight } from '@phosphor-icons/react';
 import { useRef, useState } from 'react';
 import { useInView } from '../hooks/useInView.js';
 import { projects } from '../data/projects.js';
@@ -88,7 +89,7 @@ export function ProjectSection({ project, index }) {
               <span className="dot" />
               {isLive ? (
                 <a href={project.url} target="_blank" rel="noopener noreferrer">
-                  {project.url.replace('https://', '')} ↗
+                  {project.url.replace('https://', '')} <PhArrowUpRight aria-hidden="true" className="ph-icon" />
                 </a>
               ) : (
                 'Built for client — launching soon'
@@ -116,7 +117,7 @@ export function ProjectSection({ project, index }) {
               Explore project <span aria-hidden="true">→</span>
             </a>
           ) : (
-            <a className="explore-link" href="mailto:devilfruitd3v@proton.me">
+            <a className="explore-link" href="/#contact">
               Want one like this <span aria-hidden="true">→</span>
             </a>
           )}

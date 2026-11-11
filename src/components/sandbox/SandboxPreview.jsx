@@ -1,3 +1,4 @@
+import { ArrowUpRight as PhArrowUpRight } from '@phosphor-icons/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { templates } from '../../data/sandbox.js';
 import { buildPreview, sourceSize, SOURCE_LIMIT } from '../../lib/sandbox/preview.js';
@@ -37,6 +38,6 @@ export function SandboxPreview({ state, setState }) {
       <div className="sandbox-sources">{['html', 'css'].map(field => <div className="sandbox-source" key={field}><label htmlFor={`sandbox-${field}`}>{field.toUpperCase()}<span>{(sourceSize(draft[field]) / 1024).toFixed(1)} / 20 KB</span></label><textarea id={`sandbox-${field}`} value={draft[field]} onChange={event => edit(field, event.target.value)} spellCheck={false} autoCapitalize="off" autoComplete="off" aria-describedby="sandbox-editor-note" /></div>)}</div>
       <div className="sandbox-preview-pane"><div className="sandbox-preview-label"><span>YOUR LITTLE EXPERIMENT</span><span>{dirty ? 'Unapplied changes' : 'Preview up to date'}</span></div><iframe title="Your HTML and CSS experiment" sandbox="" referrerPolicy="no-referrer" srcDoc={document} /><p id="sandbox-editor-note">HTML + CSS. Change a few lines, then run your preview. Scripts and outside resources stay off.</p></div>
     </div>
-    <div className="sandbox-editor-actions"><button type="button" className="sandbox-run" onClick={run}>Run preview <span aria-hidden="true">↗</span></button><button type="button" onClick={reset}>Reset example</button>{draft.undo && <button type="button" onClick={undo}>Undo reset</button>}<span role="status">{message || (dirty ? 'Ready when you are.' : 'A small start. Yours to change.')}</span></div>
+    <div className="sandbox-editor-actions"><button type="button" className="sandbox-run" onClick={run}>Run preview <span aria-hidden="true"><PhArrowUpRight aria-hidden="true" className="ph-icon" /></span></button><button type="button" onClick={reset}>Reset example</button>{draft.undo && <button type="button" onClick={undo}>Undo reset</button>}<span role="status">{message || (dirty ? 'Ready when you are.' : 'A small start. Yours to change.')}</span></div>
   </div>;
 }

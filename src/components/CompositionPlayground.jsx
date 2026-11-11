@@ -1,3 +1,4 @@
+import { Pause as PhPause, ArrowUpRight as PhArrowUpRight } from '@phosphor-icons/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { composeScene, monterreyDay, sunTimeAt } from '../lib/monterreyScene.js';
 import { forecastSeries, previewForecast, weatherAt } from '../lib/weather.js';
@@ -257,7 +258,7 @@ export function CompositionPlayground() {
       <div className="composition-inputs">
         {mode === 'Motion' && <>
           <label className="composition-range composition-time" htmlFor="composition-time">Time of day <output>{clockLabel(day.minutes)}</output><input id="composition-time" type="range" min="0" max="1439" value={day.minutes} aria-valuetext={`${clockLabel(day.minutes)} in Monterrey`} onChange={event => setMinutes(Number(event.target.value))} onKeyDown={stepTime} /><span className="composition-time-scale" aria-hidden="true"><span>00:00</span><span>12:00</span><span>24:00</span></span></label>
-          <button type="button" className="composition-play" disabled={reduced} onClick={playDay}>{playing ? 'Pause' : 'Play a day'} <span aria-hidden="true">{playing ? 'Ⅱ' : '↗'}</span></button>
+          <button type="button" className="composition-play" disabled={reduced} onClick={playDay}>{playing ? 'Pause' : 'Play a day'} <span aria-hidden="true">{playing ? <PhPause aria-hidden="true" className="ph-icon" /> : <PhArrowUpRight aria-hidden="true" className="ph-icon" />}</span></button>
           {scrub && <button type="button" className="composition-live" onClick={goLive}>Live <span aria-hidden="true">↺</span></button>}
         </>}
         {mode === 'Layout' && <label className="composition-range" htmlFor="composition-width">Canvas width <output>{width}%</output><input id="composition-width" type="range" min="25" max="100" value={width} onChange={event => setWidth(Number(event.target.value))} /></label>}

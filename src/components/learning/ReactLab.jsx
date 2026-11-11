@@ -1,3 +1,4 @@
+import { Check as PhCheck } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { projects } from '../../data/projects.js';
 import { AtomMark, LabIntro } from './LabParts.jsx';
@@ -26,7 +27,7 @@ export function ReactLab() {
       <ul className="project-finder-list" aria-label="Matching projects">
         {visible.map(project => <li key={project.id}>
           <div><strong>{project.name}</strong><span>{project.category} · {project.status === 'live' ? 'Live' : 'In progress'}</span></div>
-          <button type="button" aria-pressed={saved.includes(project.id)} aria-label={`${saved.includes(project.id) ? 'Unsave' : 'Save'} ${project.name}`} onClick={() => toggle(project.id)}><span aria-hidden="true">{saved.includes(project.id) ? '✓' : '+'}</span></button>
+          <button type="button" aria-pressed={saved.includes(project.id)} aria-label={`${saved.includes(project.id) ? 'Unsave' : 'Save'} ${project.name}`} onClick={() => toggle(project.id)}><span aria-hidden="true">{saved.includes(project.id) ? <PhCheck aria-hidden="true" className="ph-icon" /> : '+'}</span></button>
         </li>)}
         {!visible.length && <li className="task-empty">{onlySaved ? 'No saved projects match. Save a project or adjust your filters.' : 'No matches yet. Try another name or industry.'}</li>}
       </ul>

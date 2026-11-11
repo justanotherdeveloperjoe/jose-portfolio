@@ -1,3 +1,4 @@
+import { Check as PhCheck, X as PhX } from '@phosphor-icons/react';
 import { useEffect, useRef, useState } from 'react';
 import { useInView } from '../hooks/useInView.js';
 
@@ -151,7 +152,7 @@ export function GainzTakeover({ project }) {
             <span className="gainz-price">$890 MXN</span>
 
             <button type="button" className="gainz-add-btn" onClick={handleAddToCart}>
-              {inCart ? 'Added ✓ — view cart' : 'Add to cart'}
+              {inCart ? <>Added <PhCheck aria-hidden="true" className="ph-icon" /> — view cart</> : 'Add to cart'}
             </button>
             <p className="gainz-demo-note">A working demo — variant state, cart drawer, no backend.</p>
           </div>
@@ -162,7 +163,7 @@ export function GainzTakeover({ project }) {
         <div className="gainz-cart-head">
           <span>YOUR CART</span>
           <button type="button" onClick={() => setCartOpen(false)} aria-label="Close cart">
-            ✕
+            <PhX aria-hidden="true" className="ph-icon" />
           </button>
         </div>
         {inCart ? (
@@ -182,7 +183,7 @@ export function GainzTakeover({ project }) {
       {cartOpen && <div className="gainz-cart-backdrop" onClick={() => setCartOpen(false)} />}
 
       <div className="gainz-store-foot">
-        <a className="explore-link" href="mailto:devilfruitd3v@proton.me">
+        <a className="explore-link" href="/#contact">
           Want an interaction like this <span aria-hidden="true">→</span>
         </a>
       </div>

@@ -25,8 +25,16 @@ export const serviceTiers = [
   },
 ];
 
-export function serviceInquiry(tier) {
-  const subject = `Website inquiry — ${tier.name}`;
-  const body = `Hi Jose,\n\nI’m interested in ${tier.name}.\n\nMy business / idea:\nWhat I need the website to do:\nIdeal timing:\n\nThanks!`;
-  return `mailto:devilfruitd3v@proton.me?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+export function serviceInquiry() {
+  return '#contact';
+}
+
+export function serviceMessage(tier) {
+  const needs = {
+    launch: 'a responsive landing page that introduces my business and helps visitors get in touch',
+    business: 'a multi-page business website to showcase my services and turn visits into inquiries',
+    custom: 'a custom website with a design and features built around my idea',
+  };
+  if (!tier || !needs[tier.id]) return '';
+  return `Hi Jose, I’m interested in your ${tier.name} package. I’d like ${needs[tier.id]}. Could we discuss the scope, timing, and next steps?`;
 }

@@ -1,3 +1,4 @@
+import { Asterisk as PhAsterisk, ArrowUpRight as PhArrowUpRight } from '@phosphor-icons/react';
 import { useEffect, useRef, useState } from 'react';
 import './LearningSection.css';
 import { LearningScene } from './LearningScenes.jsx';
@@ -60,9 +61,9 @@ export function LearningSection() {
       </article>)}
     </div>
     <div className="learning-outlook">
-      <span className="learning-outlook-star" aria-hidden="true">✳</span>
+      <span className="learning-outlook-star" aria-hidden="true"><PhAsterisk aria-hidden="true" className="ph-icon" /></span>
       <div><h3>Getting better is part of the work.</h3><p>There’s always another question to ask, another approach to try, and something to improve in the next build.</p></div>
-      <a href="#playground">See my experiments <span aria-hidden="true">↗</span></a>
+      <a href="#playground">See my experiments <span aria-hidden="true"><PhArrowUpRight aria-hidden="true" className="ph-icon" /></span></a>
     </div>
   </section>;
 }

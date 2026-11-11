@@ -1,5 +1,6 @@
+import { Carrot as PhCarrot, Barbell as PhBarbell, Moon as PhMoon, Heart as PhHeart } from '@phosphor-icons/react';
 const labels = { feed: 'Feed', train: 'Train', rest: 'Rest', pet: 'Pet' };
-const icons = { feed: '◒', train: '↗', rest: '☾', pet: '♡' };
+const icons = { feed: <PhCarrot aria-hidden="true" className="ph-icon" />, train: <PhBarbell aria-hidden="true" className="ph-icon" />, rest: <PhMoon aria-hidden="true" className="ph-icon" />, pet: <PhHeart aria-hidden="true" className="ph-icon" /> };
 export function PetControls({ pet, now, onAction, paused }) {
   return <div className="digimon-controls" role="group" aria-label="Care for your Digimon">
     {['feed', 'train', 'rest', 'pet'].map(action => {

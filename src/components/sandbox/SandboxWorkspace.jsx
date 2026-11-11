@@ -1,3 +1,4 @@
+import { ArrowUpRight as PhArrowUpRight } from '@phosphor-icons/react';
 import { useEffect, useRef, useState } from 'react';
 import { appendCommand, executeCommand, limits } from '../../lib/sandbox/commands.js';
 import { completeCommand } from '../../lib/sandbox/computer.js';
@@ -134,7 +135,7 @@ export default function SandboxWorkspace({ session, onClose, onArcade, active = 
         {running && <div className="computer-process" role="status">Running JavaScript… <button type="button" onClick={() => stopProcess.current?.()}>Stop process</button></div>}
         {completions.length > 0 && <div className="computer-completions" role="group" aria-label="Command completions">{completions.map(value => <button type="button" key={value} onClick={() => { setCommand(value); setCompletions([]); input.current?.focus(); }}>{value}</button>)}</div>}
       </div>
-      <div className="computer-shortcuts" role="group" aria-label="Terminal shortcuts"><button type="button" onClick={() => run('help')}>help</button><button type="button" onClick={() => run('ls')}>ls</button><button type="button" onClick={() => run('edit hello.js')}>edit hello.js</button><button type="button" onClick={() => run('run hello.js')}>run hello.js</button><button type="button" onClick={() => run('edit postcard')}>studio ↗</button><button type="button" onClick={complete}>Complete <span>Alt + →</span></button></div>
+      <div className="computer-shortcuts" role="group" aria-label="Terminal shortcuts"><button type="button" onClick={() => run('help')}>help</button><button type="button" onClick={() => run('ls')}>ls</button><button type="button" onClick={() => run('edit hello.js')}>edit hello.js</button><button type="button" onClick={() => run('run hello.js')}>run hello.js</button><button type="button" onClick={() => run('edit postcard')}>studio <PhArrowUpRight aria-hidden="true" className="ph-icon" /></button><button type="button" onClick={complete}>Complete <span>Alt + →</span></button></div>
     </> : state.view === 'file' ? <SandboxFileEditor state={state} setState={setState} onReturn={returnToTerminal} /> : <><div className="computer-appbar"><button type="button" onClick={returnToTerminal}>← Return to terminal</button><span>Esc to return</span></div><SandboxPreview state={state} setState={setState} /></>}
     <div className="computer-statusbar"><span><i aria-hidden="true" />{state.persistence === 'local' ? 'Files saved in this browser' : 'Files saved for this session only'}</span><span id="computer-keys">↑↓ history · Ctrl+L clear · Ctrl+C stop</span></div>
     <span className="sandbox-sr-only" role="status">{announcement}</span>

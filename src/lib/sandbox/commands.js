@@ -60,9 +60,9 @@ export function executeCommand(input, cwd = '/', state) {
       }
       case 'cat': return !arg ? needsArg() : { text: files.get(path) ?? (directories.has(path) ? 'That is a folder. Try ls to look inside.' : `No file here: ${path}`) };
       case 'learn': {
-        if (!arg) return { text: 'Currently learning\n\n' + learningTopics.map(topic => `${topic.name} / ${topic.status || 'Learning'}`).join('\n') + '\n\nTry learn react.', links: [{ label: 'Visit the learning cards ↗', href: '#learning' }] };
+        if (!arg) return { text: 'Currently learning\n\n' + learningTopics.map(topic => `${topic.name} / ${topic.status || 'Learning'}`).join('\n') + '\n\nTry learn react.', links: [{ label: 'Visit the learning cards →', href: '#learning' }] };
         const topic = learningTopics.find(item => item.name.toLowerCase() === arg.toLowerCase());
-        return { text: topic ? learningNote(topic) : 'Try javascript, react, sql, python, or aws.', ...(topic ? { links: [{ label: `Visit ${topic.name} ↗`, href: `#learning-${topic.theme}-title` }] } : {}) };
+        return { text: topic ? learningNote(topic) : 'Try javascript, react, sql, python, or aws.', ...(topic ? { links: [{ label: `Visit ${topic.name} →`, href: `#learning-${topic.theme}-title` }] } : {}) };
       }
       case 'open': {
         if (!arg) return needsArg();
@@ -70,7 +70,7 @@ export function executeCommand(input, cwd = '/', state) {
         const project = projects.find(item => item.slug === slug || item.id === slug);
         if (!project) return { text: 'Project not found. Try ls /projects or open logistics.' };
         const anchor = `#${project.id}`;
-        return { text: `${project.name}\n${project.blurb}`, links: [{ label: 'Jump to the project ↗', href: anchor }, ...(project.status === 'live' && project.url ? [{ label: 'Visit website ↗', href: project.url }] : [])], action: { type: 'navigate', target: anchor } };
+        return { text: `${project.name}\n${project.blurb}`, links: [{ label: 'Jump to the project →', href: anchor }, ...(project.status === 'live' && project.url ? [{ label: 'Visit website →', href: project.url }] : [])], action: { type: 'navigate', target: anchor } };
       }
       case 'edit': return !arg || Object.hasOwn(templates, arg) ? { text: 'Make it your own. Run preview when you are ready.', action: { type: 'edit', example: arg || 'button' } } : { text: 'Try edit button, edit card, or edit postcard.' };
       case 'theme': return ['cream', 'charcoal'].includes(arg) ? { text: `A little change of atmosphere: ${arg}.`, action: { type: 'theme', theme: arg } } : { text: 'Try theme cream or theme charcoal.' };

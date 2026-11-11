@@ -1,3 +1,4 @@
+import { ArrowUpRight as PhArrowUpRight } from '@phosphor-icons/react';
 import { useReducer } from 'react';
 import { deliveryReducer, initialDelivery } from '../../lib/learningTasks.js';
 import { LabIntro } from './LabParts.jsx';
@@ -19,10 +20,10 @@ export function AwsLab() {
       </ol>
       <div className="delivery-readout"><span><b>{state.requests}</b> visits</span><span><b>{state.hits}</b> cache hits</span><span><b>{state.fetches}</b> origin requests</span></div>
       <p className={`task-status delivery-status ${state.outcome === 'error' ? 'has-error' : ''}`} role="status">{state.message}</p>
-      <div className="delivery-controls"><button type="button" className="lab-run" onClick={() => dispatch('visit')}>Visit page <span aria-hidden="true">↗</span></button><button type="button" disabled={!state.online} onClick={() => dispatch('publish')}>Publish v{state.origin + 1}</button><button type="button" onClick={() => dispatch('invalidate')}>Clear cache</button></div>
+      <div className="delivery-controls"><button type="button" className="lab-run" onClick={() => dispatch('visit')}>Visit page <span aria-hidden="true"><PhArrowUpRight aria-hidden="true" className="ph-icon" /></span></button><button type="button" disabled={!state.online} onClick={() => dispatch('publish')}>Publish v{state.origin + 1}</button><button type="button" onClick={() => dispatch('invalidate')}>Clear cache</button></div>
       <div className="delivery-options"><label><input type="checkbox" checked={!state.online} onChange={() => dispatch('toggle-origin')} /> Simulate origin outage</label><button type="button" onClick={() => dispatch('reset')}>Reset demo</button></div>
     </div>
     <p className="scene-caption">Local AWS model; no cloud resources connected. One file and one fresh cache, with expiry and invalidation delays left out.</p>
-    <a className="lab-source" href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Invalidation.html" target="_blank" rel="noreferrer">How CloudFront invalidation works <span aria-hidden="true">↗</span></a>
+    <a className="lab-source" href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Invalidation.html" target="_blank" rel="noreferrer">How CloudFront invalidation works <span aria-hidden="true"><PhArrowUpRight aria-hidden="true" className="ph-icon" /></span></a>
   </div>;
 }
