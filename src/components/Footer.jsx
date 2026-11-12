@@ -12,7 +12,7 @@ export function Footer() {
             <span>LET'S BUILD THE NEXT ONE.</span>
           </span>
         </div>
-        <Magnetic className="btn-primary btn-huge" href="mailto:devilfruitd3v@proton.me">
+        <Magnetic className="btn-primary btn-huge" href="/#contact">
           Start a project <span aria-hidden="true">→</span>
         </Magnetic>
       </section>

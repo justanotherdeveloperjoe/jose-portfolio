@@ -311,3 +311,28 @@
   html:has(.studio) { scroll-behavior: auto; }
   .studio *, .studio *::before, .studio *::after { animation: none !important; transition: none !important; }
 }
+
+/* Hero action row: buttons and the pricing link share one line with a clear gap */
+.studio-hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; }
+.studio .studio-hero-actions .studio-learning-link { color: inherit; text-decoration: underline; text-underline-offset: 5px; text-decoration-thickness: 1px; }
+
+@media (min-width: 700px) {
+/* Hero labels: legible size and contrast on the dark homepage (WCAG AA).
+   Scoped to the hero and given extra specificity so they win over the
+   smaller sizes set in studio-editorial.css and the mobile breakpoints. */
+.studio {
+  --s-hero-label: #c4c7bc;
+}
+.studio .studio-deck-label > span:first-child,
+.studio .studio-hero-meta .studio-kicker,
+.studio .studio-available,
+.studio .studio-hero-footnote > span:first-child,
+.studio .studio-hero-baseline > span {
+  font-size: 12px;
+  color: var(--s-hero-label);
+}
+.studio .studio-deck-label {
+  font-size: 12px;
+}
+  .studio .studio-deck-label > span { white-space: nowrap; }
+}

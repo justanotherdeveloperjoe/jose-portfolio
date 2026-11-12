@@ -27,7 +27,7 @@ Portfolio covering nutrition, industrial, fitness, food, e-commerce, media, real
 
 [View the live portfolio](https://hechoporjs.com/) · [Open the sandbox section](https://hechoporjs.com/#sandbox)
 
-The default route shows the editorial portfolio: hero and project deck, selected work (the seven-project Workbench), interactive playground and arcade, a Digimon fan companion in the Monterrey postcard, five practical learning labs, sandbox, Work With Me services, and contact. The previous design remains available at `?view=original`.
+The default route shows the editorial portfolio, in this order: hero and project deck, selected work (the seven-project Workbench), Work With Me pricing, a Digimon fan companion in the Monterrey postcard, five practical learning labs, the playground and arcade, the Linux sandbox, and contact. The hero offers "Explore my work", "Let's talk" and "See pricing". The previous design remains available at `?view=original`.
 
 ### Playground: Monterrey, live
 
@@ -37,7 +37,7 @@ Drag the sun along its real path, scrub or play a whole day (the forecast plays 
 
 ### Work With Me services
 
-The section at `#services` offers **Launch from $300 USD**, **Business Website from $650 USD**, and **Custom Build by quote**. Each connects deliverables to an existing project: Smashouse, AFH Logistics, and El Sótano Cómico. Interaction increases by tier, with quiet idle states and a reduced-motion fallback. Inquiry links open an email draft for the selected service.
+The section at `#services` offers **Launch from $300 USD**, **Business Website from $650 USD**, and **Custom Build by quote**. Each connects deliverables to an existing project: Smashouse, AFH Logistics, and El Sótano Cómico. Interaction increases by tier, with quiet idle states and a reduced-motion fallback. Inquiry links lead to the contact section. Each plan shows its starting price directly under its title. The Custom Build card has a live demo: a comedy-club marquee whose bulbs chase around the frame and whose title lights up letter by letter as you type. Pick a title and ink color, press "Light it up" to replay the show, or switch to the merch preview. The contact form emails messages through Web3Forms; see `docs/contact-form.md`.
 
 Edit prices, deliverables, and example assignments in `src/data/services.js`. Project links and screenshots remain in `src/data/projects.js`. Smashouse uses the supplied working HTTP URL and a local screenshot; its HTTPS endpoint returned a certificate error when checked on October 1, 2026. See [services implementation notes](docs/services-section.md) for behavior, files, and checks. Deployed to Hostinger on October 12, 2026 (release e5dbec8).
 
@@ -63,6 +63,10 @@ Networking is disabled in the emulator, so nothing inside the guest can reach th
 Edit project content in `src/data/projects.js` and learning topics in `src/data/learning.js` — both feed the guest's `projects.txt`/`learning.txt` files. UI and filesystem-bridge code live in `src/components/sandbox/` (`SandboxSection.jsx`, `LinuxDesktop.jsx`, `DesktopWindow.jsx`, `linuxFiles.js`).
 
 See [the integration plan and implementation report](SANDBOX_INTEGRATION_PLAN.md) for the full history, including the earlier JavaScript-simulated prototype that this replaced. The older [Desk Mode proposal](DESK_MODE_PLAN.md) is a separate, unimplemented desktop-window concept.
+
+### Icons and shadows
+
+Icons come from [Phosphor](https://phosphoricons.com) (`@phosphor-icons/react`), imported per file as SVG components. Text symbols that phones can show as emoji (check marks, arrows, hearts, stars, play triangles) were replaced with these icons. Window dots are CSS shapes. Directional shadows are defined in `src/shadows.css`, which is imported last in `src/main.jsx`; delete that file and its import to remove them.
 
 ### Checks
 
@@ -122,6 +126,7 @@ src/
   main.jsx · App.jsx       Entry + default/original view selection
   index.css                Base and original-view styles
   studio*.css              Default editorial portfolio styles
+  shadows.css              Directional shadow tokens (loaded last)
   data/projects.js         Case studies (the single source of project content)
   data/learning.js         Shared learning cards and terminal notes
   data/sandbox.js          Editable examples, command help, aliases

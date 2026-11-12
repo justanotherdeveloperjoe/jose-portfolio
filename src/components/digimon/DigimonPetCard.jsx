@@ -1,3 +1,4 @@
+import { Check as PhCheck, ArrowUpRight as PhArrowUpRight } from '@phosphor-icons/react';
 import { Component, useEffect, useRef, useState } from 'react';
 import { stageById, stages } from '../../data/digimon/stages.js';
 import { useDigimonPet } from '../../hooks/useDigimonPet.js';
@@ -47,11 +48,11 @@ function PetCard() {
         {storageNotice && <p className="digimon-storage-notice">{storageNotice}</p>}
         <details className="digimon-journal"><summary>Care journal & credits <span aria-hidden="true">+</span></summary>
           <dl><div><dt>Age</dt><dd>{Math.floor(Math.max(0, pet.updatedAt - pet.createdAt) / 60000)} min</dd></div><div><dt>Training</dt><dd>{pet.training}</dd></div><div><dt>Care mistakes</dt><dd>{pet.careMistakes}</dd></div></dl>
-          {progress.next ? <><p>Next: {stageById(progress.next).name}. Meet each condition while your companion is awake.</p><ul>{progress.requirements.map(item => <li key={item.label}><span>{item.label}</span><span>{Math.floor(item.value)} / {item.needed}{item.unit} {item.value >= item.needed ? '✓' : ''}</span></li>)}</ul></> : <p>The full evolution line is complete. Keep feeding, training, resting, and spending time together.</p>}
+          {progress.next ? <><p>Next: {stageById(progress.next).name}. Meet each condition while your companion is awake.</p><ul>{progress.requirements.map(item => <li key={item.label}><span>{item.label}</span><span>{Math.floor(item.value)} / {item.needed}{item.unit} {item.value >= item.needed ? <PhCheck aria-hidden="true" className="ph-icon" /> : ''}</span></li>)}</ul></> : <p>The full evolution line is complete. Keep feeding, training, resting, and spending time together.</p>}
           <p>Time together counts while this card is active. A short rest restores energy. Care mistakes add a small, recoverable training requirement.</p>
           <p>{storageNotice || 'Progress stays in this browser. Offline changes are gentle and capped.'}</p>
           <p>Unofficial fan project. Digimon belongs to its respective rights holders. No affiliation or endorsement.</p>
-          <p>World DS sprite rips: Mighty Jetters, redblueyellow, A.J. Nitro, RadSpyro, and Dazz. <a href="/sprites/digimon/credits.txt" target="_blank" rel="noreferrer">Sources & animation notes ↗</a></p>
+          <p>World DS sprite rips: Mighty Jetters, redblueyellow, A.J. Nitro, RadSpyro, and Dazz. <a href="/sprites/digimon/credits.txt" target="_blank" rel="noreferrer">Sources & animation notes <PhArrowUpRight aria-hidden="true" className="ph-icon" /></a></p>
           <p>Walking uses original frames. Feeding, resting, and training use existing poses with simplified cues; dedicated care sprites were unavailable.</p>
         </details>
       </div>
@@ -62,7 +63,7 @@ function PetCard() {
         <p>Digimon is one of the things I enjoy outside of building websites. This little companion is a place for that part of me, too.</p>
         <p>Right now, I’m sharpening my JavaScript and React skills while exploring Python, SQL, and the cloud.</p>
         <p className="digimon-signoff">Still learning. Still building.<span>— Jose</span></p>
-        <a href="#learning">What I’m learning <span aria-hidden="true">↗</span></a>
+        <a href="#learning">What I’m learning <span aria-hidden="true"><PhArrowUpRight aria-hidden="true" className="ph-icon" /></span></a>
       </div>
     </div>
     <figcaption className="digimon-card-footer"><button type="button" aria-expanded={flipped} aria-controls="digimon-note" onClick={() => setFlipped(value => !value)}>{flipped ? `Back to ${stage.name}` : 'A note from Jose'} <span aria-hidden="true">↻</span></button><button type="button" aria-pressed={paused} onClick={() => setPaused(value => !value)}>{paused ? 'Resume' : 'Pause'}</button></figcaption>

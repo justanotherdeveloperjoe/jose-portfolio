@@ -897,3 +897,14 @@ body.takeover-active .sticky-nav {
   88% { transform: rotate(-4deg) scale(1.1); color: #55d6ff; }
   100% { transform: rotate(0) scale(1); color: #55d6ff; }
 }
+
+/* Phosphor inline icons: sit on the text baseline and inherit color */
+.ph-icon {
+  display: inline-block;
+  flex: none;
+  vertical-align: -0.125em;
+}
+
+/* Window-chrome dots drawn in CSS, not text glyphs */
+.win-dots { display: inline-flex; gap: 5px; align-items: center; vertical-align: middle; }
+.win-dots i { width: 7px; height: 7px; border-radius: 50%; background: currentColor; display: inline-block; }

@@ -1,3 +1,4 @@
+import { ArrowUpRight as PhArrowUpRight } from '@phosphor-icons/react';
 import { useEffect, useRef, useState } from 'react';
 import { projects } from '../data/projects.js';
 import { serviceInquiry, serviceTiers } from '../data/services.js';
@@ -6,7 +7,7 @@ import './ServicesSection.css';
 
 function PreviewBrowser({ project, className = '' }) {
   return <div className={`service-browser ${className}`}>
-    <div className="service-browser-bar" aria-hidden="true"><span>• • •</span><span>{new URL(project.url).hostname}</span><span>↗</span></div>
+    <div className="service-browser-bar" aria-hidden="true"><span>• • •</span><span>{new URL(project.url).hostname}</span><span><PhArrowUpRight aria-hidden="true" className="ph-icon" /></span></div>
     <img src={project.screenshot} alt={`${project.name} website preview`} width={project.slug === 'smashouse' ? 1440 : 1400} height={project.slug === 'smashouse' ? 1080 : project.slug === 'afh-logistics' ? 1225 : 945} loading="lazy" decoding="async" />
   </div>;
 }
@@ -27,7 +28,7 @@ function ProjectPreview({ tier, project, inputRef }) {
   return <div className="service-preview service-preview-custom"><ServiceCustomDemo inputRef={inputRef} /></div>;
 }
 
-function ServiceCard({ tier, onCaseStudy, caseLink, caseOpen }) {
+function ServiceCard({ tier, onCaseStudy, caseLink, caseOpen, onInquiry }) {
   const card = useRef(null), frame = useRef(null), input = useRef(null);
   const project = projects.find(item => item.slug === tier.projectSlug);
   useEffect(() => {
@@ -72,16 +73,16 @@ function ServiceCard({ tier, onCaseStudy, caseLink, caseOpen }) {
   return <article ref={card} className={`service-card service-${tier.id}`} aria-labelledby={`service-${tier.id}-title`}>
     <div className="service-card-top"><span>{tier.number} / {tier.character}</span><span className="service-level" aria-hidden="true">{[0, 1, 2].map(index => <i key={index} className={index < Number(tier.number) ? 'is-lit' : ''} />)}</span></div>
     <div className="service-intro"><h3 id={`service-${tier.id}-title`}>{tier.name}</h3><p>{tier.description}</p></div>
-    <ProjectPreview tier={tier} project={project} inputRef={input} />
-    {tier.id === 'custom' ? <div className="service-example service-custom-actions"><button type="button" onClick={() => input.current?.focus()}>Interact with demo <span aria-hidden="true">→</span></button><a ref={caseLink} href="#service-case-study" aria-expanded={caseOpen} aria-controls="service-case-study" onClick={event => { event.preventDefault(); onCaseStudy(); }}>View case study <span aria-hidden="true">↗</span></a></div> : <div className="service-example"><span>{project.name}</span><a href={project.url} target="_blank" rel="noreferrer">{tier.id === 'launch' ? 'View website' : 'Explore project'} <span aria-hidden="true">↗</span></a></div>}
-    <p className="service-example-note">{tier.exampleNote}</p>
     <div className="service-price"><span>{tier.priceNote}</span><strong>{tier.price}</strong></div>
+    <ProjectPreview tier={tier} project={project} inputRef={input} />
+    {tier.id === 'custom' ? <div className="service-example service-custom-actions"><button type="button" onClick={() => input.current?.focus()}>Interact with demo <span aria-hidden="true">→</span></button><a ref={caseLink} href="#service-case-study" aria-expanded={caseOpen} aria-controls="service-case-study" onClick={event => { event.preventDefault(); onCaseStudy(); }}>View case study <span aria-hidden="true"><PhArrowUpRight aria-hidden="true" className="ph-icon" /></span></a></div> : <div className="service-example"><span>{project.name}</span><a href={project.url} target="_blank" rel="noreferrer">{tier.id === 'launch' ? 'View website' : 'Explore project'} <span aria-hidden="true"><PhArrowUpRight aria-hidden="true" className="ph-icon" /></span></a></div>}
+    <p className="service-example-note">{tier.exampleNote}</p>
     <ul className="service-features" aria-label={`${tier.name} includes`}>{tier.features.map((feature, index) => <li key={feature} style={{ '--feature-index': index }}><span aria-hidden="true">↳</span>{feature}</li>)}</ul>
-    <a className="service-inquiry" href={serviceInquiry(tier)}>{tier.action}<span aria-hidden="true">↗</span></a>
+    <a className="service-inquiry" href={serviceInquiry(tier)} onClick={event => { if (!event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey && event.button === 0) onInquiry?.(tier); }}>{tier.action}<span aria-hidden="true"><PhArrowUpRight aria-hidden="true" className="ph-icon" /></span></a>
   </article>;
 }
 
-export function ServicesSection() {
+export function ServicesSection({ onInquiry } = {}) {
   const [caseOpen, setCaseOpen] = useState(false);
   const caseLink = useRef(null), caseHeading = useRef(null);
   const customProject = projects.find(project => project.slug === 'el-sotano-comico');
@@ -91,8 +92,8 @@ export function ServicesSection() {
   function closeCase() { setCaseOpen(false); caseLink.current?.focus({ preventScroll: true }); caseLink.current?.scrollIntoView({ block: 'nearest', behavior: 'instant' }); }
   return <section className="studio-services studio-wrap" id="services" aria-labelledby="services-title">
     <div className="studio-section-heading services-heading"><div><span className="studio-kicker">06 / Work with me</span><h2 id="services-title">The right size<br /><em>for your next step.</em></h2></div><p>A simple launch. A fuller business presence.<br />Or something that needs its own approach.<br /><span>Explore the examples. Find your starting point.</span></p></div>
-    <div className="services-grid">{serviceTiers.map(tier => <ServiceCard key={tier.id} tier={tier} onCaseStudy={() => setCaseOpen(true)} caseOpen={caseOpen} caseLink={caseLink} />)}</div>
+    <div className="services-grid">{serviceTiers.map(tier => <ServiceCard key={tier.id} tier={tier} onInquiry={onInquiry} onCaseStudy={() => setCaseOpen(true)} caseOpen={caseOpen} caseLink={caseLink} />)}</div>
     <div id="service-case-study" className="service-case-study" hidden={!caseOpen} onKeyDown={event => { if (event.key === 'Escape') { event.stopPropagation(); closeCase(); } }}><div className="service-case-top"><span className="studio-kicker">A closer look / Custom work</span><button type="button" onClick={closeCase}>Close case study <span aria-hidden="true">×</span></button></div><h3 ref={caseHeading} tabIndex="-1">A comedy brand.<br /><em>A whole world around it.</em></h3><div className="service-case-grid">{caseOpen && <img src={customProject.screenshot} alt="El Sótano Cómico website" width="1400" height="945" />}<div><h4>{customProject.name}</h4><p>The brief: give the brand a home that carries its personality and connects visitors to more than a single page of content.</p><ul><li><strong>Discovery.</strong> A distinct visual identity and a home for the comedy.</li><li><strong>Connection.</strong> Newsletter capture, a lead-magnet download, and social links.</li><li><strong>Next steps.</strong> A path from discovering the brand to exploring merchandise.</li></ul><p className="service-case-note">The brand studio above is an interactive portfolio demo inspired by this project. Try changing the design, switching formats, and moving the sticker.</p>{customProject.url ? <a href={customProject.url} target="_blank" rel="noreferrer">View the live project &#8599;</a> : <span className="service-project-status">Launching soon</span>}</div></div></div>
-    <div className="services-footnote"><p>Starting prices in USD. Final scope and price agreed before we begin.<br />Examples show the kind of work each service can support.</p><a href="mailto:devilfruitd3v@proton.me?subject=Help%20choosing%20a%20website%20service">Not sure where to start? Let’s talk <span aria-hidden="true">↗</span></a></div>
+    <div className="services-footnote"><p>Starting prices in USD. Final scope and price agreed before we begin.<br />Examples show the kind of work each service can support.</p><a href="/#contact">Not sure where to start? Let’s talk <span aria-hidden="true"><PhArrowUpRight aria-hidden="true" className="ph-icon" /></span></a></div>
   </section>;
 }

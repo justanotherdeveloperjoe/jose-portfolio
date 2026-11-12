@@ -1,3 +1,4 @@
+import { ArrowUpRight as PhArrowUpRight, ArrowsLeftRight as PhArrowsLeftRight } from '@phosphor-icons/react';
 import { useEffect, useRef, useState } from 'react';
 
 function ReconstructedWireframe() {
@@ -13,7 +14,7 @@ function ReconstructedWireframe() {
     <g fill="#e2e3d8" stroke="#8e9580" strokeWidth="2"><rect x="185" y="519" width="289" height="73" rx="18" /><rect x="486" y="519" width="289" height="73" rx="18" /><rect x="185" y="603" width="590" height="41" rx="18" /></g>
     <g fill="#7b836c" fontFamily="monospace" fontSize="17"><text x="210" y="562">REASSURANCE 01</text><text x="511" y="562">REASSURANCE 02</text><text x="210" y="630">SERVICE DETAILS</text></g>
     <rect x="185" y="676" width="176" height="45" rx="10" fill="#667453" /><rect x="374" y="676" width="138" height="45" rx="10" fill="none" stroke="#8e9580" strokeWidth="2" />
-    <g fontFamily="monospace" fontSize="16"><text x="205" y="704" fill="#fff">PRIMARY ACTION</text><text x="395" y="704" fill="#667453">EXPLORE</text><text x="534" y="704" fill="#667453">CONTACT ↗</text></g>
+    <g fontFamily="monospace" fontSize="16"><text x="205" y="704" fill="#fff">PRIMARY ACTION</text><text x="395" y="704" fill="#667453">EXPLORE</text><text x="534" y="704" fill="#667453">CONTACT</text><path d="M602 704 L612 694 M606 694 H612 V700" fill="none" stroke="#667453" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></g>
     <g fill="none" stroke="#adb2a0" strokeWidth="2" strokeDasharray="8 8"><rect x="910" y="272" width="320" height="300" /><path d="m910 272 320 300m0-300L910 572" /></g>
     <text x="954" y="606" fill="#777e6a" fontFamily="monospace" fontSize="18">IMAGE / ATMOSPHERE</text>
     <g fill="#777e6a" fontFamily="monospace" fontSize="15"><text x="185" y="794">AVAILABILITY / SUPPORTING DETAIL</text><text x="1020" y="832">STRUCTURE STUDY</text></g>
@@ -35,7 +36,7 @@ export function ProjectTransformation({ project, onClose }) {
   return <section className="studio-transformation" id="transformation" aria-labelledby="transformation-title" onKeyDown={event => { if (event.key === 'Escape') { event.stopPropagation(); onClose(); } }}>
     <div className="studio-case-topline"><span className="studio-kicker">From structure to character / {project.name}</span><button type="button" className="studio-case-close" onClick={onClose}>Close comparison <span aria-hidden="true">×</span></button></div>
     <div className="transformation-heading"><h3 id="transformation-title" ref={heading} tabIndex={-1}>Same bones.<br /><em>Whole new feeling.</em></h3><p>Slide between the structure and the finished interface.<br /><span>Wireframe reconstructed for this comparison.</span></p></div>
-    <div className="transformation-browser"><span aria-hidden="true">● ● ●</span><span>{project.url.replace('https://', '')} / a closer look</span><span aria-hidden="true">↗</span></div>
+    <div className="transformation-browser"><span aria-hidden="true"><span className="win-dots" aria-hidden="true"><i /><i /><i /></span></span><span>{project.url.replace('https://', '')} / a closer look</span><span aria-hidden="true"><PhArrowUpRight aria-hidden="true" className="ph-icon" /></span></div>
     <div className="transformation-stage" style={{ '--reveal': `${reveal}%` }}>
       <ReconstructedWireframe />
       <div className="transformation-finished"><img src={project.screenshot} alt={`${project.name} finished homepage with navy colors, transport photography, and red contact buttons`} width="1400" height="1225" loading="lazy" /></div>
@@ -44,6 +45,6 @@ export function ProjectTransformation({ project, onClose }) {
       <span className="transformation-divider" aria-hidden="true" /><span className="transformation-grip" aria-hidden="true">‹ <i /> ›</span>
       <input className="transformation-slider" id="transformation-reveal" type="range" min="0" max="100" value={reveal} aria-label="Finished design revealed" aria-valuetext={`${reveal}% finished design, ${100 - reveal}% reconstructed wireframe`} aria-describedby="transformation-help" onChange={event => setReveal(Number(event.target.value))} />
     </div>
-    <div className="transformation-controls"><p id="transformation-help">Drag to reveal <span aria-hidden="true">↔</span><span>Or focus the image and use the arrow keys.</span></p><div className="transformation-presets" role="group" aria-label="Comparison view"><button type="button" aria-pressed={reveal === 0} onClick={() => setReveal(0)}>Wireframe</button><button type="button" aria-pressed={reveal === 50} onClick={() => setReveal(50)}>50 / 50</button><button type="button" aria-pressed={reveal === 100} onClick={() => setReveal(100)}>Finished</button></div></div>
+    <div className="transformation-controls"><p id="transformation-help">Drag to reveal <span aria-hidden="true"><PhArrowsLeftRight aria-hidden="true" className="ph-icon" /></span><span>Or focus the image and use the arrow keys.</span></p><div className="transformation-presets" role="group" aria-label="Comparison view"><button type="button" aria-pressed={reveal === 0} onClick={() => setReveal(0)}>Wireframe</button><button type="button" aria-pressed={reveal === 50} onClick={() => setReveal(50)}>50 / 50</button><button type="button" aria-pressed={reveal === 100} onClick={() => setReveal(100)}>Finished</button></div></div>
   </section>;
 }

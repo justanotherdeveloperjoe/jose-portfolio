@@ -1,3 +1,4 @@
+import { X as PhX, Stop as PhStop, Play as PhPlay } from '@phosphor-icons/react';
 import { useRef, useState } from 'react';
 import { jsExamples, jsExampleNotes, jsExampleData } from '../../data/jsExamples.js';
 import { runJs, TIME_LIMIT_MS } from '../../lib/runJs.js';
@@ -43,16 +44,16 @@ export function JsLab() {
   return <div className="learning-scene lab-scene">
     <LabIntro title="The logic behind the interface.">{jsExampleNotes[example]}</LabIntro>
     <div className="lab-window">
-      <div className="lab-bar"><span aria-hidden="true">● ● ●</span><span>website.js</span><span>JS</span></div>
+      <div className="lab-bar"><span aria-hidden="true"><span className="win-dots" aria-hidden="true"><i /><i /><i /></span></span><span>website.js</span><span>JS</span></div>
       <CodeEditor language="js" value={code} onChange={setCode} onRun={run} label="JavaScript code — edit it, then run it" />
       <div className="lab-output" data-state={running ? 'running' : lines.length ? 'done' : 'empty'}>
-        {lines.length ? lines.map((line, i) => <div key={i} className={`lab-line is-${line.kind}`}><span aria-hidden="true">{line.kind === 'result' ? '←' : line.kind === 'error' ? '✕' : line.kind === 'stopped' ? '■' : '›'}</span>{line.text}</div>)
+        {lines.length ? lines.map((line, i) => <div key={i} className={`lab-line is-${line.kind}`}><span aria-hidden="true">{line.kind === 'result' ? '←' : line.kind === 'error' ? <PhX aria-hidden="true" className="ph-icon" /> : line.kind === 'stopped' ? <PhStop aria-hidden="true" className="ph-icon" /> : '›'}</span>{line.text}</div>)
           : <div className="lab-line is-hint"><span aria-hidden="true">›</span>{running ? 'Running…' : 'Edit the code and press Run. It really runs — in a sandbox, off the page.'}</div>}
       </div>
     </div>
     <div className="lab-actions">
       <div className="lab-examples" role="group" aria-label="Start from an example">{Object.keys(jsExamples).map(name => <button key={name} type="button" aria-pressed={example === name} onClick={() => choose(name)}>{name}</button>)}</div>
-      <button type="button" className="lab-run" onClick={run} aria-disabled={running}>{running ? 'Running…' : 'Run it'} <span aria-hidden="true">▶</span></button>
+      <button type="button" className="lab-run" onClick={run} aria-disabled={running}>{running ? 'Running…' : 'Run it'} <span aria-hidden="true"><PhPlay aria-hidden="true" className="ph-icon" /></span></button>
     </div>
     <button type="button" className="lab-reset" onClick={() => choose(example)}>Reset code</button>
     <details className="lab-reference"><summary>Available data · {jsExampleData.projects.length} projects</summary><pre>{JSON.stringify(jsExampleData.projects, null, 2)}</pre><p>Use data.projects in any example. Each run gets a fresh copy with name, category, and status (“live” or “soon”).</p></details>

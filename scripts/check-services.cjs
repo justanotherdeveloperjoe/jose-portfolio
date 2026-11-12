@@ -23,11 +23,7 @@ const base = process.env.SERVICES_URL || 'http://127.0.0.1:4173';
       const card = section.locator(`.service-${id}`);
       assert.ok((await card.locator('.service-features li').count()) >= 5);
       assert.equal(await card.locator('.service-example a').getAttribute('href'), id === 'custom' ? '#service-case-study' : url);
-      const mail = new URL(await card.locator('.service-inquiry').getAttribute('href'));
-      assert.equal(mail.protocol, 'mailto:');
-      assert.equal(mail.pathname, 'devilfruitd3v@proton.me');
-      assert.match(mail.searchParams.get('subject'), new RegExp(name));
-      assert.match(mail.searchParams.get('body'), /My business \/ idea:/);
+      assert.equal(await card.locator('.service-inquiry').getAttribute('href'), '#contact');
     }
     await page.waitForFunction(() => [...document.querySelectorAll('#services img')].every(image => image.complete && image.naturalWidth > 0));
     assert.equal(await page.locator('#p04').count(), 1);

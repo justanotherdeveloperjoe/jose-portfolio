@@ -1,0 +1,43 @@
+/* Subtle directional shadows.
+   Light is treated as coming from four angles, so each shadow falls a little
+   toward one side: top, right, bottom or left. Colors follow --shadow-color, so
+   light and dark themes stay consistent. Selectors use :root to outrank the
+   component stylesheets without editing them. */
+
+/* Dark theme (default): a stronger ink and a wider, softer blur so the shadows
+   show against dark surfaces. Offsets stay small so each one still reads as a
+   gentle lean toward its side. */
+:root {
+  --shade-ink: rgba(0, 0, 0, 0.85);
+  --shade-soft: color-mix(in srgb, var(--shade-ink) 80%, transparent);
+  --shade-top: 0 -7px 24px -10px var(--shade-soft);
+  --shade-right: 7px 0 24px -10px var(--shade-soft);
+  --shade-bottom: 0 7px 24px -10px var(--shade-soft);
+  --shade-left: -7px 0 24px -10px var(--shade-soft);
+}
+
+/* Light theme keeps the original, lighter shadows (mirrors index.css). */
+@media (prefers-color-scheme: light) {
+  :root {
+    --shade-ink: var(--shadow-color);
+    --shade-top: 0 -6px 14px -8px var(--shade-soft);
+    --shade-right: 6px 0 14px -8px var(--shade-soft);
+    --shade-bottom: 0 6px 14px -8px var(--shade-soft);
+    --shade-left: -6px 0 14px -8px var(--shade-soft);
+  }
+}
+
+/* Deck cards cycle through all four angles. */
+:root .studio-deck-card:nth-child(4n+1) { box-shadow: var(--shade-top); }
+:root .studio-deck-card:nth-child(4n+2) { box-shadow: var(--shade-right); }
+:root .studio-deck-card:nth-child(4n+3) { box-shadow: var(--shade-bottom); }
+:root .studio-deck-card:nth-child(4n+4) { box-shadow: var(--shade-left); }
+
+/* Single surfaces take one angle each. */
+:root .workbench-estate-browser { box-shadow: var(--shade-right); }
+:root .workbench-afh-browser { box-shadow: var(--shade-left); }
+:root .service-business-phone { box-shadow: var(--shade-top); }
+:root .service-live-demo { box-shadow: var(--shade-bottom); }
+:root .learning-panel { box-shadow: var(--shade-bottom); }
+:root .lab-window { box-shadow: var(--shade-top); }
+:root .task-window { box-shadow: var(--shade-right); }

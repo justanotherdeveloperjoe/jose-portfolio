@@ -1,4 +1,4 @@
-﻿const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 const assert=require('node:assert/strict');const fs=require('node:fs');
 (async()=>{const b=await chromium.launch();try{
  const p=await b.newPage({viewport:{width:1440,height:1000},reducedMotion:'reduce'});const errors=[];p.on('pageerror',e=>errors.push(e.message));
@@ -9,7 +9,7 @@ const assert=require('node:assert/strict');const fs=require('node:fs');
  for(const width of [1440,768,390,320]){
   await p.setViewportSize({width,height:1000});await p.evaluate(()=>document.fonts.ready);
   if(baseline[width])for(const[selector,expected]of Object.entries(baseline[width])){
-   if(selector==='#playground')continue; // redesigned since this baseline; scripts/check-playground.cjs covers it
+   if(selector==='#playground'||selector==='#contact')continue; // redesigned since this baseline; scripts/check-playground.cjs covers it
    const actual=await p.locator(selector).evaluate(el=>{const r=el.getBoundingClientRect();return{html:el.outerHTML,width:r.width,height:r.height}});
    assert.ok(Math.abs(actual.width-expected.width)<1&&Math.abs(actual.height-expected.height)<1,`${selector} dimensions changed at ${width}`);
    if(selector!=='.mountain-signature')assert.equal(clean(actual.html),clean(expected.html),`${selector} markup changed`);
@@ -28,11 +28,9 @@ const assert=require('node:assert/strict');const fs=require('node:fs');
  assert.ok(positions.near>positions.far&&positions.near<=7&&positions.far<=3,'Subtle independent layer depth');
  await p.screenshot({path:'.preview/footer-desktop-active.png'});
  const settled=await mountain.getAttribute('style');await p.waitForTimeout(250);assert.equal(await mountain.getAttribute('style'),settled,'Settles without continuing style updates');
- const cta=p.locator('#contact > a');const headlineBox=await cta.boundingBox();await cta.focus();await p.waitForTimeout(300);
- assert.ok(await cta.evaluate(el=>el.matches(':focus-visible')));assert.equal(await cta.locator('em').evaluate(el=>getComputedStyle(el).color),'rgb(229, 255, 167)');
- assert.equal(await cta.getAttribute('href'),'mailto:devilfruitd3v@proton.me');
- assert.equal((await cta.boundingBox()).x,headlineBox.x,'Headline does not move');
- assert.match(await cta.locator('span').evaluate(el=>getComputedStyle(el).transform),/5, -5/);
+ const field=p.locator('#contact-name');await field.focus();
+ assert.ok(await field.evaluate(el=>el.matches(':focus-visible')));
+ assert.equal(await p.locator('#contact a[href^="mailto:"]').count(),0);
  await p.mouse.move(1280,y);await p.waitForTimeout(250);await p.emulateMedia({reducedMotion:'reduce'});await p.waitForTimeout(100);
  assert.equal(await light.getAttribute('cx'),'720.00');assert.equal(await mountain.locator('.mountain-ridge').evaluate(el=>getComputedStyle(el).transform),'none');
  await p.mouse.move(150,y);assert.equal(await light.getAttribute('cx'),'720.00');

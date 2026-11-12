@@ -1,3 +1,4 @@
+import { ArrowUpRight as PhArrowUpRight } from '@phosphor-icons/react';
 import { useEffect, useRef, useState } from 'react';
 
 export function ProjectAnnotations({ project, notes, onClose }) {
@@ -36,7 +37,7 @@ export function ProjectAnnotations({ project, notes, onClose }) {
       </div>
       <div className="studio-case-layout">
         <div className="studio-case-visual">
-          <div className="studio-case-browser"><span aria-hidden="true">● ● ●</span><span>{project.url.replace('https://', '')} / homepage</span><span aria-hidden="true">↗</span></div>
+          <div className="studio-case-browser"><span aria-hidden="true"><span className="win-dots" aria-hidden="true"><i /><i /><i /></span></span><span>{project.url.replace('https://', '')} / homepage</span><span aria-hidden="true"><PhArrowUpRight aria-hidden="true" className="ph-icon" /></span></div>
           <div className="studio-case-canvas">
             <div className="studio-case-image">
               <img src={project.screenshot} alt={`${project.name} homepage showing its service headline, reassurance cards, and contact actions`} width="1400" height="1225" />
@@ -64,7 +65,7 @@ export function ProjectAnnotations({ project, notes, onClose }) {
           <div className="studio-case-note-options" role="group" aria-label="Design decisions">
             {notes.map((note, index) => (
               <button key={note.id} type="button" aria-pressed={selected === index} aria-controls={panelId} onClick={() => setSelected(index)}>
-                <span>{note.number}</span><span>{note.category}</span><span aria-hidden="true">↗</span>
+                <span>{note.number}</span><span>{note.category}</span><span aria-hidden="true"><PhArrowUpRight aria-hidden="true" className="ph-icon" /></span>
               </button>
             ))}
           </div>
@@ -76,7 +77,7 @@ export function ProjectAnnotations({ project, notes, onClose }) {
           </div>
         </div>
       </div>
-      <div className="studio-case-footer"><span>Good interfaces are a collection of small decisions.</span><a href={project.url} target="_blank" rel="noreferrer">Explore the live website ↗</a></div>
+      <div className="studio-case-footer"><span>Good interfaces are a collection of small decisions.</span><a href={project.url} target="_blank" rel="noreferrer">Explore the live website <PhArrowUpRight aria-hidden="true" className="ph-icon" /></a></div>
     </section>
   );
 }

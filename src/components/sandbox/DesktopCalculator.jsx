@@ -1,3 +1,4 @@
+import { Backspace as PhBackspace } from '@phosphor-icons/react';
 import { useRef, useState } from 'react';
 import { calculate } from './utilityMath.js';
 
@@ -32,7 +33,7 @@ export function DesktopCalculator() {
       <label className="linux-sr-only" htmlFor="linux-calculation">Calculation</label>
       <input ref={input} id="linux-calculation" autoComplete="off" spellCheck={false} placeholder="24 × (3 + 2)" maxLength={120} value={expression} onChange={event => { setExpression(event.target.value); setError(''); finished.current = false; }} onKeyDown={event => { if (event.key === 'Escape') { event.preventDefault(); press('AC'); } }} />
       <output className="linux-calculator-result" aria-label="Calculation result" aria-live="polite">{result}</output>
-      <div className="linux-calculator-keys">{keys.map(key => <button type="button" key={key} aria-label={key === 'AC' ? 'Clear calculation' : key === '⌫' ? 'Backspace' : key} className={/[÷×−+]/.test(key) ? 'is-operator' : ''} onClick={() => press(key)}>{key}</button>)}</div>
+      <div className="linux-calculator-keys">{keys.map(key => <button type="button" key={key} aria-label={key === 'AC' ? 'Clear calculation' : key === '⌫' ? 'Backspace' : key} className={/[÷×−+]/.test(key) ? 'is-operator' : ''} onClick={() => press(key)}>{key === '⌫' ? <PhBackspace aria-hidden="true" className="ph-icon" /> : key}</button>)}</div>
       <button className="linux-primary linux-calculate" type="submit">Calculate <span aria-hidden="true">=</span></button>
     </form>
     <p className="linux-utility-status" role="status">{error || 'Enter to calculate · % divides a value by 100'}</p>
