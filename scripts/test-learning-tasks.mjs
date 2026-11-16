@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { prepareAssets, sampleAssetNames, toCsv, deliveryReducer, initialDelivery } from '../src/lib/learningTasks.js';
+import { prepareAssets, sampleAssetNames, toCsv, deliveryReducer, initialDelivery } from '../src/lib/learningTasks.ts';
 
 assert.deepEqual(prepareAssets(sampleAssetNames).map(file => file.path), ['images/homepage-hero.jpg', 'images/brand-logo.svg', 'images/team-portrait.png', 'documents/menu-summer.pdf', 'images/homepage-hero-2.jpg']);
 assert.deepEqual(prepareAssets('café.JPG\ncafe.jpg\ncafe-2.jpg\nCAFE.JPG').map(file => file.path), ['images/cafe.jpg', 'images/cafe-2.jpg', 'images/cafe-2-2.jpg', 'images/cafe-3.jpg']);

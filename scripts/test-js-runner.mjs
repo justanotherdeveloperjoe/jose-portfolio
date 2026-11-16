@@ -1,8 +1,8 @@
 // The JavaScript lab's runner: console output reads like a real console, errors are explained, and every
 // starter snippet runs. (The 2-second stop for endless loops lives in the browser; check-learning-lab.cjs covers it.)
 import assert from 'node:assert/strict';
-import { runCode, formatValue, MAX_LINE_LENGTH } from '../src/lib/jsRunner.js';
-import { jsExamples, jsExampleData } from '../src/data/jsExamples.js';
+import { runCode, formatValue, MAX_LINE_LENGTH } from '../src/lib/jsRunner.ts';
+import { jsExamples, jsExampleData } from '../src/data/jsExamples.ts';
 
 async function run(code) {
   const lines = [];

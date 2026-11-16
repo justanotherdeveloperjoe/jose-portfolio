@@ -1,7 +1,7 @@
 // The SQL lab's engine: real answers about the real projects, and friendly errors instead of crashes.
 import assert from 'node:assert/strict';
-import { runQuery, SqlError } from '../src/lib/miniSql.js';
-import { labTables } from '../src/data/labTables.js';
+import { runQuery, SqlError } from '../src/lib/miniSql.ts';
+import { labTables } from '../src/data/labTables.ts';
 
 const run = sql => runQuery(sql, labTables);
 const names = sql => run(sql).rows.map(row => row[0]);

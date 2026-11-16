@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { createPet, advancePet, actOnPet, evolutionProgress } from '../src/lib/digimon/engine.js';
+import { createPet, advancePet, actOnPet, evolutionProgress } from '../src/lib/digimon/engine.ts';
 const start = 1800000000000;
 let pet = createPet(start);
 let result = actOnPet(pet, 'feed', start); assert.equal(result.pet.food, 100);
@@ -21,9 +21,9 @@ assert.equal(pet.careMistakes, 1, 'One mistake per neglect episode');
 assert.ok(evolutionProgress(pet).requirements.find(r => r.label === 'Training').needed > 24);
 console.log('Care checks passed: actions, cooldowns, rest, bounded decay, clocks and neglect episodes.');
 
-const { decodePet, readPet, writePet } = await import('../src/lib/digimon/storage.js');
-const { stages } = await import('../src/data/digimon/stages.js');
-const { evolutionRules } = await import('../src/data/digimon/evolutionRules.js');
+const { decodePet, readPet, writePet } = await import('../src/lib/digimon/storage.ts');
+const { stages } = await import('../src/data/digimon/stages.ts');
+const { evolutionRules } = await import('../src/data/digimon/evolutionRules.ts');
 const memory = new Map(), storage = { getItem: key => memory.get(key) ?? null, setItem: (key, value) => memory.set(key, value) };
 for (const stage of stages) {
   writePet({ ...createPet(start), stage: stage.id, training: 50 }, start, storage);

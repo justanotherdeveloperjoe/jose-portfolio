@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
-import { appendCommand, executeCommand, limits, parseCommand } from '../src/lib/sandbox/commands.js';
-import { directories, files, normalizePath } from '../src/lib/sandbox/filesystem.js';
-import { projects } from '../src/data/projects.js';
-import { learningTopics } from '../src/data/learning.js';
-import { HOME, freshHome, readHome, saveFile, validateHome, filesystem } from '../src/lib/sandbox/home.js';
-import { completeCommand } from '../src/lib/sandbox/computer.js';
+import { appendCommand, executeCommand, limits, parseCommand } from '../src/lib/sandbox/commands.ts';
+import { directories, files, normalizePath } from '../src/lib/sandbox/filesystem.ts';
+import { projects } from '../src/data/projects.ts';
+import { learningTopics } from '../src/data/learning.ts';
+import { HOME, freshHome, readHome, saveFile, validateHome, filesystem } from '../src/lib/sandbox/home.ts';
+import { completeCommand } from '../src/lib/sandbox/computer.ts';
 
 assert.deepEqual(parseCommand('  cat "learning/react.txt" '), ['cat', 'learning/react.txt']);
 assert.deepEqual(parseCommand("cat 'about.txt'"), ['cat', 'about.txt']);
