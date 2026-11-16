@@ -1,5 +1,5 @@
-import { ArrowUpRight as PhArrowUpRight, Asterisk as PhAsterisk, ArrowDownLeft as PhArrowDownLeft, ArrowDownRight as PhArrowDownRight } from '@phosphor-icons/react';
-import { useEffect, useRef, useState } from 'react';
+import { ArrowUpRight as PhArrowUpRight, Asterisk as PhAsterisk, ArrowDownRight as PhArrowDownRight } from '@phosphor-icons/react';
+import { useState } from 'react';
 import type { CSSProperties } from 'react';
 import { projects } from '../data/projects.ts';
 import { useLocalClock } from '../hooks/useLocalClock.ts';
@@ -13,13 +13,13 @@ import { SandboxSection } from './sandbox/SandboxSection.tsx';
 import { ServicesSection } from './ServicesSection.tsx';
 import { RubiksCube } from './RubiksCube.tsx';
 import { ContactSection } from './ContactSection.tsx';
+import { IsoCity } from './IsoCity.tsx';
 import type { ContactInquiry } from './ContactSection.tsx';
 import { sendMessage } from '../lib/sendMessage.ts';
 
 // Only called with the hardcoded slugs below, all of which exist in projects.
 const bySlug = (slug: string) => projects.find(project => project.slug === slug)!;
 const deckLeads = ['el-sotano-comico', 'propiedades-allende', 'afh-logistics'].map(bySlug);
-const liveProjects = [...deckLeads, ...projects.filter(project => project.status === 'live' && !deckLeads.includes(project))];
 // Alternates light and dark artwork in every column count (3, 2 and 1).
 const workbenchProjects = ['ikinuki-trip-agency', 'propiedades-allende', 'afh-logistics', 'tk-industrial', 'el-sotano-comico', 'nutriologa-allende', 'wolf-fitness'].map(bySlug);
 const pad = (number: number) => String(number).padStart(2, '0');
@@ -29,54 +29,6 @@ function Asterisk({ className = '' }) {
   return <svg className={className} viewBox="0 0 100 100" fill="none" aria-hidden="true">
     {[0, 45, 90, 135].map((angle) => <path key={angle} d="M50 5V95" stroke="currentColor" strokeWidth="15" transform={`rotate(${angle} 50 50)`} />)}
   </svg>;
-}
-
-function ProjectDeck() {
-  const [selected, setSelected] = useState(0);
-  const deck = useRef<HTMLDivElement>(null);
-  const tilt = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const media = window.matchMedia('(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)');
-    // Both refs are attached on mount, before this effect runs.
-    const element = deck.current!;
-    function reset() {
-      tilt.current!.style.setProperty('--tilt-x', '0deg');
-      tilt.current!.style.setProperty('--tilt-y', '0deg');
-    }
-    function move(event: PointerEvent) {
-      if (!media.matches || event.pointerType === 'touch') return;
-      const bounds = element.getBoundingClientRect();
-      tilt.current!.style.setProperty('--tilt-x', `${(0.5 - (event.clientY - bounds.top) / bounds.height) * 7}deg`);
-      tilt.current!.style.setProperty('--tilt-y', `${((event.clientX - bounds.left) / bounds.width - 0.5) * 9}deg`);
-    }
-    element.addEventListener('pointermove', move);
-    element.addEventListener('pointerleave', reset);
-    element.addEventListener('pointercancel', reset);
-    media.addEventListener('change', reset);
-    return () => {
-      element.removeEventListener('pointermove', move);
-      element.removeEventListener('pointerleave', reset);
-      element.removeEventListener('pointercancel', reset);
-      media.removeEventListener('change', reset);
-    };
-  }, []);
-  const active = liveProjects[selected];
-  return <div className="studio-deck" ref={deck}>
-    <div className="studio-deck-label"><span>SELECTED WORK / {new Date().getFullYear()}</span><span>A FEW OPEN TABS <PhArrowDownLeft aria-hidden="true" className="ph-icon" /></span></div>
-    <div className="studio-deck-arrival"><div className="studio-deck-stack" ref={tilt}>
-      {liveProjects.map((project, index) => {
-        const position = (index - selected + liveProjects.length) % liveProjects.length;
-        return <a key={project.id} href={`#${project.id}`} className={`studio-deck-card deck-position-${position}`} tabIndex={position === 0 ? 0 : -1} aria-hidden={position !== 0}>
-          <div className="studio-window-bar"><span><span className="win-dots" aria-hidden="true"><i /><i /><i /></span></span><span>{project.url ? project.url.replace(/^https?:\/\//, '') : 'Project preview / launching soon'}</span><span><PhArrowUpRight aria-hidden="true" className="ph-icon" /></span></div>
-          <img src={project.screenshot ?? undefined} alt={`${project.name} website preview`} fetchpriority={index === 0 ? 'high' : 'auto'} />
-        </a>;
-      })}
-    </div></div>
-    <div className="studio-deck-controls">
-      <span aria-live="polite">0{selected + 1} / 0{liveProjects.length} <span className="studio-deck-current">{active.name}</span></span>
-      <div><button type="button" aria-label="Previous project preview" onClick={() => setSelected((selected + liveProjects.length - 1) % liveProjects.length)}>←</button><button type="button" aria-label="Next project preview" onClick={() => setSelected((selected + 1) % liveProjects.length)}>→</button></div>
-    </div>
-  </div>;
 }
 
 function SelectedWork() {
@@ -112,7 +64,7 @@ export function StudioPortfolio() {
             </div>
             <div className="studio-hero-footnote"><span>Design-minded.<br />Detail-obsessed.</span><span className="studio-handnote">Always a work in progress.</span></div>
           </div>
-          <ProjectDeck />
+          <IsoCity facades={deckLeads.map(project => project.screenshot).filter((src): src is string => Boolean(src))} />
         </div>
         <div className="studio-hero-baseline"><span>LOCAL TIME {time} / MX</span><span>Scroll a little. Find something good. ↓</span><span>SELECTED WORK & EXPERIMENTS</span></div>
       </section>

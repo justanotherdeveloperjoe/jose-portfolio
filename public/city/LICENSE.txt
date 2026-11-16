@@ -1,0 +1,4 @@
+Sprites in this folder come from Kenney's isometric asset packs
+(Isometric Nature, Isometric Tiles City, Isometric Tiles Vehicles),
+https://kenney.nl/assets/tag:isometric, licensed Creative Commons CC0 1.0
+(public domain; no attribution required). Mirror used: github.com/shorepine/kenney.
