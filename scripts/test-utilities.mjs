@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { calculate, calendarDays, dateKey, timerElapsed } from '../src/components/sandbox/utilityMath.js';
+import { calculate, calendarDays, dateKey, timerElapsed } from '../src/components/sandbox/utilityMath.ts';
 
 assert.equal(calculate('2 + 3 × 4'), '14');
 assert.equal(calculate('(2 + 3) × 4'), '20');

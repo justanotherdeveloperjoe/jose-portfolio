@@ -1,7 +1,7 @@
 // Checks the cube is a real, valid Rubik's cube at every step — not just that it ends up solved.
 // The rule a real cube always obeys: every colored sticker faces outward, and no outside square is plastic.
 import assert from 'node:assert/strict';
-import { createSolvedCubies, randomMove, invertMove, applyMove, applyMoves, faces, turnMatrix, transform, identity } from '../src/lib/rubiksCube.js';
+import { createSolvedCubies, randomMove, invertMove, applyMove, applyMoves, faces, turnMatrix, transform, identity } from '../src/lib/rubiksCube.ts';
 
 // The browser's own rotations, from the CSS Transforms spec, computed independently of the cube code.
 function cssRotation(fn, degrees) {

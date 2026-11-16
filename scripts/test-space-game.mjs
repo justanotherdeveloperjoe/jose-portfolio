@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { createGame, stepGame, overlaps, GAME_WIDTH, GAME_HEIGHT } from '../src/components/spaceGame.js';
+import { createGame, stepGame, overlaps, GAME_WIDTH, GAME_HEIGHT } from '../src/components/spaceGame.ts';
 const idle = { left: false, right: false, fire: false };
 const game = createGame();
 assert.equal(game.enemies.length, 21);

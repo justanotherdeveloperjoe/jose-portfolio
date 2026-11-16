@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
-import { sunPosition, moonPosition, moonPhase } from '../src/lib/sky.js';
-import { skyline } from '../src/data/skyline.js';
-import { daylight, monterreyDay, projection, sunTimeAt } from '../src/lib/monterreyScene.js';
-import { forecastSeries, weatherAt } from '../src/lib/weather.js';
+import { sunPosition, moonPosition, moonPhase } from '../src/lib/sky.ts';
+import { skyline } from '../src/data/skyline.ts';
+import { daylight, monterreyDay, projection, sunTimeAt } from '../src/lib/monterreyScene.ts';
+import { forecastSeries, weatherAt } from '../src/lib/weather.ts';
 
 const { lat, lon } = skyline.viewpoint;
 const minutes = (start, count) => Array.from({ length: count }, (_, i) => new Date(Date.parse(start) + i * 60000));
