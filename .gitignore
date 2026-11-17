@@ -3,3 +3,4 @@ dist/
 .preview/
 .cache/
 debug.log
+public/__bake/

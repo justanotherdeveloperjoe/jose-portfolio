@@ -5,6 +5,9 @@ import './index.css';
 import './shadows.css';
 import './hero-lift.css';
 import './iso-city.css';
+import './iso-city-world.css';
+import './work-carousel.css';
+import './about-hub.css';
 
 // index.html always provides #root.
 createRoot(document.getElementById('root')!).render(
