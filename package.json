@@ -17,6 +17,7 @@
     "test:sql": "node scripts/test-mini-sql.mjs",
     "test:js": "node scripts/test-js-runner.mjs",
     "test:learning": "node scripts/test-learning-tasks.mjs",
+    "test:city": "node scripts/test-city-traffic.mjs",
     "build:skyline": "node scripts/build-skyline.mjs",
     "typecheck": "tsc --noEmit -p ."
   },
