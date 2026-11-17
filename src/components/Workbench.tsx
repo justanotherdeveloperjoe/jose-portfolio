@@ -1,6 +1,6 @@
-import { ArrowUpRight as PhArrowUpRight, ArrowsLeftRight as PhArrowsLeftRight } from '@phosphor-icons/react';
+import { ArrowUpRight as PhArrowUpRight, ArrowsLeftRight as PhArrowsLeftRight, ArrowLeft as PhArrowLeft, ArrowRight as PhArrowRight } from '@phosphor-icons/react';
 import { useRef, useState } from 'react';
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { ProjectAnnotations } from './ProjectAnnotations.tsx';
 import { ProjectTransformation } from './ProjectTransformation.tsx';
 import { afhNotes } from '../data/projectNotes.ts';
@@ -48,46 +48,104 @@ function statusLabel(project: Project) {
 
 export function Workbench({ projects, children }: { projects: Project[]; children: ReactNode }) {
   const [panel, setPanel] = useState<Panel | null>(null);
+  const [active, setActive] = useState(0);
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const triggers = useRef<Record<string, HTMLButtonElement | null>>({});
+  const swipe = useRef<number | null>(null);
   const panelProject = panel && projects.find(project => project.slug === panel.slug);
+  const count = projects.length;
+  const current = projects[active];
+  const pad = (n: number) => String(n).padStart(2, '0');
+
+  function go(index: number) {
+    setActive((index + count) % count);
+    setDetailsOpen(false);
+  }
 
   function closePanel() {
     // Only reachable from an open panel.
     const trigger = triggers.current[`${panel!.slug}-${panel!.view}`];
     setPanel(null);
-    const target = trigger?.checkVisibility?.() ? trigger : trigger?.closest('.workbench-card')!.querySelector('summary');
-    target?.focus({ preventScroll: true });
-    target?.scrollIntoView({ block: 'nearest', behavior: 'instant' });
+    trigger?.focus({ preventScroll: true });
+    trigger?.scrollIntoView({ block: 'nearest', behavior: 'instant' });
   }
 
-  return <div className="studio-workbench" id="workbench">
-    <div className="workbench-grid">
-      <div className="workbench-intro">{children}</div>
-      {projects.map((project, index) => {
-        const live = project.status === 'live';
-        const notes = designNotes[project.slug];
-        return <article className={`workbench-card workbench-${project.theme}${live ? ' is-live' : ''}`} key={project.id} id={project.id}>
-          <details>
-            <summary>
-              <span className="workbench-art" aria-hidden="true"><ProjectArtwork project={project} /></span>
-              <h3 className="workbench-card-heading"><span className="workbench-number">{String(index + 1).padStart(2, '0')}</span><span>{project.name}</span></h3>
-              <span className="workbench-card-meta"><span>{project.category}</span><span className="workbench-expand"><span className="workbench-closed-label">{live ? 'Project details' : 'Explore study'}</span><span className="workbench-open-label">{live ? 'Close details' : 'Close study'}</span><b aria-hidden="true">+</b></span></span>
-            </summary>
-            <div className="workbench-details">
-              <p>{project.blurb}</p>
-              <ul aria-label="Project features">{project.tags.map(tag => <li key={tag}>{tag}</li>)}</ul>
-              {notes && <div className="workbench-closer" role="group" aria-label={`A closer look at ${project.name}`}>
-                <button ref={node => { triggers.current[`${project.slug}-notes`] = node; }} type="button" aria-expanded={panel?.slug === project.slug && panel.view === 'notes'} aria-controls={`${project.id}-under-the-hood`} onClick={() => setPanel(panel?.view === 'notes' ? null : { slug: project.slug, view: 'notes' })}>Design notes <span>{String(notes.length).padStart(2, '0')}</span></button>
-                <button ref={node => { triggers.current[`${project.slug}-compare`] = node; }} type="button" aria-expanded={panel?.slug === project.slug && panel.view === 'compare'} aria-controls="transformation" onClick={() => setPanel(panel?.view === 'compare' ? null : { slug: project.slug, view: 'compare' })}>Wireframe comparison <span aria-hidden="true"><PhArrowsLeftRight aria-hidden="true" className="ph-icon" /></span></button>
-              </div>}
-            </div>
-          </details>
-          <div className="workbench-card-foot">
-            <span className={`workbench-status ${live ? 'is-live' : 'is-progress'}`}><i aria-hidden="true" />{statusLabel(project)}</span>
-            {live && <a className="workbench-visit" href={project.url ?? undefined} target="_blank" rel="noreferrer" aria-label={`Visit website: ${project.name} (opens in a new tab)`}>Visit website <span aria-hidden="true"><PhArrowUpRight aria-hidden="true" className="ph-icon" /></span></a>}
-          </div>
-        </article>;
-      })}
+  const live = current.status === 'live';
+  const notes = designNotes[current.slug];
+
+  return <div className="studio-workbench wbc" id="workbench">
+    <div className="wbc-layout">
+      <div className="workbench-intro wbc-intro">{children}</div>
+      <div
+        className="wbc-stage"
+        role="region"
+        aria-roledescription="carousel"
+        aria-label="Selected work"
+        onKeyDown={event => {
+          if (event.key === 'ArrowLeft') { event.preventDefault(); go(active - 1); }
+          if (event.key === 'ArrowRight') { event.preventDefault(); go(active + 1); }
+        }}
+        onPointerDown={event => { swipe.current = event.clientX; }}
+        onPointerUp={event => {
+          if (swipe.current === null) return;
+          const dx = event.clientX - swipe.current;
+          swipe.current = null;
+          if (Math.abs(dx) > 50) go(active + (dx < 0 ? 1 : -1));
+        }}
+      >
+        <div className="wbc-track">
+          {projects.map((project, index) => {
+            let offset = index - active;
+            if (offset > count / 2) offset -= count;
+            if (offset < -count / 2) offset += count;
+            const isActive = offset === 0;
+            const projectLive = project.status === 'live';
+            return <div className={`wbc-slot${isActive ? ' is-active' : ''}`} key={project.id} style={{ '--o': offset, '--s': Math.sign(offset), '--abs': Math.abs(offset) } as CSSProperties}>
+              <article
+                className={`wbc-card workbench-${project.theme}${projectLive ? ' is-live' : ''}`}
+                id={project.id}
+                aria-roledescription="slide"
+                aria-label={`${pad(index + 1)} of ${pad(count)}: ${project.name}`}
+                inert={!isActive ? '' : undefined}
+              >
+                <header className="wbc-head">
+                  <span className="wbc-kicker">{project.name} / {project.category}</span>
+                  <span className={`wbc-badge ${projectLive ? 'is-live' : 'is-progress'}`}><i aria-hidden="true" />{projectLive ? 'Live' : 'In progress'}</span>
+                </header>
+                <span className="wbc-preview workbench-art" aria-hidden="true"><ProjectArtwork project={project} /></span>
+                <h3 className="wbc-title"><span className="wbc-number">{pad(index + 1)}</span><span>{project.name}</span></h3>
+                <p className="wbc-category">{project.category}</p>
+                <footer className="wbc-foot">
+                  <button type="button" className="wbc-details-toggle" aria-expanded={isActive && detailsOpen} aria-controls="wbc-details" onClick={() => setDetailsOpen(open => !open)}>
+                    {projectLive ? 'Project details' : 'Explore study'} <b aria-hidden="true">{isActive && detailsOpen ? '−' : '+'}</b>
+                  </button>
+                  {projectLive
+                    ? <a className="wbc-visit" href={project.url ?? undefined} target="_blank" rel="noreferrer" aria-label={`Visit website: ${project.name} (opens in a new tab)`}>Visit website <PhArrowUpRight aria-hidden="true" className="ph-icon" /></a>
+                    : <span className="wbc-soon">{statusLabel(project)}</span>}
+                </footer>
+              </article>
+              {!isActive && <button type="button" className="wbc-pick" tabIndex={-1} aria-label={`Show ${project.name}`} onClick={() => go(index)} />}
+            </div>;
+          })}
+        </div>
+        <div className="wbc-controls">
+          <button type="button" className="wbc-arrow" aria-label="Previous project" onClick={() => go(active - 1)}><PhArrowLeft aria-hidden="true" className="ph-icon" /></button>
+          <span className="wbc-count" aria-live="polite">{pad(active + 1)} / {pad(count)}</span>
+          <button type="button" className="wbc-arrow wbc-arrow-next" aria-label="Next project" onClick={() => go(active + 1)}><PhArrowRight aria-hidden="true" className="ph-icon" /></button>
+        </div>
+        <div className="wbc-dots" role="group" aria-label="Choose a project">
+          {projects.map((project, index) => <button key={project.id} type="button" className={index === active ? 'is-active' : ''} aria-label={project.name} aria-current={index === active} onClick={() => go(index)} />)}
+        </div>
+        {detailsOpen && <div className="wbc-details" id="wbc-details">
+          <p>{current.blurb}</p>
+          <ul aria-label="Project features">{current.tags.map(tag => <li key={tag}>{tag}</li>)}</ul>
+          {notes && <div className="workbench-closer" role="group" aria-label={`A closer look at ${current.name}`}>
+            <button ref={node => { triggers.current[`${current.slug}-notes`] = node; }} type="button" aria-expanded={panel?.slug === current.slug && panel.view === 'notes'} aria-controls={`${current.id}-under-the-hood`} onClick={() => setPanel(panel?.view === 'notes' ? null : { slug: current.slug, view: 'notes' })}>Design notes <span>{pad(notes.length)}</span></button>
+            <button ref={node => { triggers.current[`${current.slug}-compare`] = node; }} type="button" aria-expanded={panel?.slug === current.slug && panel.view === 'compare'} aria-controls="transformation" onClick={() => setPanel(panel?.view === 'compare' ? null : { slug: current.slug, view: 'compare' })}>Wireframe comparison <span aria-hidden="true"><PhArrowsLeftRight aria-hidden="true" className="ph-icon" /></span></button>
+          </div>}
+          {!live && <p className="wbc-details-note">{statusLabel(current)}</p>}
+        </div>}
+      </div>
     </div>
     {/* Panels open only from a project's notes buttons, which exist only for live projects with design notes. */}
     {panel?.view === 'notes' && <ProjectAnnotations project={panelProject as LiveProject} notes={designNotes[panel.slug]!} onClose={closePanel} />}

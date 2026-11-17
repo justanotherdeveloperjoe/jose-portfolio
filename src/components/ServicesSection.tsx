@@ -1,107 +1,104 @@
-import { ArrowUpRight as PhArrowUpRight } from '@phosphor-icons/react';
-import { useEffect, useRef, useState } from 'react';
-import type { CSSProperties, Ref, RefObject } from 'react';
+import { ArrowUpRight as PhArrowUpRight, Check as PhCheck, Eye as PhEye, Stack as PhStack, Lightning as PhLightning, Code as PhCode } from '@phosphor-icons/react';
+import { useRef, useState } from 'react';
+import type { KeyboardEvent } from 'react';
 import { projects } from '../data/projects.ts';
 import { serviceInquiry, serviceTiers } from '../data/services.ts';
 import type { ServiceTier } from '../data/services.ts';
-
-type Project = (typeof projects)[number];
-type InquiryHandler = (tier: ServiceTier) => void;
-import { ServiceCustomDemo } from './ServiceCustomDemo.tsx';
 import './ServicesSection.css';
+import './services-showcase.css';
 
-function PreviewBrowser({ project, className = '' }: { project: Project; className?: string }) {
-  return <div className={`service-browser ${className}`}>
-    <div className="service-browser-bar" aria-hidden="true"><span>• • •</span><span>{new URL(project.url!).hostname}</span><span><PhArrowUpRight aria-hidden="true" className="ph-icon" /></span></div>
-    <img src={project.screenshot ?? undefined} alt={`${project.name} website preview`} width={project.slug === 'smashouse' ? 1440 : 1400} height={project.slug === 'smashouse' ? 1080 : project.slug === 'afh-logistics' ? 1225 : 945} loading="lazy" decoding="async" />
-  </div>;
-}
+type InquiryHandler = (tier: ServiceTier) => void;
 
-// Launch and Business previews use live example projects, which always have a url and screenshot.
-function ProjectPreview({ tier, project, inputRef }: { tier: ServiceTier; project: Project; inputRef: Ref<HTMLInputElement> }) {
-  const [device, setDevice] = useState('desktop');
-  if (tier.id === 'launch') return <div className="service-preview service-preview-launch" id={project.id}>
-    <a href={project.url ?? undefined} target="_blank" rel="noreferrer" aria-label={`View ${project.name} website`}><PreviewBrowser project={project} /></a>
-    <span className="service-preview-caption">One page. A clear next step.</span>
-  </div>;
-  if (tier.id === 'business') return <div className={`service-preview service-preview-business is-${device}`}>
-    <div className="service-device-stage" id="service-business-devices" role="group" aria-label={`AFH Logistics ${device} preview`}>
-      <a href={project.url ?? undefined} target="_blank" rel="noreferrer" className="service-business-desktop" aria-label={`View ${project.name} website`}><PreviewBrowser project={project} /></a>
-      <div className="service-business-phone"><span aria-hidden="true" /><img src="/screenshots/afh-mobile.jpg" alt="AFH Logistics mobile layout" width="390" height="844" loading="lazy" decoding="async" /></div>
-    </div>
-    <div className="service-device-switch" role="group" aria-label="Business preview device">{['desktop', 'mobile'].map(item => <button key={item} type="button" aria-pressed={device === item} aria-controls="service-business-devices" onClick={() => setDevice(item)}>{item === 'desktop' ? 'Desktop' : 'Mobile'}</button>)}<span>Same site. Different screen.</span></div>
-  </div>;
-  return <div className="service-preview service-preview-custom"><ServiceCustomDemo inputRef={inputRef} /></div>;
-}
+// Each plan's pitch line and the phone screenshot used in its device preview.
+const pitch: Record<string, { lead: string; phone: string | null; laptop?: string }> = {
+  launch: { lead: 'A strong starting point for your business, idea, or project.', phone: null },
+  business: { lead: 'A complete website with more room to grow your business.', phone: '/screenshots/afh-mobile.jpg' },
+  custom: { lead: 'A tailored solution built around your idea, goals, and audience.', phone: '/screenshots/elsotanocomico-live-mobile.jpg', laptop: '/screenshots/elsotanocomico-live.jpg' },
+};
 
-interface ServiceCardProps { tier: ServiceTier; onCaseStudy: () => void; caseLink: RefObject<HTMLAnchorElement>; caseOpen: boolean; onInquiry?: InquiryHandler }
-function ServiceCard({ tier, onCaseStudy, caseLink, caseOpen, onInquiry }: ServiceCardProps) {
-  const card = useRef<HTMLElement>(null), frame = useRef<number | null>(null), input = useRef<HTMLInputElement>(null);
-  const project = projects.find(item => item.slug === tier.projectSlug)!; // every tier names an existing project
-  useEffect(() => {
-    if (tier.id === 'launch') return;
-    const element = card.current!; // attached on mount, before effects run
-    const motion = matchMedia('(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)');
-    // frame.current is null until the first frame; cancelAnimationFrame(null) is a no-op.
-    const reset = () => {
-      cancelAnimationFrame(frame.current!);
-      element.style.setProperty('--service-x', '0'); element.style.setProperty('--service-y', '0');
-      element.style.setProperty('--service-light-x', '50%'); element.style.setProperty('--service-light-y', '25%');
-    };
-    const move = (event: PointerEvent) => {
-      if (!motion.matches || event.pointerType === 'touch') return;
-      cancelAnimationFrame(frame.current!);
-      const bounds = element.getBoundingClientRect();
-      const x = Math.max(0, Math.min(1, (event.clientX - bounds.left) / bounds.width));
-      const y = Math.max(0, Math.min(1, (event.clientY - bounds.top) / bounds.height));
-      frame.current = requestAnimationFrame(() => {
-        element.style.setProperty('--service-x', String(x - .5)); element.style.setProperty('--service-y', String(y - .5));
-        element.style.setProperty('--service-light-x', `${x * 100}%`); element.style.setProperty('--service-light-y', `${y * 100}%`);
-      });
-    };
-    element.addEventListener('pointermove', move); element.addEventListener('pointerleave', reset); element.addEventListener('pointercancel', reset); motion.addEventListener('change', reset);
-    return () => { reset(); element.removeEventListener('pointermove', move); element.removeEventListener('pointerleave', reset); element.removeEventListener('pointercancel', reset); motion.removeEventListener('change', reset); };
-  }, [tier.id]);
-
-  useEffect(() => {
-    if (tier.id !== 'business') return;
-    const motion = matchMedia('(prefers-reduced-motion: reduce)');
-    const list = card.current!.querySelector('.service-features')!; // rendered by this card
-    const animations: Animation[] = [];
-    const observer = new IntersectionObserver(([entry]) => {
-      if (!entry.isIntersecting) return;
-      observer.disconnect();
-      if (!motion.matches) [...list.children].forEach((node, index) => animations.push(node.animate([{ opacity: .15, transform: 'translateY(12px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: 480, delay: index * 65, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'backwards' })));
-    }, { threshold: .15 });
-    const cancel = () => animations.forEach(animation => animation.cancel());
-    observer.observe(list); motion.addEventListener('change', cancel);
-    return () => { observer.disconnect(); cancel(); motion.removeEventListener('change', cancel); };
-  }, [tier.id]);
-
-  return <article ref={card} className={`service-card service-${tier.id}`} aria-labelledby={`service-${tier.id}-title`}>
-    <div className="service-card-top"><span>{tier.number} / {tier.character}</span><span className="service-level" aria-hidden="true">{[0, 1, 2].map(index => <i key={index} className={index < Number(tier.number) ? 'is-lit' : ''} />)}</span></div>
-    <div className="service-intro"><h3 id={`service-${tier.id}-title`}>{tier.name}</h3><p>{tier.description}</p></div>
-    <div className="service-price"><span>{tier.priceNote}</span><strong>{tier.price}</strong></div>
-    <ProjectPreview tier={tier} project={project} inputRef={input} />
-    {tier.id === 'custom' ? <div className="service-example service-custom-actions"><button type="button" onClick={() => input.current?.focus()}>Interact with demo <span aria-hidden="true">→</span></button><a ref={caseLink} href="#service-case-study" aria-expanded={caseOpen} aria-controls="service-case-study" onClick={event => { event.preventDefault(); onCaseStudy(); }}>View case study <span aria-hidden="true"><PhArrowUpRight aria-hidden="true" className="ph-icon" /></span></a></div> : <div className="service-example"><span>{project.name}</span><a href={project.url ?? undefined} target="_blank" rel="noreferrer">{tier.id === 'launch' ? 'View website' : 'Explore project'} <span aria-hidden="true"><PhArrowUpRight aria-hidden="true" className="ph-icon" /></span></a></div>}
-    <p className="service-example-note">{tier.exampleNote}</p>
-    <ul className="service-features" aria-label={`${tier.name} includes`}>{tier.features.map((feature, index) => <li key={feature} style={{ '--feature-index': index } as CSSProperties}><span aria-hidden="true">↳</span>{feature}</li>)}</ul>
-    <a className="service-inquiry" href={serviceInquiry()} onClick={event => { if (!event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey && event.button === 0) onInquiry?.(tier); }}>{tier.action}<span aria-hidden="true"><PhArrowUpRight aria-hidden="true" className="ph-icon" /></span></a>
-  </article>;
-}
+const promises = [
+  { icon: PhStack, title: 'Clear scope', text: 'You know what’s included from the start.' },
+  { icon: PhLightning, title: 'Built for growth', text: 'A solid base you can expand later.' },
+  { icon: PhCode, title: 'Tailored to you', text: 'From straightforward to fully custom.' },
+];
 
 export function ServicesSection({ onInquiry }: { onInquiry?: InquiryHandler } = {}) {
-  const [caseOpen, setCaseOpen] = useState(false);
-  const caseLink = useRef<HTMLAnchorElement>(null), caseHeading = useRef<HTMLHeadingElement>(null);
-  const customProject = projects.find(project => project.slug === 'el-sotano-comico')!; // a known project
-  useEffect(() => {
-    if (caseOpen) { caseHeading.current?.focus({ preventScroll: true }); caseHeading.current?.scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' }); }
-  }, [caseOpen]);
-  function closeCase() { setCaseOpen(false); caseLink.current?.focus({ preventScroll: true }); caseLink.current?.scrollIntoView({ block: 'nearest', behavior: 'instant' }); }
-  return <section className="studio-services studio-wrap" id="services" aria-labelledby="services-title">
-    <div className="studio-section-heading services-heading"><div><span className="studio-kicker">06 / Work with me</span><h2 id="services-title">The right size<br /><em>for your next step.</em></h2></div><p>A simple launch. A fuller business presence.<br />Or something that needs its own approach.<br /><span>Explore the examples. Find your starting point.</span></p></div>
-    <div className="services-grid">{serviceTiers.map(tier => <ServiceCard key={tier.id} tier={tier} onInquiry={onInquiry} onCaseStudy={() => setCaseOpen(true)} caseOpen={caseOpen} caseLink={caseLink} />)}</div>
-    <div id="service-case-study" className="service-case-study" hidden={!caseOpen} onKeyDown={event => { if (event.key === 'Escape') { event.stopPropagation(); closeCase(); } }}><div className="service-case-top"><span className="studio-kicker">A closer look / Custom work</span><button type="button" onClick={closeCase}>Close case study <span aria-hidden="true">×</span></button></div><h3 ref={caseHeading} tabIndex={-1}>A comedy brand.<br /><em>A whole world around it.</em></h3><div className="service-case-grid">{caseOpen && <img src={customProject.screenshot ?? undefined} alt="El Sótano Cómico website" width="1400" height="945" />}<div><h4>{customProject.name}</h4><p>The brief: give the brand a home that carries its personality and connects visitors to more than a single page of content.</p><ul><li><strong>Discovery.</strong> A distinct visual identity and a home for the comedy.</li><li><strong>Connection.</strong> Newsletter capture, a lead-magnet download, and social links.</li><li><strong>Next steps.</strong> A path from discovering the brand to exploring merchandise.</li></ul><p className="service-case-note">The brand studio above is an interactive portfolio demo inspired by this project. Try changing the design, switching formats, and moving the sticker.</p>{customProject.url ? <a href={customProject.url} target="_blank" rel="noreferrer">View the live project &#8599;</a> : <span className="service-project-status">Launching soon</span>}</div></div></div>
-    <div className="services-footnote"><p>Starting prices in USD. Final scope and price agreed before we begin.<br />Examples show the kind of work each service can support.</p><a href="/#contact">Not sure where to start? Let’s talk <span aria-hidden="true"><PhArrowUpRight aria-hidden="true" className="ph-icon" /></span></a></div>
+  const [active, setActive] = useState(0);
+  const tabs = useRef<(HTMLButtonElement | null)[]>([]);
+  const tier = serviceTiers[active];
+  const project = projects.find(item => item.slug === tier.projectSlug);
+  const custom = tier.id === 'custom';
+  const extra = pitch[tier.id];
+
+  function navigate(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    const target = ({ ArrowDown: index + 1, ArrowRight: index + 1, ArrowUp: index - 1, ArrowLeft: index - 1, Home: 0, End: serviceTiers.length - 1 } as Partial<Record<string, number>>)[event.key];
+    if (target === undefined) return;
+    event.preventDefault();
+    const next = (target + serviceTiers.length) % serviceTiers.length;
+    setActive(next);
+    tabs.current[next]?.focus();
+  }
+
+  return <section className="studio-services svc studio-wrap" id="services" aria-labelledby="services-title">
+    <div className="svc-head">
+      <div className="svc-title"><span className="studio-kicker svc-kicker"><b>05</b> / Services &amp; pricing</span><h2 id="services-title">The right size<br /><em>for your next step.</em></h2></div>
+      <div className="svc-intro"><p>A simple launch. A fuller business presence.<br />Or something that needs its own approach.</p><p className="svc-intro-strong">Explore the options and find your starting point.</p></div>
+    </div>
+
+    <div className="svc-body">
+      <div className="svc-tiers" role="tablist" aria-orientation="vertical" aria-label="Services">
+        {serviceTiers.map((item, index) => <button
+          key={item.id}
+          ref={node => { tabs.current[index] = node; }}
+          type="button"
+          role="tab"
+          id={`svc-tab-${item.id}`}
+          aria-selected={active === index}
+          aria-controls="svc-panel"
+          tabIndex={active === index ? 0 : -1}
+          className="svc-tier"
+          onClick={() => setActive(index)}
+          onKeyDown={event => navigate(event, index)}
+        >
+          <span className="svc-tier-text">
+            <span className="svc-tier-kicker">{item.number} / {item.character}</span>
+            <span className="svc-tier-name">{item.name}</span>
+            <span className="svc-tier-desc">{item.description}</span>
+          </span>
+          <span className={`svc-tier-price${item.id === 'custom' ? ' is-quote' : ''}`}>{item.price}</span>
+          <PhArrowUpRight aria-hidden="true" className="ph-icon svc-tier-arrow" />
+        </button>)}
+      </div>
+
+      <article className="svc-panel" id="svc-panel" role="tabpanel" aria-labelledby={`svc-tab-${tier.id}`} key={tier.id}>
+        <div className="svc-panel-copy">
+          <span className="svc-selected">Selected service</span>
+          <h3>{tier.name}</h3>
+          <p className="svc-lead">{extra.lead}</p>
+          <h4>What’s included</h4>
+          <ul className="svc-features">{tier.features.map(feature => <li key={feature}><PhCheck aria-hidden="true" className="ph-icon" weight="bold" />{feature}</li>)}</ul>
+        </div>
+        <div className="svc-devices" aria-hidden="true">
+          <i className="svc-slash" />
+          <i className="svc-spark"><i /><i /><i /></i>
+          <span className="svc-laptop"><span className="svc-laptop-bar"><i /><i /><i /></span><img src={extra.laptop ?? project?.screenshot ?? undefined} alt="" loading="lazy" decoding="async" /></span>
+          <span className="svc-laptop-base" />
+          <span className="svc-phone"><img src={extra.phone ?? project?.screenshot ?? undefined} alt="" loading="lazy" decoding="async" className={extra.phone ? '' : 'is-desktop-crop'} /></span>
+        </div>
+        <div className="svc-panel-foot">
+          <div className="svc-price"><span>{custom ? 'Custom quote' : 'Starting at'}</span><b className={custom ? 'is-quote' : ''}>{tier.price}</b></div>
+          <a className="svc-cta" href={serviceInquiry()} onClick={event => { if (!event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey && event.button === 0) onInquiry?.(tier); }}>{tier.action}<PhArrowUpRight aria-hidden="true" className="ph-icon" /></a>
+          {project?.url
+            ? <a className="svc-example" href={project.url} target="_blank" rel="noreferrer" aria-label={`View example: ${project.name} (opens in a new tab)`}><PhEye aria-hidden="true" className="ph-icon" />View example</a>
+            : <span className="svc-example is-soon">Example launching soon</span>}
+        </div>
+        <p className="svc-example-note">Example: {project?.name}. {tier.exampleNote}</p>
+      </article>
+    </div>
+
+    <ul className="svc-promises">
+      {promises.map(({ icon: Icon, title, text }) => <li key={title}><Icon aria-hidden="true" className="ph-icon" /><span><b>{title}</b>{text}</span></li>)}
+    </ul>
+    <p className="svc-footnote">Starting prices in USD. Final scope and price agreed before we begin. <a href="#contact">Not sure where to start? Let’s talk <PhArrowUpRight aria-hidden="true" className="ph-icon" /></a></p>
   </section>;
 }

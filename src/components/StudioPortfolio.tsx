@@ -1,4 +1,4 @@
-import { ArrowUpRight as PhArrowUpRight, Asterisk as PhAsterisk, ArrowDownRight as PhArrowDownRight } from '@phosphor-icons/react';
+import { ArrowUpRight as PhArrowUpRight, Asterisk as PhAsterisk, User as PhUser, Code as PhCode } from '@phosphor-icons/react';
 import { useState } from 'react';
 import type { CSSProperties } from 'react';
 import { projects } from '../data/projects.ts';
@@ -70,18 +70,32 @@ export function StudioPortfolio() {
       </section>
       <SelectedWork />
       <ServicesSection onInquiry={tier => setContactInquiry({ tier })} />
-      <section className="studio-about studio-about--companion studio-wrap" id="about" aria-labelledby="about-title"><DigimonPetCard /><div><span className="studio-kicker">03 / Behind the browser</span><h2 id="about-title">A person who likes<br /><em>figuring things out.</em></h2><p>I’m Jose. I build interfaces for businesses with very different worlds: comedy, real estate, logistics, fitness, and more. I’m interested in the details that make each one feel like itself.</p><a className="studio-learning-link" href="#learning">See what I’m learning <span aria-hidden="true"><PhArrowDownRight aria-hidden="true" className="ph-icon" /></span></a><div className="studio-about-tools"><span>Currently building with</span><span>React / JavaScript / CSS / Vite</span><RubiksCube /></div></div></section>
-      <LearningSection />
+      <section className="studio-hub studio-wrap" id="about" aria-labelledby="about-title">
+        <div className="hub-head">
+          <div className="hub-title"><span className="studio-kicker hub-kicker"><b>03</b> / Behind the browser</span><h2 id="about-title">A person who likes<br /><em>figuring things out.</em><Asterisk className="hub-star" /></h2></div>
+          <div className="hub-intro"><p>I’m Jose. I build interfaces for businesses with very different worlds: comedy, real estate, logistics, fitness, and more. I’m interested in the details that make each one feel like itself.</p><p className="hub-tools"><span>Currently building with</span> React / TypeScript / CSS / Vite</p></div>
+          <div className="hub-cube"><RubiksCube /></div>
+        </div>
+        <div className="hub-grid">
+          <div className="hub-card hub-pet">
+            <div className="hub-card-head"><span><PhUser aria-hidden="true" className="ph-icon" /> Personal corner</span><span>01 / 04</span></div>
+            <DigimonPetCard />
+          </div>
+          <div className="hub-card hub-lab">
+            <div className="hub-card-head"><span><PhCode aria-hidden="true" className="ph-icon" /> Learning lab</span><span>02 / 04</span></div>
+            <p className="hub-card-sub">Client work keeps me building. Curiosity keeps me learning.</p>
+            <LearningSection embedded />
+          </div>
+        </div>
+        <div className="hub-arcade"><SpaceArcade openRequest={arcadeRequest} /></div>
+        <div className="hub-sandbox"><SandboxSection embedded onArcade={() => setArcadeRequest(value => value + 1)} /></div>
+      </section>
       <section className="studio-playground" id="playground" aria-labelledby="playground-title">
         <div className="studio-wrap">
-          <div className="playground-topline"><span>AN OPEN INVITATION TO PLAY</span><Asterisk /><span>NO RIGHT ANSWERS HERE.</span></div>
-          <div className="studio-section-heading"><div><span className="studio-kicker">02 / The playground</span><h2 id="playground-title">Curiosity,<br /><em>with a browser.</em></h2></div><p>One composition. Four ways to play.<br />A little piece of Monterrey, made yours.</p></div>
+          <div className="studio-section-heading"><div><h2 id="playground-title">Curiosity,<br /><em>with a browser.</em></h2></div><p>One composition. Four ways to play.<br />A little piece of Monterrey, made yours.</p></div>
           <CompositionPlayground />
-          <SpaceArcade openRequest={arcadeRequest} />
-          <div className="playground-bottomline"><span>A FEW IDEAS, LEFT OPEN.</span><span>Made to be played with. <span aria-hidden="true"><PhArrowUpRight aria-hidden="true" className="ph-icon" /></span></span></div>
         </div>
       </section>
-      <SandboxSection onArcade={() => setArcadeRequest(value => value + 1)} />
       <ContactSection inquiry={contactInquiry} onSend={sendMessage} />
     </main><MountainSignature /><footer className="studio-footer studio-wrap"><a href="#top" className="studio-logo" aria-label="Jose Sanchez home">js<span><PhAsterisk aria-hidden="true" className="ph-icon" /></span></a><span>Jose Sanchez © {new Date().getFullYear()}</span><a href="#top">Back to the top ↑</a></footer>
   </div>;

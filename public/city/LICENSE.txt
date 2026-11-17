@@ -2,3 +2,19 @@ Sprites in this folder come from Kenney's isometric asset packs
 (Isometric Nature, Isometric Tiles City, Isometric Tiles Vehicles),
 https://kenney.nl/assets/tag:isometric, licensed Creative Commons CC0 1.0
 (public domain; no attribution required). Mirror used: github.com/shorepine/kenney.
+
+Sprites in public/city/k/ were rendered (at this city's isometric camera angle) from
+Kenney's Car Kit 3.1, City Kit Industrial 2.0 and Mini Forest 1.0 3D models,
+https://kenney.nl, licensed Creative Commons CC0 1.0 (public domain; no attribution required).
+
+Sprites in public/city/people/ were rendered (walk and idle animation frames, four
+directions) from Kenney's Mini Characters 2.0 models, https://kenney.nl,
+licensed Creative Commons CC0 1.0 (public domain; no attribution required).
+
+Sprites named com-* and sub-* in public/city/k/ were rendered from Kenney's City Kit
+Commercial 2.1 and City Kit Suburban 2.0 models, https://kenney.nl, licensed
+Creative Commons CC0 1.0 (public domain; no attribution required).
+
+Sprites named hol-* and nat-* in public/city/k/ were rendered from Kenney's Holiday Kit
+2.0 and Nature Kit 2.1 models, https://kenney.nl, licensed Creative Commons CC0 1.0
+(public domain; no attribution required).

@@ -15,20 +15,22 @@ class WorkspaceBoundary extends Component<{ children?: ReactNode }, { failed: bo
   }
 }
 
-export function SandboxSection({ onArcade }: { onArcade: () => void }) {
+// embedded: just the launcher and desktop, inside the Behind the browser hub.
+export function SandboxSection({ onArcade, embedded = false }: { onArcade: () => void; embedded?: boolean }) {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const session = useRef(null);
   const launch = useRef<HTMLButtonElement>(null);
   function close() { setOpen(false); launch.current?.focus({ preventScroll: true }); }
 
-  return <section id="sandbox" className="sandbox-section studio-wrap" aria-labelledby="sandbox-title">
-    <div className="sandbox-heading">
+  const Wrapper = embedded ? 'div' : 'section';
+  return <Wrapper id="sandbox" className={embedded ? 'sandbox-section sandbox-embedded' : 'sandbox-section studio-wrap'} aria-labelledby="sandbox-title">
+    {!embedded && <div className="sandbox-heading">
       <div><span className="studio-kicker">05 / The sandbox</span><h2 id="sandbox-title">A little room to<br /><em>figure things out.</em></h2></div>
       <p>Explore my projects, see what I’m learning, or change a few lines and make something your own.</p>
-    </div>
+    </div>}
     <div className={`sandbox-invitation ${open ? 'is-open' : ''}`}>
-      <div className="sandbox-invitation-copy"><span className="sandbox-symbol" aria-hidden="true">&gt;_</span><div><h3>Your little Linux desktop.</h3><p>A real terminal. A few windows. Room to explore.</p></div></div>
+      <div className="sandbox-invitation-copy"><span className="sandbox-symbol" aria-hidden="true">&gt;_</span><div>{embedded && <span className="sandbox-kicker">04 / The sandbox</span>}<h3 id={embedded ? 'sandbox-title' : undefined}>Your little Linux desktop.</h3><p>A real terminal. A few windows. Room to explore.</p></div></div>
       <div className="sandbox-peek" aria-hidden="true"><span>Your files. Your tools. Your desktop.</span><span>Loads on open · about 13 MB</span></div>
       <button ref={launch} className="sandbox-launch" type="button" aria-expanded={open} aria-controls="sandbox-panel" onClick={() => { if (open) close(); else { setMounted(true); setOpen(true); } }}>{open ? 'Close desktop' : 'Open desktop'} <span aria-hidden="true">{open ? '−' : <PhArrowUpRight aria-hidden="true" className="ph-icon" />}</span></button>
     </div>
@@ -36,6 +38,6 @@ export function SandboxSection({ onArcade }: { onArcade: () => void }) {
       inert={!open ? '' : undefined}>
       <div className="sandbox-panel-inner">{mounted && <WorkspaceBoundary><Suspense fallback={<div className="sandbox-loading" role="status">Starting your workspace…</div>}><Workspace session={session} onClose={close} onArcade={onArcade} active={open} /></Suspense></WorkspaceBoundary>}</div>
     </div>
-    <div className="sandbox-footnote"><span>Small experiments. Yours to change.</span><span>Made with curiosity <PhArrowUpRight aria-hidden="true" className="ph-icon" /></span></div>
-  </section>;
+    {!embedded && <div className="sandbox-footnote"><span>Small experiments. Yours to change.</span><span>Made with curiosity <PhArrowUpRight aria-hidden="true" className="ph-icon" /></span></div>}
+  </Wrapper>;
 }

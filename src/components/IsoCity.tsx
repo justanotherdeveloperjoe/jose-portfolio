@@ -1,88 +1,70 @@
 import { useEffect, useRef, useState } from 'react';
 import type { CSSProperties, MouseEvent } from 'react';
+import { citySprites } from '../data/citySprites.ts';
+import { ROADS, ROAD_LINES, createTraffic, spriteAngle } from './cityTraffic.ts';
+import type { RoadLine } from './cityTraffic.ts';
+import { O, SPUR_LINES, WORLD, cityBlocks, commercial, fillers, holidayCore, industrial, nature, parked, pocketParkProps, pocketParks, standing, townTree, suburbYards, suburbsFar, suburbsNear, walkRoutes, walkers, woods } from '../data/cityLayout.ts';
+import type { CityBlock, Placed } from '../data/cityLayout.ts';
 
-// An isometric city built from the page's own sections. Every building is a
-// link: hovering lifts it and shows its label, clicking flies the camera
-// toward it and then scrolls to the real section below. Trees, props and
-// cars are CC0 sprites from Kenney (see public/city/LICENSE.txt), drawn as
-// billboards standing on the ground plane.
+// An isometric city built from the page's own sections (layout in data/cityLayout.ts). The landmarks are links:
+// hovering lifts one and shows its label, clicking flies the camera toward it and
+// then scrolls to the real section below. Around downtown sit an industrial
+// district, a parking lot and forest outskirts, drawn with Kenney CC0 models that
+// were rendered at this city's camera angle (public/city/k, see public/city/LICENSE.txt).
 
-export type CityBlock = {
-  id: string;
-  label: string;
-  note: string;
-  kind: 'tower' | 'shop' | 'house' | 'lab' | 'arcade' | 'computer' | 'antenna';
-  x: number; y: number; w: number; d: number; h: number;
-  color: string;
-};
+// Residents: Kenney Mini Characters rendered as walk (6 frames) and idle (4 frames)
+// strips in four directions (public/city/people). Frames are 43px at 36px per model
+// unit; PERSON sets how many ground px a model unit takes on the page.
+const PERSON = 13;
+const FRAME = 43, ANCHOR = { x: 21.6, y: 35.1 }, BAKE_PPU = 36;
+const personScale = PERSON / BAKE_PPU;
+const personSize = { w: FRAME * personScale, ax: ANCHOR.x * personScale, ay: ANCHOR.y * personScale, g: 0.22 * PERSON };
+const personUrl = (who: string, clip: 'walk' | 'idle', dir: number) => `/city/people/${who}-${clip}-${dir}.png`;
+const facing = (heading: number) => (Math.round(heading / 90) * 90) % 360;
 
-export const cityBlocks: CityBlock[] = [
-  { id: 'work', label: 'Work', note: 'Selected projects', kind: 'tower', x: 56, y: 52, w: 126, d: 126, h: 236, color: '#e9e7dd' },
-  { id: 'services', label: 'Services', note: 'Plans and pricing', kind: 'shop', x: 236, y: 48, w: 140, d: 104, h: 86, color: '#d5f77a' },
-  { id: 'contact', label: 'Contact', note: 'Say hello', kind: 'antenna', x: 440, y: 58, w: 66, d: 66, h: 148, color: '#dcdad0' },
-  { id: 'learning', label: 'Learning', note: 'Live labs', kind: 'lab', x: 56, y: 236, w: 128, d: 100, h: 66, color: '#9fc3b2' },
-  { id: 'about', label: 'About', note: 'Behind the browser', kind: 'house', x: 250, y: 222, w: 104, d: 104, h: 78, color: '#3d7a62' },
-  { id: 'playground', label: 'Playground', note: 'Arcade and toys', kind: 'arcade', x: 420, y: 226, w: 100, d: 112, h: 122, color: '#2a2d28' },
-  { id: 'sandbox', label: 'Sandbox', note: 'A Linux desktop', kind: 'computer', x: 236, y: 404, w: 132, d: 92, h: 58, color: '#596158' },
-];
+const trafficModels = ['car-sedan', 'car-taxi', 'car-suv', 'car-van', 'car-delivery', 'car-hatchback-sports', 'car-taxi', 'car-sedan'];
 
-type Sprite = { src: string; x: number; y: number; w: number };
-// Ground coordinates; w is the drawn width in ground pixels. Bottom-center anchored.
-const sprites: Sprite[] = [
-  { src: 'tree-1', x: 22, y: 26, w: 58 }, { src: 'tree-3', x: 210, y: 18, w: 54 }, { src: 'pine-1', x: 404, y: 26, w: 50 },
-  { src: 'tree-2', x: 536, y: 150, w: 56 }, { src: 'bush-1', x: 520, y: 118, w: 34 },
-  { src: 'tree-4', x: 26, y: 392, w: 60 }, { src: 'bush-2', x: 60, y: 370, w: 34 }, { src: 'pine-2', x: 186, y: 448, w: 48 },
-  { src: 'tree-1', x: 404, y: 420, w: 56 }, { src: 'tree-2', x: 536, y: 470, w: 56 }, { src: 'bush-1', x: 470, y: 400, w: 32 },
-  { src: 'monument', x: 330, y: 372, w: 40 }, { src: 'rock', x: 24, y: 180, w: 36 }, { src: 'bush-2', x: 230, y: 176, w: 30 },
-  { src: 'lamp-2', x: 232, y: 232, w: 14 }, { src: 'lamp-2', x: 232, y: 350, w: 14 }, { src: 'lamp-3', x: 384, y: 232, w: 14 },
-  { src: 'lamp-3', x: 384, y: 360, w: 14 }, { src: 'lamp-1', x: 188, y: 232, w: 14 }, { src: 'lamp-4', x: 420, y: 180, w: 14 },
-  { src: 'bus-stop', x: 300, y: 180, w: 26 },
-];
+// Junction pads where road lines cross. Crosswalk stripes are drawn only where the
+// vertical road actually continues north or south of the junction.
+const allLines: RoadLine[] = [...ROAD_LINES, ...SPUR_LINES];
+const junctions = (() => {
+  const hs = allLines.filter(l => l.axis === 'h'), vs = allLines.filter(l => l.axis === 'v');
+  const seen = new Set<string>(), out: { x: number; y: number; n: boolean; s: boolean }[] = [];
+  for (const h of hs) for (const v of vs) {
+    if (v.at < h.from || v.at > h.to || h.at < v.from || h.at > v.to) continue;
+    const key = `${v.at},${h.at}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    const onV = vs.filter(l => l.at === v.at);
+    out.push({ x: v.at, y: h.at, n: onV.some(l => l.from < h.at), s: onV.some(l => l.to > h.at) });
+  }
+  return out;
+})();
+const spriteUrl = (name: string) => `/city/k/${name}.png`;
 
-// Small anonymous buildings that fill the blocks around the landmarks.
-type Filler = { x: number; y: number; w: number; d: number; h: number; c: string };
-const palette = ['#4a4e45', '#5b5f55', '#6b6f64', '#8a8d84', '#3f4a3e', '#7a8a6a'];
-const fillerSeed: [number, number, number, number, number][] = [
-  // top strip (y 0..90)
-  [8, 6, 44, 40, 34], [60, 10, 36, 36, 52], [104, 4, 48, 44, 28], [160, 8, 40, 40, 46], [210, 6, 50, 36, 30], [268, 12, 36, 40, 60],
-  [352, 8, 44, 36, 38], [404, 4, 40, 44, 26], [454, 10, 48, 40, 48], [512, 6, 36, 36, 32], [556, 8, 42, 44, 58], [606, 4, 48, 40, 30], [662, 10, 44, 36, 44], [714, 6, 40, 40, 36],
-  // left strip (x 0..90)
-  [6, 108, 40, 44, 42], [8, 160, 44, 40, 28], [4, 212, 36, 48, 56], [10, 420, 44, 40, 34], [6, 470, 40, 44, 48], [8, 522, 44, 40, 30], [4, 574, 40, 48, 44], [10, 626, 44, 40, 36], [6, 678, 40, 44, 26], [8, 722, 44, 34, 40],
-  // right strip (x 660..760)
-  [664, 108, 44, 40, 30], [712, 112, 42, 44, 46], [668, 164, 40, 40, 38], [716, 168, 40, 44, 24], [670, 420, 44, 40, 52], [716, 426, 40, 44, 32], [666, 474, 42, 40, 28], [714, 480, 44, 44, 44], [670, 528, 40, 40, 36], [716, 534, 42, 44, 26], [668, 584, 44, 40, 48], [714, 590, 40, 44, 34], [672, 640, 40, 40, 30], [716, 646, 42, 44, 40], [668, 700, 44, 48, 26],
-  // bottom strip (y 660..760)
-  [104, 664, 44, 40, 34], [156, 668, 40, 44, 48], [210, 662, 48, 40, 28], [266, 670, 40, 44, 40], [420, 664, 44, 40, 52], [472, 668, 40, 44, 30], [526, 662, 48, 40, 36], [582, 670, 40, 44, 44], [104, 716, 40, 38, 30], [160, 712, 44, 42, 26], [214, 716, 40, 38, 38], [420, 712, 44, 42, 28], [476, 716, 40, 38, 46], [530, 712, 44, 42, 32], [586, 716, 40, 38, 24],
-  // inner gaps
-  [120, 520, 40, 36, 24], [160, 480, 36, 40, 30], [440, 540, 36, 40, 22], [580, 300, 40, 36, 26], [610, 560, 36, 36, 28],
-];
-const fillers: Filler[] = fillerSeed.map(([x, y, w, d, h], i) => ({ x, y, w, d, h, c: palette[(i * 7) % palette.length] }));
-
-// Residents: tiny walkers on the sidewalks (ground coords, path length and duration).
-type Walker = { x: number; y: number; axis: 'x' | 'y'; len: number; dur: number; delay: number; shirt: string };
-const walkers: Walker[] = [
-  { x: 100, y: 280, axis: 'x', len: 560, dur: 38, delay: 0, shirt: '#e9e7dd' },
-  { x: 660, y: 328, axis: 'x', len: -560, dur: 44, delay: 6, shirt: '#d5f77a' },
-  { x: 290, y: 100, axis: 'y', len: 560, dur: 40, delay: 2, shirt: '#9fc3b2' },
-  { x: 332, y: 660, axis: 'y', len: -560, dur: 36, delay: 11, shirt: '#f0a8b8' },
-  { x: 482, y: 120, axis: 'y', len: 520, dur: 42, delay: 5, shirt: '#e9e7dd' },
-  { x: 524, y: 640, axis: 'y', len: -520, dur: 39, delay: 14, shirt: '#d5f77a' },
-  { x: 140, y: 420, axis: 'x', len: 140, dur: 16, delay: 3, shirt: '#8ab4d6' },
-  { x: 340, y: 500, axis: 'x', len: 120, dur: 14, delay: 8, shirt: '#e9e7dd' },
-  { x: 380, y: 470, axis: 'x', len: -120, dur: 15, delay: 1, shirt: '#f0c070' },
-  { x: 560, y: 420, axis: 'y', len: 100, dur: 12, delay: 7, shirt: '#9fc3b2' },
-  { x: 200, y: 300, axis: 'x', len: 300, dur: 24, delay: 9, shirt: '#d5f77a' },
-  { x: 620, y: 290, axis: 'x', len: -300, dur: 26, delay: 4, shirt: '#e9e7dd' },
-];
+function spriteStyle(name: string, x: number, y: number, index = 0): CSSProperties {
+  const m = citySprites[name];
+  return { '--x': `${x + m.gx}px`, '--y': `${y + m.gy}px`, '--w': `${m.w}px`, '--h': `${m.h}px`, '--ax': `${m.ax}px`, '--ay': `${m.ay}px`, '--i': index } as CSSProperties;
+}
+// Static sprites are a single billboarded image (one 3D layer each). Outer rings use
+// copies with their dimming baked in (name.c/.p/.s/.f.png) instead of CSS filters,
+// which would cost a filter pass per sprite on every frame.
+type Tone = 'c' | 'p' | 's' | 'f';
+const Sprite = ({ item: [name, x, y], index, tone, still }: { item: Placed; index: number; tone?: Tone; still?: boolean }) =>
+  <img className={`iso-kimg${still ? ' is-still' : ''}`} style={spriteStyle(name, x, y, index)} src={tone ? `/city/k/${name}.${tone}.png` : spriteUrl(name)} alt="" loading="lazy" decoding="async" />;
 
 type IsoCityProps = { facades?: string[] };
-
-// Landmarks and sprites were laid out on a 560 grid; the world is now 760 with them centred.
-const O = 100;
 
 export function IsoCity({ facades = [] }: IsoCityProps) {
   const stage = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(0.6);
   const [fly, setFly] = useState<{ x: number; y: number } | null>(null);
+  // Lighter traffic on small screens.
+  const [small] = useState(() => window.matchMedia('(max-width: 760px)').matches);
+  const traffic = small ? trafficModels.slice(0, 4) : trafficModels;
+  const residents = small ? walkers.slice(0, 3) : walkers;
+  const carEls = useRef<(HTMLElement | null)[]>([]);
+  const pedEls = useRef<(HTMLElement | null)[]>([]);
 
   useEffect(() => {
     // The stage is always mounted before this effect runs.
@@ -92,14 +74,68 @@ export function IsoCity({ facades = [] }: IsoCityProps) {
     return () => observer.disconnect();
   }, []);
 
+  // Traffic: a light simulation drawn straight to the DOM each frame. It pauses
+  // while the city is off screen or the tab is hidden, and stays parked for
+  // visitors who prefer reduced motion.
+  useEffect(() => {
+    const sim = createTraffic(traffic, Math.random, residents.map(w => ({ ...walkRoutes.find(r => r.name === w.route)!, ...w })));
+    const draw = () => {
+      sim.cars.forEach((car, i) => {
+      const el = carEls.current[i];
+      if (!el) return;
+      const key = `${car.sprite}-${spriteAngle(car.heading)}`;
+      const m = citySprites[key];
+      el.style.transform = `translate3d(${(car.pos.x + m.gx).toFixed(2)}px, ${(car.pos.y + m.gy).toFixed(2)}px, 0.6px)`;
+      if (el.dataset.key !== key) {
+        el.dataset.key = key;
+        el.style.setProperty('--w', `${m.w}px`); el.style.setProperty('--h', `${m.h}px`);
+        el.style.setProperty('--ax', `${m.ax}px`); el.style.setProperty('--ay', `${m.ay}px`);
+        (el.firstElementChild as HTMLImageElement).src = spriteUrl(key);
+      }
+    });
+      sim.peds.forEach((ped, i) => {
+      const el = pedEls.current[i];
+      if (!el) return;
+      el.style.transform = `translate3d(${(ped.pos.x + personSize.g).toFixed(2)}px, ${(ped.pos.y + personSize.g).toFixed(2)}px, 0.6px)`;
+      const clip = ped.walking ? 'walk' : 'idle';
+      const key = `${clip}-${facing(ped.heading)}`;
+      if (el.dataset.key !== key) {
+        el.dataset.key = key;
+        el.classList.toggle('is-walk', ped.walking);
+        el.classList.toggle('is-idle', !ped.walking);
+        (el.firstElementChild as HTMLElement).style.backgroundImage = `url(${personUrl(ped.who, clip, facing(ped.heading))})`;
+      }
+    });
+    };
+    draw();
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    // Warm the cache with every heading so turns never flash.
+    traffic.forEach(model => { for (let a = 0; a < 360; a += 45) new Image().src = spriteUrl(`${model}-${a}`); });
+    residents.forEach(w => { for (let a = 0; a < 360; a += 90) { new Image().src = personUrl(w.who, 'walk', a); new Image().src = personUrl(w.who, 'idle', a); } });
+    let raf = 0, last = 0, visible = false;
+    const tick = (now: number) => {
+      raf = 0;
+      if (!visible || document.hidden) return;
+      sim.update(last ? (now - last) / 1000 : 0);
+      last = now;
+      draw();
+      raf = requestAnimationFrame(tick);
+    };
+    const start = () => { if (!raf && visible && !document.hidden) { last = 0; raf = requestAnimationFrame(tick); } };
+    const io = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; start(); });
+    io.observe(stage.current!);
+    document.addEventListener('visibilitychange', start);
+    return () => { io.disconnect(); document.removeEventListener('visibilitychange', start); if (raf) cancelAnimationFrame(raf); };
+  }, [small]); // eslint-disable-line react-hooks/exhaustive-deps
+
   function visit(event: MouseEvent<HTMLAnchorElement>, block: CityBlock) {
-    const target = document.getElementById(block.id);
+    const target = document.getElementById(block.target);
     if (!target) return; // let the browser follow the hash
     event.preventDefault();
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduce || !stage.current) {
       target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
-      history.replaceState(null, '', `#${block.id}`);
+      history.replaceState(null, '', `#${block.target}`);
       return;
     }
     const bounds = stage.current.getBoundingClientRect();
@@ -107,7 +143,7 @@ export function IsoCity({ facades = [] }: IsoCityProps) {
     setFly({ x: bounds.left + bounds.width / 2 - (roof.left + roof.width / 2), y: bounds.top + bounds.height / 2 - (roof.top + roof.height / 2) });
     window.setTimeout(() => {
       target.scrollIntoView({ behavior: 'smooth' });
-      history.replaceState(null, '', `#${block.id}`);
+      history.replaceState(null, '', `#${block.target}`);
     }, 520);
     window.setTimeout(() => setFly(null), 1500);
   }
@@ -117,47 +153,67 @@ export function IsoCity({ facades = [] }: IsoCityProps) {
       <i className="iso-face iso-top" /><i className="iso-face iso-front" /><i className="iso-face iso-side" />
     </i>;
 
+  const { half } = ROADS;
   return <div className={`iso-stage ${fly ? 'is-flying' : ''}`} ref={stage} style={{ '--iso-s': scale, '--fly-x': `${fly?.x ?? 0}px`, '--fly-y': `${fly?.y ?? 0}px` } as CSSProperties}>
     <div className="iso-camera">
       <div className="iso-world">
+        <div className="iso-outer-ground" aria-hidden="true" style={{ left: WORLD.from, top: WORLD.from, width: WORLD.to - WORLD.from, height: WORLD.to - WORLD.from }}>
+          <i className="iso-belt" style={{ left: -126 - WORLD.from, top: -126 - WORLD.from, width: 1012, height: 1012 }} />
+          {pocketParks.map(([x, y]) => <i key={`${x},${y}`} className="iso-pocket" style={{ left: x - 36 - WORLD.from, top: y - 34 - WORLD.from, width: 72, height: 68 }} />)}
+        </div>
         <div className="iso-ground" aria-hidden="true">
-          <i className="iso-road iso-road-h" />
-          <i className="iso-road iso-road-v iso-road-v1" />
-          <i className="iso-road iso-road-v iso-road-v2" />
-          <i className="iso-road iso-road-h iso-road-h2" />
-          <i className="iso-road iso-road-v iso-road-v3" />
-          <i className="iso-road iso-road-v iso-road-v4" />
+          <i className="iso-zone iso-zone-industrial" style={{ left: 0, top: 96, width: 86, height: 664 }} />
+          <i className="iso-zone iso-zone-industrial" style={{ left: 86, top: 657, width: 225, height: 103 }} />
+          <i className="iso-zone iso-zone-green" style={{ left: 670, top: 96, width: 90, height: 664 }} />
+          <i className="iso-zone iso-zone-green" style={{ left: 327, top: 657, width: 343, height: 103 }} />
+          <i className="iso-zone iso-zone-green" style={{ left: 670, top: 56, width: 90, height: 40 }} />
           <i className="iso-plaza" />
+          <i className="iso-lot" />
           <i className="iso-cloud" />
           {cityBlocks.map(block => <i key={block.id} className="iso-shadow" style={{ '--x': `${block.x + O}px`, '--y': `${block.y + O}px`, '--w': `${block.w}px`, '--d': `${block.d}px`, '--h': `${block.h}px` } as CSSProperties} />)}
           {fillers.map((f, i) => <i key={`f${i}`} className="iso-shadow" style={{ '--x': `${f.x}px`, '--y': `${f.y}px`, '--w': `${f.w}px`, '--d': `${f.d}px`, '--h': `${f.h}px` } as CSSProperties} />)}
         </div>
+        <div className="iso-roads" aria-hidden="true">
+          {allLines.map((l, i) => <i key={i} className={`iso-street${l.axis === 'v' ? ' iso-street-v' : ''}${SPUR_LINES.includes(l) ? ' iso-street-quiet' : ''}`} style={l.axis === 'h'
+            ? { left: l.from - half, top: l.at - half, width: l.to - l.from + half * 2, height: half * 2 }
+            : { left: l.at - half, top: l.from - half, width: half * 2, height: l.to - l.from + half * 2 }} />)}
+          {junctions.map(j => <i key={`${j.x},${j.y}`} className={`iso-junction${j.n ? ' has-n' : ''}${j.s ? ' has-s' : ''}`} style={{ left: j.x - half, top: j.y - half, width: half * 2, height: half * 2 }} />)}
+        </div>
+        <div className="iso-props iso-outer" aria-hidden="true">
+          <div className="iso-ring-commercial">{commercial.map((item, index) => <Sprite key={`c${index}`} item={item} index={index % 12} tone="c" still />)}</div>
+          <div className="iso-ring-parks">{pocketParkProps.map((item, index) => <Sprite key={`p${index}`} item={item} index={index % 12} tone="p" still />)}</div>
+          <i className="iso-k iso-twinkle" style={spriteStyle(townTree[0], townTree[1], townTree[2])}><i><b /><b /><b /><b /><b /></i></i>
+          <div className="iso-ring-suburbs">{[...suburbsNear, ...suburbYards].map((item, index) => <Sprite key={`n${index}`} item={item} index={index % 12} tone="s" still />)}</div>
+          {!small && <div className="iso-ring-far">{[...suburbsFar, ...woods].map((item, index) => <Sprite key={`f${index}`} item={item} index={index % 12} tone="f" still />)}</div>}
+        </div>
         <div className="iso-props" aria-hidden="true">
-          {sprites.map((sprite, index) => <i key={index} className="iso-sprite" style={{ '--x': `${sprite.x + O}px`, '--y': `${sprite.y + O}px`, '--w': `${sprite.w}px`, '--i': index } as CSSProperties}><img src={`/city/${sprite.src}.png`} alt="" loading="lazy" /></i>)}
-          <i className="iso-sprite iso-car iso-car-a"><img src="/city/car-red4-15.png" alt="" /></i>
-          <i className="iso-sprite iso-car iso-car-b"><img src="/city/car-silver2-07.png" alt="" /></i>
-          <i className="iso-sprite iso-car iso-car-c"><img src="/city/car-black6-11.png" alt="" /></i>
+          {[...industrial, ...nature, ...parked, ...holidayCore].map((item, index) => <Sprite key={index} item={item} index={index % 12} />)}
+          
+          {traffic.map((model, i) => <i key={`${model}-${i}`} ref={node => { carEls.current[i] = node; }} className="iso-k iso-traffic"><img src={spriteUrl(`${model}-0`)} alt="" decoding="async" /></i>)}
         </div>
         <div className="iso-fillers" aria-hidden="true">
           {fillers.map((f, i) => <i key={i} className="iso-box iso-filler" style={{ '--x': `${f.x}px`, '--y': `${f.y}px`, '--w': `${f.w}px`, '--d': `${f.d}px`, '--h': `${f.h}px`, '--c': f.c, '--i': (i % 9) + 2 } as CSSProperties}>
             <i className="iso-face iso-top" /><i className="iso-face iso-front" /><i className="iso-face iso-side" />
           </i>)}
         </div>
-        <div className="iso-residents" aria-hidden="true">
-          {walkers.map((p, i) => <i key={i} className={`iso-walker iso-walk-${p.axis}`} style={{ '--x': `${p.x}px`, '--y': `${p.y}px`, '--len': `${p.len}px`, '--dur': `${p.dur}s`, '--delay': `${p.delay}s`, '--shirt': p.shirt } as CSSProperties}><i /></i>)}
+        <div className="iso-residents" aria-hidden="true" style={{ '--pw': `${personSize.w}px`, '--pax': `${personSize.ax}px`, '--pay': `${personSize.ay}px` } as CSSProperties}>
+          {residents.map((w, i) => <i key={w.who + i} ref={node => { pedEls.current[i] = node; }} className="iso-ped is-walk" style={{ '--walk-dur': `${(0.67 * 12 / w.speed).toFixed(2)}s` } as CSSProperties}><i className="iso-ped-sprite" style={{ backgroundImage: `url(${personUrl(w.who, 'walk', 0)})` }} /></i>)}
+          {standing.map(([who, x, y, dir], i) => <i key={`s${i}`} className="iso-ped is-idle" style={{ transform: `translate3d(${x + personSize.g}px, ${y + personSize.g}px, 0.6px)`, '--idle-delay': `${-i * 0.37}s` } as CSSProperties}><i className="iso-ped-sprite" style={{ backgroundImage: `url(${personUrl(who, 'idle', dir)})` }} /></i>)}
         </div>
         <nav className="iso-blocks" aria-label="City map of this page">
           {cityBlocks.map((block, index) => <a
             key={block.id}
-            href={`#${block.id}`}
+            href={`#${block.target}`}
             className={`iso-box iso-${block.kind}`}
             style={{ '--x': `${block.x + O}px`, '--y': `${block.y + O}px`, '--w': `${block.w}px`, '--d': `${block.d}px`, '--h': `${block.h}px`, '--c': block.color, '--i': index } as CSSProperties}
             onClick={event => visit(event, block)}
           >
+            <span className="iso-halo" aria-hidden="true" />
             <span className="iso-face iso-top" aria-hidden="true">
               {block.kind === 'tower' && <i className="iso-helipad">H</i>}
               {block.kind === 'lab' && <i className="iso-glassroof" />}
               {block.kind === 'house' && <><i className="iso-slope iso-slope-a" /><i className="iso-slope iso-slope-b" /></>}
+              {block.kind === 'gallery' && <i className="iso-skylight" />}
             </span>
             <span className="iso-face iso-front" aria-hidden="true">
               {block.kind === 'tower' && <>{facades.slice(0, 3).map((src, i) => <img key={i} src={src} alt="" className="iso-billboard" style={{ '--n': i } as CSSProperties} loading="lazy" />)}<i className="iso-sheen" /></>}
@@ -166,11 +222,13 @@ export function IsoCity({ facades = [] }: IsoCityProps) {
               {block.kind === 'house' && <><i className="iso-door" /><i className="iso-window" /><i className="iso-window iso-window-2" /></>}
               {block.kind === 'lab' && <i className="iso-glass" />}
               {block.kind === 'antenna' && <i className="iso-sheen" />}
+              {block.kind === 'gallery' && <i className="iso-print"><i /><i /></i>}
             </span>
             <span className="iso-face iso-side" aria-hidden="true">
               {block.kind === 'house' && <i className="iso-gable" />}
               {block.kind === 'arcade' && <i className="iso-edge iso-edge-h" />}
               {block.kind === 'tower' && <i className="iso-sheen" />}
+              {block.kind === 'gallery' && <i className="iso-door iso-door-gallery" />}
             </span>
             {block.kind === 'tower' && <>{mini('iso-crown', 28, 28, 70, 70, 58, '#f0eee6')}{mini('iso-ac', 8, 100, 18, 16, 10, '#b9b7ad')}<i className="iso-spire" aria-hidden="true" /><i className="iso-roofsign" aria-hidden="true">js<b>*</b></i></>}
             {block.kind === 'shop' && <>{mini('iso-canopy', 16, 104, 108, 16, 4, '#4c5c2a')}{mini('iso-ac', 100, 14, 24, 20, 12, '#aebd6c')}<i className="iso-roofsign iso-roofsign-box" aria-hidden="true">PRICING</i></>}
@@ -179,11 +237,12 @@ export function IsoCity({ facades = [] }: IsoCityProps) {
             {block.kind === 'arcade' && <>{mini('iso-joystick', 36, 40, 28, 28, 10, '#44483f')}<i className="iso-ball" aria-hidden="true" /><i className="iso-roofsign iso-roofsign-arcade" aria-hidden="true">ARCADE</i></>}
             {block.kind === 'antenna' && <i className="iso-mast" aria-hidden="true"><i className="iso-dish" /><i className="iso-beacon" /><i className="iso-ring" /><i className="iso-ring" /><i className="iso-ring" /></i>}
             {block.kind === 'computer' && <>{mini('iso-keys', 26, 56, 80, 20, 4, '#bfc3b8')}<i className="iso-monitor" aria-hidden="true"><i className="iso-face iso-top" /><i className="iso-face iso-front"><i className="iso-term" /></i><i className="iso-face iso-side" /></i></>}
+            {block.kind === 'gallery' && <i className="iso-roofsign iso-roofsign-box iso-roofsign-gallery" aria-hidden="true">PLAYGROUND</i>}
             <span className="iso-label"><b>{block.label}</b><small>{block.note}</small></span>
           </a>)}
         </nav>
       </div>
     </div>
-    <p className="iso-caption"><span>CITY MAP / 07 DISTRICTS / {walkers.length} RESIDENTS</span><span className="iso-caption-hover">Hover a building. Click to visit.</span><span className="iso-caption-touch">Tap a building to visit.</span></p>
+    <p className="iso-caption"><span>CITY MAP / {String(cityBlocks.length).padStart(2, '0')} LANDMARKS / {residents.length + standing.length} RESIDENTS</span><span className="iso-caption-hover">Hover a building. Click to visit.</span><span className="iso-caption-touch">Tap a building to visit.</span></p>
   </div>;
 }
